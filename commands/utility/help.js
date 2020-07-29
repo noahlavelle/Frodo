@@ -1,4 +1,4 @@
-const { generateEmbed } = require('../../utils');
+const { generateEmbed, commandUsage } = require('../../utils');
 
 module.exports = {
     name: 'help',
@@ -31,7 +31,6 @@ module.exports = {
             return message.channel.send(embed('That\'s not a valid command!', '#EB403B'))
         }
 
-        message.channel.send(generateEmbed(`Command: ${prefix}${command.name}`, `**Aliases:** ${command.aliases || 'none'}\n**Description:** ${command.description || 'none'}\n**Cooldown:** ${command.cooldown || 3}\n**Usage:** ${command.usage || 'none'}\n**Sub Commands:**\n${command.subcommands || 'none'}\n**Examples:**\n${command.examples || 'none'}`,
-        '#3498db', true, false))
+        message.channel.send(generateEmbed(`Command: ${prefix}${command.name}`, commandUsage(command), '#3498db', true, false))
     },
 }

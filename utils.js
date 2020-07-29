@@ -14,4 +14,9 @@ function generateEmbed(title, description, color, timestamp, fields, image, thum
     return embed
 }
 
+function commandUsage(command) {
+    return `**Aliases:** ${command.aliases || 'none'}\n**Description:** ${command.description}\n**Cooldown:** ${command.cooldown || 3}\n**Usage:** ${command.usage || 'none'}\n**Sub Commands:**\n${command.subcommands || 'none'}\n**Examples:**\n${command.examples || 'none'}`
+}
+
 module.exports.generateEmbed = generateEmbed
+module.exports.commandUsage = commandUsage

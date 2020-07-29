@@ -3,7 +3,7 @@ const { Client, Collection } = require('discord.js'); // Requiring discord.js li
 const { readdirSync } = require('fs'); // For reading the commands directory
 const Enmap = require('enmap'); // For per server config
 const { sep } = require("path"); // For reading subfolders in commands directory
-const { generateEmbed } = require('./utils'); // Importing the embed function from utils to prevent reused code
+const { generateEmbed, commandUsage } = require('./utils'); // Importing the embed function from utils to prevent reused code
 const { token } = require('./config.json')
 
 const client = new Client();
@@ -74,9 +74,7 @@ client.on('message', message => {
 
     if (command.args && !args.length) {
         // Sends an embed with the usage for a command if they did not provide arguments
-        return message.reply(generateEmbed(`You didn't provide any arguments. Usage:`, 
-            `**Aliases:** ${command.aliases || 'none'}\n**Description:** ${command.description}\n**Cooldown:** ${command.cooldown || 3}\n**Usage:** ${command.usage || 'none'}\n**Sub Commands:**\n${command.subcommands || 'none'}\n**Examples:**\n${command.examples || 'none'}`
-        , '#3498db', true, false));
+        return message.reply(generateEmbed(`You didn't provide any arguments. Usage:`, commandUsage(command), '#3498db', true, false));
     }
 
     // Cooldown Checking
