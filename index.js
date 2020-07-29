@@ -57,7 +57,10 @@ client.on('guildCreate', guild => {
 client.on('message', message => {
     if (message.author.bot) return; // Stops if the message is by a bot
 
-    if (message.channel.type === 'dm') prefix = defaultSettings.prefix; else prefix = client.settings.get(message.guild.id, 'prefix')// Gets the prefix
+    if (message.channel.type === 'dm') prefix = defaultSettings.prefix; else {
+        client.settings.ensure(message.guild.id, defaultSettings);
+        prefix = client.settings.get(message.guild.id, 'prefix')// Gets the prefix
+    }
 
     if (message.content.indexOf(prefix) !== 0) return; // Stops if the message does not begin with the prefix
 
