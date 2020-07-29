@@ -1,10 +1,11 @@
 // Requiring dependancies
-const { Client, Collection } = require('discord.js'); // Requiring discord.js library for use in this file
+const { Client, Collection, GuildMember, Guild } = require('discord.js'); // Requiring discord.js library for use in this file
 const { readdirSync } = require('fs'); // For reading the commands directory
 const Enmap = require('enmap'); // For per server config
 const { sep } = require("path"); // For reading subfolders in commands directory
 const { generateEmbed, commandUsage } = require('./utils'); // Importing the embed function from utils to prevent reused code
-const { token } = require('./config.json')
+const { token } = require('./config.json') // Loading the token from our config file
+const { Structures } = require('discord.js'); // Loading structures so we can add things to the guild
 
 const client = new Client();
 
@@ -55,6 +56,7 @@ client.on('guildCreate', guild => {
 
 client.on('message', message => {
     if (message.author.bot) return; // Stops if the message is by a bot
+
     if (message.channel.type === 'dm') prefix = defaultSettings.prefix; else prefix = client.settings.get(message.guild.id, 'prefix')// Gets the prefix
 
     if (message.content.indexOf(prefix) !== 0) return; // Stops if the message does not begin with the prefix
