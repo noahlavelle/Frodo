@@ -101,9 +101,11 @@ git clone https://github.com/NoahLavelle/Frodo.git
 ```sh
 npm install
 ```
-4. Enter your discordjs token in `config.json`
+4. Create a `config.json` file in the same folder as the index.js with this inside. Change `bot-token` with your bot token.
 ```JSON
-"token": "bot-token"
+{
+	"token": "bot-token"
+}
 ```
 You can obtain a key [here](https://discord.com/developers/applications) by creating an aplication and adding a bot to it.
 
