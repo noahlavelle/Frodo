@@ -1,4 +1,4 @@
-const inGame = [];
+var inGame = [];
 
 module.exports = {
 	name: 'rps',
@@ -8,7 +8,7 @@ module.exports = {
     guildOnly: true,
 	execute(message, args, client) {
         const filter = (message => {
-            return message.content == 'r' || message.content == 'p' ||message.content == 's'
+            return message.content == 'r' || message.content == 'p' || message.content == 's'
         });
 
         const challanged = message.guild.members.cache.get(args[0].replace(/[^0-9]/g, ''));
@@ -25,24 +25,57 @@ module.exports = {
 
             async run() {
                 const p1Message = await message.author.send('You have created a game of rps. Please enter r, p, s')
-                const p2Message = await this.challanged.send('You have been challanged a game of rps. Please enter r, p, s or exit')
+                const p2Message = await this.challanged.send('You have been challanged a game of rps. Please enter r, p, s')
                 const p1Response = p1Message.channel.awaitMessages(filter, {
                     max: 1,
                     time: 30000,
+                    errors: ['time']
                 }).catch(() => {
                     message.author.send('Timeout');
                 });
                 const p2Response = p2Message.channel.awaitMessages(filter, {
                     max: 1,
                     time: 30000,
+                    errors: ['time']
                 }).catch(() => {
-                    message.author.send('Timeout');
+                    challanged.send('Timeout');
                 });
 
-                Promise.all([p1Response, p2Response]).then(values => console.log(values))
+                Promise.all([p1Response, p2Response]).then(values => {
+                    const p1Choise = values[0].get((Array.from(values[0].keys())).toString()).content;
+                    const p2Choise = values[1].get((Array.from(values[1].keys())).toString()).content;
+
+                    if (p1Choise == 'r' && p2Choise == 's') return this.win('p1'); else if (p2Choise == 'r' && p1Choise == 's') return this.win('p2'); else if (p2Choise == 'r' && p1Choise == 'r') return this.win('draw')();
+                    if (p1Choise == 'p' && p2Choise == 'r') return this.win('p1'); else if (p2Choise == 'p' && p1Choise == 'r') return this.win('p2'); else if (p2Choise == 'p' && p1Choise == 'p') return this.win('draw')();
+                    if (p1Choise == 's' && p2Choise == 'p') return this.win('p1'); else if (p2Choise == 's' && p1Choise == 'p') return this.win('p2'); else if (p2Choise == 's' && p1Choise == 's') return this.win('draw')();
+                });
+            }
+
+            win (type) {
+                switch (type) {
+                    case 'p1':
+                        message.author.send('You Won!')
+                        this.challanged.send('You lost :(')
+                        game = null;
+                        break;
+                    case 'p2':
+                        this.challanged.send('You Won!')
+                        message.author.send('You lost :(')
+                        game = null;
+                        break;
+                    case 'draw':
+                        message.author.send('It was a draw.')
+                        this.challanged.send('It was a draw.')
+                        game = null;
+                        break;
+                }
+
+                inGame = inGame.filter(i => i != message.author.id);
+                inGame = inGame.filter(i => i != this.challanged.id);
+                console.log(inGame)
             }
         }
 
-        const game = new Game(message, challanged)
+        var game = new Game(message, challanged)
 	},
 };
