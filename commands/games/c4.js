@@ -17,8 +17,9 @@ module.exports = {
             constructor(message, challenged) { // Defining vars and running the game logic
                 this.message = message;
                 this.challenged = challenged;
-                this.grid = new Array(6).fill()
-                this.run();
+                this.grid = new Array(6).fill();
+                this.footer = [':one:', ':two:', ':three:', ':four:', ':five:', ':six:', ':seven:'];
+                this.reactions = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣']
                 this.init();
             }
 
@@ -26,10 +27,32 @@ module.exports = {
             for (let i in this.grid) { // Populate array
                 this.grid[i] = new Array(7).fill(':white_large_square:')
             }
-            message.channel.send(`${this.grid[0].join('')}\n${this.grid[1].join('')}\n${this.grid[2].join('')}\n${this.grid[3].join('')}\n${this.grid[4].join('')}\n${this.grid[5].join('')}`)
+            this.blank = `${this.grid[0].join('')}\n${this.grid[1].join('')}\n${this.grid[2].join('')}\n${this.grid[3].join('')}\n${this.grid[4].join('')}\n${this.grid[5].join('')}\n${this.footer.join('')}`;
+            this.msg = await message.channel.send(this.blank)
+            for (let i in this.reactions) {
+                this.msg.react(this.reactions[i])
+            }
+            this.run();
         }
 
         async run() {
+            const userReactions = this.msg.reactions.cache.filter(reaction => reaction.users.cache.has(message.author.id, challenged.id));
+            for (const reaction of userReactions.values()) {
+                reaction.users.remove(message.author.id);
+                reaction.users.remove(challenged.id);
+            }
+            await this.p1Calcs();
+            
+
+        }
+
+        async p1Calcs() {
+            const filter = (reaction, user) => reaction.emoji.name === ':one:'
+            this.msg.awaitReactions(filter, { max: 1})
+            .then(collected => {
+                console.log(collected);
+            }).catch(console.error);
+
         }
     }
 
