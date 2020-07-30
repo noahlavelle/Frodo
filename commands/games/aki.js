@@ -33,6 +33,7 @@ module.exports = {
                     ));
                     const filter = m => m.content == '0' || m.content == '1' || m.content == '2' || m.content == '3' || m.content == '4' || m.content == '5';
                     const response = await this.getResponse(filter);
+                    console.log(response)
                     if (response == '5') await this.aki.back(); else await this.aki.step(parseInt(response));
                     
                     if (this.aki.progress >= 70 || this.aki.currentStep >= 78) {
@@ -67,13 +68,20 @@ module.exports = {
             }
 
             async getResponse(filter) {
+                var response
                 const responseAwait = await message.channel.awaitMessages(filter, { 
                     max: 1,
-                    time: 30000,
+                    time: 1000,
                     errors: ['time'],
-                }).catch(() => message.channel.send('The game has timed out'));
-                const response = responseAwait.get((Array.from(responseAwait.keys())).toString()).content;
-                return response;
+                }).catch(() =>  {
+                    message.channel.send('The game has timed out');
+                    response = 'exit';
+                    return game = null;
+                });
+                if (response != 'exit') {
+                    response = (responseAwait.get((Array.from(responseAwait.keys())).toString()).content);
+                    return response;
+                }
             }
         }
 
