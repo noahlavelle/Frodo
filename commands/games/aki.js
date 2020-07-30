@@ -16,19 +16,19 @@ module.exports = {
 
             async init() {
                 await this.aki.start();
-                message.channel.send('Are you thinking of a character and ready to begin? y / n');
+                message.channel.send('Are you thinking of a character and ready to begin? y / n').then(msg => this.msg = msg);
                 const filter = m => m.content == 'y' || m.content == 'n';
                 const response = await this.getResponse(filter);
                 if (response == 'y') this.run(); else game = null;
             }
 
             async run() {
-                message.channel.send(new MessageEmbed()
+                this.msg.edit('', new MessageEmbed()
                     .setTitle('Akinator:')
                     .setColor('#3498db')
                     .addFields(
                         { name: 'Question:', value: this.aki.question },
-                        { name: 'Answers:', value: `\n[0] ${this.aki.answers[0]}\n[1] ${this.aki.answers[1]}\n[2] ${this.aki.answers[2]}\n[3] ${this.aki.answers[3]}\n[4] ${this.aki.answers[4]}\n[5] back` },
+                        { name: 'Answers:', value: `\n[0] ${this.aki.answers[0]}\n[1] ${this.aki.answers[1]}\n[2] ${this.aki.answers[2]}\n[3] ${this.aki.answers[3]}\n[4] ${this.aki.answers[4]}\n[5] Back` },
                         { name: 'Progress:', value: this.aki.progress },
                     ));
                     const filter = m => m.content == '0' || m.content == '1' || m.content == '2' || m.content == '3' || m.content == '4' || m.content == '5';
@@ -45,7 +45,7 @@ module.exports = {
 
             async win () {
                 const answer = this.aki.answers[this.i];
-                if (!answer) message.channel.send(':confused: I don\'t know.')
+                if (!answer) this.msg.edit(':confused: I don\'t know.')
                 const embed = new MessageEmbed()
                     .setTitle(`Akinator Guess ${this.i + 1}:`)
                     .setColor('#3498db')
@@ -53,14 +53,14 @@ module.exports = {
                     .setImage(answer.absolute_picture_path)
                     .setDescription('Is this guess correct? Type y / n')
 
-                message.channel.send(embed)
+                this.msg.edit(embed)
                 const filter = m => m.content == 'y' || m.content == 'n';
                 const response = await this.getResponse(filter)
                 if (response == 'n') {
                     this.i++; 
                     this.win();
                 }  else {
-                    message.channel.send('I win again!')
+                    this.msg.edit('I win again!')
                     return game = null;
                 }
                 if (this.i == JSON.stringify(this.aki.answers.length) - 1) return game = null
@@ -73,12 +73,13 @@ module.exports = {
                     time: 30000,
                     errors: ['time'],
                 }).catch(() =>  {
-                    message.channel.send('The game has timed out');
+                    this.msg.edit('The game has timed out');
                     response = 'exit';
                     return game = null;
                 });
                 if (response != 'exit') {
                     response = (responseAwait.get((Array.from(responseAwait.keys())).toString()).content);
+                    message.channel.bulkDelete(1)
                     return response;
                 }
             }
