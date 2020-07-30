@@ -71,7 +71,7 @@ module.exports = {
                 var response
                 const responseAwait = await message.channel.awaitMessages(filter, { 
                     max: 1,
-                    time: 1000,
+                    time: 30000,
                     errors: ['time'],
                 }).catch(() =>  {
                     message.channel.send('The game has timed out');
