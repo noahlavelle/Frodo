@@ -18,7 +18,8 @@ function commandUsage(command) {
     return `**Aliases:** ${command.aliases || 'none'}\n**Description:** ${command.description}\n**Cooldown:** ${command.cooldown || 3}\n**Usage:** ${command.usage || 'none'}\n**Sub Commands:**\n${command.subcommands || 'none'}\n**Examples:**\n${command.examples || 'none'}`
 }
 
-const inGame = new Collection();
+const inGame = []
 
 module.exports.generateEmbed = generateEmbed
 module.exports.commandUsage = commandUsage
+module.exports.inGame = inGame

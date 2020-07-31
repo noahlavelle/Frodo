@@ -1,4 +1,4 @@
-var inGame = [];
+const utils = require('../../utils');
 
 module.exports = {
 	name: 'c4',
@@ -12,9 +12,9 @@ module.exports = {
 
         const challenged = message.guild.members.cache.get(args[0].replace(/[^0-9]/g, '')); // Getting the user who was mentioned
         if (!challenged || challenged == message.member) return message.reply('Please enter a valid user'); // If none is mentioned or you mentioned yourself return
-        if (inGame.includes(message.author.id)) return message.reply('You are allready in a game. Please finish that first.'); // Checking if you are allready in a game
-        if (inGame.includes(challenged.id)) return message.reply('That user is allready in a game. Try again in a minute.'); // Checking if the person you challenged is in a game and if so return
-        inGame.push(challenged.id, message.author.id); // Push both ids to the inGame array so they are registered as in a game
+        if (utils.inGame.includes(message.author.id)) return message.reply('You are allready in a game. Please finish that first.'); // Checking if you are allready in a game
+        if (utils.inGame.includes(challenged.id)) return message.reply('That user is allready in a game. Try again in a minute.'); // Checking if the person you challenged is in a game and if so return
+        utils.inGame.push(challenged.id, message.author.id); // Push both ids to the utils.inGame array so they are registered as in a game
         class Game { // Creating a game class so there is support for multiple games at once.
             constructor(message, challenged) { // Defining vars and running the game logic
                 this.message = message;
@@ -81,15 +81,23 @@ module.exports = {
     }
 
     async checkWin(color) {
+        let streak = 0
+        for (let i in this.grid) {
+            for (let j in this.grid) {
+                if (this.grid[i][j].includes('_circle')) streak++;
+                if (this.grid[i][j] == ':white_large_square:') streak = 0;
+                if (streak == this.grid.length * 7) return this.win('draw')
+            }
+        }
         await this.checkWinVer(color)
-        await this.checkWinDiag(color);
+        this.checkWinDiag(color);
+        this.checkWinDiagLeft(color);
         for (let i in this.grid) {
             let streak = 0;
             for (let j in this.grid[i]) {
-                if (this.grid[i][j] == `:${color}_circle:`) streak++;
-                if (this.grid[i][j] == ':white_large_square:') streak = 0;
+                if (this.grid[i][j] == `:${color}_circle:`) streak++; else streak = 0;
                 if (streak == 4) {
-                    return console.log('Win')
+                    return this.win(color)
                 }
             }
         }
@@ -102,15 +110,46 @@ module.exports = {
             collumn.push(this.grid[i][this.position]);
         }
         for (let i in collumn) {
-            if (collumn[i] == `:${color}_circle:`) streak++;
-            if (collumn[i] == ':white_large_square:') streak = 0;
+            if (collumn[i] == `:${color}_circle:`) streak++; else streak = 0;
             if (streak == 4) {
-                return console.log('Win')
+                return win(color)
             }
         }
     }
 
     checkWinDiag(color) {
+        let streak = 0;
+        let diagonal = [];
+        let runningCheck = true
+        let runningPush = false
+        let i = this.y - 1;
+        let j = this.position - 1;
+        while (runningCheck) {
+            i++;
+            j++;
+            if (i == this.grid.length || j == 7 ) {
+                runningCheck = false;
+                runningPush = true
+            }
+        }
+        while (runningPush) {
+            i--;
+            j--;
+            diagonal.push(this.grid[i][j]);
+            if (i == 0 || j == -1) {
+                runningPush = false; 
+            }
+        }
+
+        for (let i in diagonal) {
+            if (diagonal[i] == `:${color}_circle:`) streak++; else streak = 0;
+            if (streak == 4) {
+                return this.win(color)
+            }
+        }
+    }
+
+    checkWinDiagLeft(color) {
         let streak = 0;
         let diagonal = [];
         let runningCheck = true
@@ -135,12 +174,27 @@ module.exports = {
         }
 
         for (let i in diagonal) {
-            if (diagonal[i] == `:${color}_circle:`) streak++;
-            if (diagonal[i] == ':white_large_square:') streak = 0;
+            if (diagonal[i] == `:${color}_circle:`) streak++; else streak = 0;
             if (streak == 4) {
-                return console.log('Win')
+                return this.win(color)
             }
         }
+    }
+
+    win(term) {
+        let win
+        if (term == 'blue') {
+            win = `<@${message.author.id}> won the game!`;
+        } else if (term == 'red') {
+            win = `<@${challenged.id}> won the game!`;
+        } else {
+            win = `It is a draw.`;
+        }
+        utils.inGame = utils.inGame.filter(i => i != message.author.id);
+        utils.inGame = utils.inGame.filter(i => i != challenged.id);
+        this.msg.edit(`${this.grid[0].join('')}\n${this.grid[1].join('')}\n${this.grid[2].join('')}\n${this.grid[3].join('')}\n${this.grid[4].join('')}\n${this.grid[5].join('')}\n${this.footer.join('')}\n\n${win}`)
+        this.msg.reactions.removeAll().catch(error => console.error('Failed to clear reactions: ', error));
+        return game = null
     }
 }
 

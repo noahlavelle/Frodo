@@ -1,5 +1,5 @@
 const { DMChannel, Collection } = require("discord.js");
-var inGame = []
+const utils = require('../../utils');
 
 module.exports = {
 	name: 'ttt',
@@ -10,9 +10,9 @@ module.exports = {
 	execute(message, args, client) {
         const player_two = message.guild.members.cache.get(args[0].replace(/[^0-9]/g, ''));
         if (!player_two || player_two == message.member) return message.reply('Please enter a valid user');
-        if (inGame.includes(message.author.id)) return message.reply('You are allready in a game. Please finish that first.');
-        if (inGame.includes(player_two.id)) return message.reply('That user is allready in a game. Try again in a minute.');
-        inGame.push(player_two.id, message.author.id);
+        if (utils.inGame.includes(message.author.id)) return message.reply('You are allready in a game. Please finish that first.');
+        if (utils.inGame.includes(player_two.id)) return message.reply('That user is allready in a game. Try again in a minute.');
+        utils.inGame.push(player_two.id, message.author.id);
 
         class Game {
             constructor(message, player_two) {
@@ -134,8 +134,8 @@ module.exports = {
                 }
             }
             end_game(player_two, message) {
-                inGame = inGame.filter(i => i != message.author.id);
-                inGame = inGame.filter(i => i != player_two.id);
+                utils.inGame = utils.inGame.filter(i => i != message.author.id);
+                utils.inGame = utils.inGame.filter(i => i != player_two.id);
                 game = null
                 this.playing_game = false
                 return;

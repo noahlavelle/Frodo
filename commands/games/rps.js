@@ -1,4 +1,4 @@
-var inGame = [];
+const utils = require('../../utils');
 
 module.exports = {
 	name: 'rps',
@@ -13,9 +13,9 @@ module.exports = {
 
         const challenged = message.guild.members.cache.get(args[0].replace(/[^0-9]/g, '')); // Getting the user who was mentioned
         if (!challenged || challenged == message.member) return message.reply('Please enter a valid user'); // If none is mentioned or you mentioned yourself return
-        if (inGame.includes(message.author.id)) return message.reply('You are allready in a game. Please finish that first.'); // Checking if you are allready in a game
-        if (inGame.includes(challenged.id)) return message.reply('That user is allready in a game. Try again in a minute.'); // Checking if the person you challenged is in a game and if so return
-        inGame.push(challenged.id, message.author.id); // Push both ids to the inGame array so they are registered as in a game
+        if (utils.inGame.includes(message.author.id)) return message.reply('You are allready in a game. Please finish that first.'); // Checking if you are allready in a game
+        if (utils.inGame.includes(challenged.id)) return message.reply('That user is allready in a game. Try again in a minute.'); // Checking if the person you challenged is in a game and if so return
+        utils.inGame.push(challenged.id, message.author.id); // Push both ids to the utils.inGame array so they are registered as in a game
         class Game { // Creating a game class so there is support for multiple games at once.
             constructor(message, challenged) { // Defining vars and running the game logic
                 this.message = message;
@@ -76,8 +76,8 @@ module.exports = {
             }
 
             endGame() {
-                inGame = inGame.filter(i => i != message.author.id);
-                inGame = inGame.filter(i => i != this.challenged.id); // Filtering the people in the game out of the ingame array
+                utils.inGame = utils.inGame.filter(i => i != message.author.id);
+                utils.inGame = utils.inGame.filter(i => i != this.challenged.id); // Filtering the people in the game out of the utils.inGame array
                 return game = null; // Clearing this instance of game
             }
         }
