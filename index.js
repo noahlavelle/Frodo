@@ -7,7 +7,7 @@ const { generateEmbed, commandUsage } = require('./utils'); // Importing the emb
 const { token } = require('./config.json') // Loading the token from our config file
 const { Structures } = require('discord.js'); // Loading structures so we can add things to the guild
 
-const client = new Client();
+const client = new Client()
 
 // Creating a new commands and cooldowns collection so they can be accessed later
 client.commands = new Collection();

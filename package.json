@@ -19,6 +19,7 @@
   "dependencies": {
     "aki-api": "^5.1.1",
     "better-sqlite3": "^7.1.0",
+    "discord-backup": "^2.1.19",
     "discord.js": "^12.2.0",
     "enmap": "^5.4.1",
     "jimp": "^0.14.0",

@@ -23,6 +23,7 @@ module.exports = {
                 this.footer = [':one:', ':two:', ':three:', ':four:', ':five:', ':six:', ':seven:'];
                 this.reactions = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣']
                 this.init();
+                this.progress= true;
             }
 
         async init() {
@@ -41,7 +42,7 @@ module.exports = {
         async run() {
             await this.posCalcs(message.author.id, 'blue');
             await this.posCalcs(challenged.id, 'red');
-            this.run();
+            if (this.progress) this.run();
 
         }
 
@@ -84,9 +85,8 @@ module.exports = {
         let streak = 0
         for (let i in this.grid) {
             for (let j in this.grid) {
-                if (this.grid[i][j].includes('_circle')) streak++;
-                if (this.grid[i][j] == ':white_large_square:') streak = 0;
-                if (streak == this.grid.length * 7) return this.win('draw')
+                if (this.grid[i][j].includes('_circle')) streak++; else streak = 0;
+                if (streak == 36) this.win('draw')
             }
         }
         await this.checkWinVer(color)
@@ -97,13 +97,13 @@ module.exports = {
             for (let j in this.grid[i]) {
                 if (this.grid[i][j] == `:${color}_circle:`) streak++; else streak = 0;
                 if (streak == 4) {
-                    return this.win(color)
+                    this.win(color)
                 }
             }
         }
     }
 
-    checkWinVer(color) {
+    async checkWinVer(color) {
         let streak = 0;
         let collumn = [];
         for (let i in this.grid) {
@@ -112,12 +112,12 @@ module.exports = {
         for (let i in collumn) {
             if (collumn[i] == `:${color}_circle:`) streak++; else streak = 0;
             if (streak == 4) {
-                return win(color)
+                this.win(color)
             }
         }
     }
 
-    checkWinDiag(color) {
+    async checkWinDiag(color) {
         let streak = 0;
         let diagonal = [];
         let runningCheck = true
@@ -144,12 +144,12 @@ module.exports = {
         for (let i in diagonal) {
             if (diagonal[i] == `:${color}_circle:`) streak++; else streak = 0;
             if (streak == 4) {
-                return this.win(color)
+                this.win(color)
             }
         }
     }
 
-    checkWinDiagLeft(color) {
+    async checkWinDiagLeft(color) {
         let streak = 0;
         let diagonal = [];
         let runningCheck = true
@@ -176,7 +176,7 @@ module.exports = {
         for (let i in diagonal) {
             if (diagonal[i] == `:${color}_circle:`) streak++; else streak = 0;
             if (streak == 4) {
-                return this.win(color)
+                this.win(color)
             }
         }
     }
@@ -194,6 +194,7 @@ module.exports = {
         utils.inGame = utils.inGame.filter(i => i != challenged.id);
         this.msg.edit(`${this.grid[0].join('')}\n${this.grid[1].join('')}\n${this.grid[2].join('')}\n${this.grid[3].join('')}\n${this.grid[4].join('')}\n${this.grid[5].join('')}\n${this.footer.join('')}\n\n${win}`)
         this.msg.reactions.removeAll().catch(error => console.error('Failed to clear reactions: ', error));
+        this.progress = false;
         return game = null
     }
 }
