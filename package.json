@@ -18,6 +18,7 @@
   "homepage": "https://github.com/NoahLavelle/Frodo#readme",
   "dependencies": {
     "aki-api": "^5.1.1",
+    "atob": "^2.1.2",
     "better-sqlite3": "^7.1.0",
     "discord-backup": "^2.1.19",
     "discord.js": "^12.2.0",
