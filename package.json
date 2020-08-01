@@ -23,7 +23,8 @@
     "enmap": "^5.4.1",
     "jimp": "^0.14.0",
     "moment": "^2.27.0",
-    "moment-duration-format": "^2.3.2"
+    "moment-duration-format": "^2.3.2",
+    "node-fetch": "^2.6.0"
   },
   "devDependencies": {
     "eslint": "^7.5.0"
