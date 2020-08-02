@@ -1,30 +1,10 @@
-
-<!--
-*** Thanks for checking out this README Template. If you have a suggestion that would
-*** make this better, please fork the repo and create a pull request or simply open
-*** an issue with the tag "enhancement".
-*** Thanks again! Now go create something AMAZING! :D
--->
-
-
-
-
-
-<!-- PROJECT SHIELDS -->
-<!--
-*** I'm using markdown "reference style" links for readability.
-*** Reference links are enclosed in brackets [ ] instead of parentheses ( ).
-*** See the bottom of this document for the declaration of the reference variables
-*** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
-*** https://www.markdownguide.org/basic-syntax/#reference-style-links
--->
 [![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
 [![MIT License][license-shield]][license-url]
 
-<!-- PROJECT LOGO -->
+
 <br />
 <p align="center">
   <a href="https://github.com/NoahLavelle/Frodo">
@@ -53,7 +33,8 @@
 ## Table of Contents
 
 * [About the Project](#about-the-project)
-  * [Built With](#built-with)
+	* [Features](#features)
+	* [Built With](#built-with)
 * [Getting Started](#getting-started)
   * [Prerequisites](#prerequisites)
   * [Installation](#installation)
@@ -71,6 +52,19 @@
 
 There are many bots out there that can do games, but this one aimes to bring them all together. It is currently being worked on by Daniel Howard and Noah Lavelle for fun and to develop skills. It is being constantly updated and will soon have features like minigames - RPS, TTT, number games etc, and a more advanced party system for server-wide games like Werewolves. We also intend to create an economy based game.
 
+### Features
+
+The bot currently has quite a few games. The full list currently is
+* Connect 4,
+* Akinator,
+* Hangman,
+* Rock Paper Scissors,
+* Trivia,
+* Tick Tack Toe,
+* Countdown style anagrams.
+* Chase the Ace - Almost completed,
+All of these are within the discord chat and are quite polished. The current major games in development is Wearwolves and a set of card games. The bot does not only provide games though. 
+There are also many different simple text commands like joke, fact, fortune, insult and most importantly, chucknorris. The bot also has per server configs for things like prefixes and also full server backups! This covers rolls, settings, channels and even messages!
 ### Built With
 Here are the frameworks and dependancies we are using. They may change alot and you can install them for yourself by running ``npm i`` - asuming you have NodeJS installed
 * [NodeJS](https://nodejs.org/en/)
@@ -85,10 +79,18 @@ This is how to get the bot up and running on your own machine. You need to insta
 
 ### Prerequisites
 
-This is an example of how to list things you need to use the software and how to install them.
+These are all of the node moduals the bot uses. Read through the [Installation](#installation) section to see how to install them all at once
 * npm
 ```sh
-npm install discord.js
+discord.js
+aki-api
+atob
+better-sqlite3
+discord-backup
+discord.js
+enmap
+moment + moment-duration-format
+node-fetch
 ```
 
 ### Installation
@@ -99,7 +101,7 @@ git clone https://github.com/NoahLavelle/Frodo.git
 ```
 3. Install NPM packages
 ```sh
-npm install
+npm i
 ```
 4. Create a `config.json` file in the same folder as the index.js with this inside. Change `bot-token` with your bot token.
 ```JSON
