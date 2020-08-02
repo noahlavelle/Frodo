@@ -23,6 +23,7 @@ module.exports = {
                 '\_\_\_\n*      |\n*    :dizzy_face: \n*    /|\\ \n*      |\n*    /\n*', '\_\_\_\n*      |\n*    :dizzy_face: \n*    /|\\ \n*      |\n*    / \\\n*'];
                 this.init();
                 this.guesses = '';
+                this.typedLetters = [];
                 this.correct = 0;
                 this.letters = 0;
                 this.stage = 0;
@@ -38,6 +39,7 @@ module.exports = {
                     time: 60000,
                     errors: ['time']
                 }).catch(() => {
+                    this.end();
                     message.author.send('This game has expired');
                 })
                 this.word = word.get((Array.from(word.keys())).toString()).content;
@@ -53,6 +55,7 @@ module.exports = {
                     time: 60000,
                     errors: ['time']
                 }).catch(() => {
+                    this.end();
                     this.msg.edit('This game has expired');
                 })
                 this.letter = word.get((Array.from(word.keys())).toString()).content;
@@ -64,22 +67,39 @@ module.exports = {
                     this.msg.edit(`${this.stages[this.stage]}\n\`\`${this.displayWord}\`\`\n Wrong Guesses: ${this.guesses}`);
 
                 }
+
+                if (this.typedLetters.includes(this.letter)) {
+                    message.reply('You have allready guessed that letter');
+                    return this.run();
+                }
+
                 for (let i = 0; i < this.word.length; i++) {
                     if (this.word.charAt(i).toLowerCase() == this.letter.toLowerCase()) {
                         this.displayWord = this.displayWord.substr(0, i) + this.letter + this.displayWord.substr(i + 1);
                         this.msg.edit(`${this.stages[this.stage]}\n\`\`${this.displayWord}\`\`\n Wrong Guesses: ${this.guesses}`);
-                         this.correct++;
+                        this.correct++;
+                        this.typedLetters.push(this.letter);
                     }
                 }
 
-                if (this.correct == this.word.length) return this.msg.edit(`${this.stages[this.stage]}\nYou Won! \`\`${this.word}\`\`\n Wrong Guesses: ${this.guesses}`)
+                if (this.correct == this.word.length) {
+                    this.end();
+                    return this.msg.edit(`${this.stages[this.stage]}\nYou Won! \`\`${this.word}\`\`\n Wrong Guesses: ${this.guesses}`)
+                }
 
                 if (this.stage == 5) {
+                    this.end();
                     return this.msg.edit(this.msg.edit(`${this.stages[this.stage]}\nYou Lost! The word was \`\`${this.word}\`\`\n Wrong Guesses: ${this.guesses}`));
                 }
                 this.run();
                 
 
+            }
+
+            end() {
+                utils.inGame = utils.inGame.filter(i => i != message.author.id);
+                utils.inGame = utils.inGame.filter(i => i != challenged.id);
+                this.game = null;
             }
 }
 
