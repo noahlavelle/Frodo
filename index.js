@@ -23,6 +23,7 @@ client.settings = new Enmap({
 const defaultSettings = {
     prefix: ".",
     joinRole: "Member",
+    jokeFilters: "nsfw,religious,political,racist,sexist"
 };
 
 const dir = './commands/';
