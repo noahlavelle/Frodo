@@ -1,6 +1,5 @@
 const utils = require('../../utils');
 const fetch = require('node-fetch');
-const { compareHashes } = require('jimp');
 
 module.exports = {
 	name: 'anagram',
