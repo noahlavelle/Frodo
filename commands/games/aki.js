@@ -17,7 +17,7 @@ module.exports = {
             async init() {
                 await this.aki.start();
                 message.channel.send('Are you thinking of a character and ready to begin? y / n').then(msg => this.msg = msg);
-                const filter = m => m.content == 'y' || m.content == 'n';
+                const filter = m => m.content == 'y' && m.author == message.author || m.content == 'n' && m.author == message.author;
                 const response = await this.getResponse(filter);
                 if (response == 'y') this.run(); else game = null;
             }
@@ -31,7 +31,7 @@ module.exports = {
                         { name: 'Answers:', value: `\n[0] ${this.aki.answers[0]}\n[1] ${this.aki.answers[1]}\n[2] ${this.aki.answers[2]}\n[3] ${this.aki.answers[3]}\n[4] ${this.aki.answers[4]}\n[5] Back` },
                         { name: 'Progress:', value: this.aki.progress },
                     ));
-                    const filter = m => m.content == '0' || m.content == '1' || m.content == '2' || m.content == '3' || m.content == '4' || m.content == '5';
+                    const filter = m => m.content == '0' && m.author == message.author || m.content == '1' && m.author == message.author || m.content == '2' && m.author == message.author || m.content == '3'&& m.author == message.author  || m.content == '4' && m.author == message.author || m.content == '5' && m.author == message.author;
                     const response = await this.getResponse(filter);
                     if (response == '5') await this.aki.back(); else await this.aki.step(parseInt(response));
                     
@@ -54,7 +54,7 @@ module.exports = {
                     .setDescription('Is this guess correct? Type y / n')
 
                 this.msg.edit(embed)
-                const filter = m => m.content == 'y' || m.content == 'n';
+                const filter = m => m.content == 'y' && m.author == message.author || m.content == 'n' && m.author == message.author;
                 const response = await this.getResponse(filter)
                 if (response == 'n') {
                     this.i++; 
