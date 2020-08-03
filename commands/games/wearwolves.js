@@ -100,7 +100,7 @@ module.exports = {
                     for (const player in this.villagers) {
                         message.guild.members.cache.get(this.villagers[player]).roles.add(roleVillagers)
                     }
-                    cchannel.send('This is the channel where you will all discus who to kill each round. But beware, the **werewolves** are also somewhere in this room!')
+                    channel.send('This is the channel where you will all discus who to kill each round. But beware, the **werewolves** are also somewhere in this room!')
                 });
             }
 
