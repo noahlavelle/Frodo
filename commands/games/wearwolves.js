@@ -1,5 +1,6 @@
 const utils = require('../../utils');
 const { color } = require('jimp');
+const role = require('../../../EVA/commands/utility/role');
 
 module.exports = {
 	name: 'werewolves',
@@ -7,8 +8,10 @@ module.exports = {
 	execute(message, args, client) {
         class Game {
             constructor() {
-                this.uniqueRoles = ['werewolf', 'seer'];
+                this.uniqueRoles = ['werewolf', 'werewolf2', 'seer'];
                 this.players = [];
+                this.werewolves = [];
+                this.villagers = [];
                 this.checker = (arr, target) => target.every(v => arr.includes(v));
                 this.init();
             }
@@ -52,15 +55,56 @@ module.exports = {
                 for (const player in this.players) {
                     await this.assignRole(player);
                 }
-                console.log(this.players)
+
+                const roleVillagers = await message.guild.roles.create({
+                    data: {
+                        name: 'Werewolves - Villagers'
+                }});
+                message.guild.channels.create('Werewolves party - Villagers', 'text')
+                .then(async channel => {
+                    await this.channelPerms(roleVillagers, channel);
+                    for (const player in this.villagers) {
+                        message.guild.members.cache.get(this.villagers[player]).roles.add(roleVillagers)
+                    }
+                    channel.send('This is the channel where you, the villagers, will interact to make decisions based around the game! Don\'t worry, this channel is private so you won\'t get any werewolves snooping around.')
+                });
+                const roleWerewolves = await message.guild.roles.create({
+                    data: {
+                        name: 'Werewolves - Werewolves'
+                }});
+                message.guild.channels.create('Werewolves party - Werewolves', 'text')
+                .then(async channel => {
+                    await this.channelPerms(roleWerewolves, channel);
+                    for (const player in this.werewolves) {
+                        message.guild.members.cache.get(this.werewolves[player]).roles.add(roleWerewolves)
+                    }
+                    channel.send('This is the channel where you, the werewolves, will interact to make decisions based around the game! Don\'t worry, this channel is private so you won\'t get any villagers snooping around.')
+                });
             }
 
             assignRole(player) {
                 const roleNumber = Math.round(Math.random() * (this.uniqueRoles.length - 1));
                 if (this.checker(this.assiginedRoles, this.uniqueRoles)) return this.players[player].push('villager')
                 if (this.assiginedRoles.includes(this.uniqueRoles[roleNumber])) return this.assignRole(player);
+                if (this.uniqueRoles[roleNumber] == 'werewolf' || this.uniqueRoles[roleNumber] == 'werewolf2') this.werewolves.push(this.players[player][0]); else {
+                    this.villagers.push(this.players[player][0]);
+                }
                 this.players[player].push(this.uniqueRoles[roleNumber])
                 return this.assiginedRoles.push(this.uniqueRoles[roleNumber]);
+            }
+
+            channelPerms(role, channel) {
+                const everyone = message.guild.roles.everyone.id
+                channel.overwritePermissions([
+                    {
+                        id: everyone,
+                        deny: ['VIEW_CHANNEL']
+                    },
+                    {
+                        id: role.id,
+                        allow: ['VIEW_CHANNEL', 'READ_MESSAGE_HISTORY']
+                    }
+                ]);
             }
 
             async getReaction(filter, time) {
