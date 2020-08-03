@@ -48,8 +48,6 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
-
 There are many bots out there that can do games, but this one aimes to bring them all together. It is currently being worked on by Daniel Howard and Noah Lavelle for fun and to develop skills. It is being constantly updated and will soon have features like minigames - RPS, TTT, number games etc, and a more advanced party system for server-wide games like Werewolves. We also intend to create an economy based game.
 
 ### Features
