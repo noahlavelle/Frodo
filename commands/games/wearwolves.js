@@ -1,6 +1,4 @@
 const utils = require('../../utils');
-const { color } = require('jimp');
-const role = require('../../../EVA/commands/utility/role');
 
 module.exports = {
 	name: 'werewolves',
@@ -58,27 +56,51 @@ module.exports = {
 
                 const roleVillagers = await message.guild.roles.create({
                     data: {
-                        name: 'Werewolves - Villagers'
+                        name: 'Werewolves Game'
                 }});
-                message.guild.channels.create('Werewolves party - Villagers', 'text')
-                .then(async channel => {
-                    await this.channelPerms(roleVillagers, channel);
-                    for (const player in this.villagers) {
-                        message.guild.members.cache.get(this.villagers[player]).roles.add(roleVillagers)
-                    }
-                    channel.send('This is the channel where you, the villagers, will interact to make decisions based around the game! Don\'t worry, this channel is private so you won\'t get any werewolves snooping around.')
-                });
                 const roleWerewolves = await message.guild.roles.create({
                     data: {
-                        name: 'Werewolves - Werewolves'
+                        name: 'Werewolves Game'
                 }});
                 message.guild.channels.create('Werewolves party - Werewolves', 'text')
                 .then(async channel => {
-                    await this.channelPerms(roleWerewolves, channel);
+                    const everyone = message.guild.roles.everyone.id
+                    await channel.overwritePermissions([
+                        {
+                            id: everyone,
+                            deny: ['VIEW_CHANNEL']
+                        },
+                        {
+                            id: roleWerewolves.id,
+                            allow: ['VIEW_CHANNEL', 'READ_MESSAGE_HISTORY']
+                        },
+                    ]);
                     for (const player in this.werewolves) {
                         message.guild.members.cache.get(this.werewolves[player]).roles.add(roleWerewolves)
                     }
-                    channel.send('This is the channel where you, the werewolves, will interact to make decisions based around the game! Don\'t worry, this channel is private so you won\'t get any villagers snooping around.')
+                    channel.send('This is the channel where you, the werewolves, will decide who to kill Don\'t worry, this channel is private so you won\'t get any villagers snooping around.')
+                });
+                message.guild.channels.create('Werewolves party - Villagers', 'text')
+                .then(async channel => {
+                    const everyone = message.guild.roles.everyone.id
+                    await channel.overwritePermissions([
+                        {
+                            id: everyone,
+                            deny: ['VIEW_CHANNEL']
+                        },
+                        {
+                            id: roleVillagers.id,
+                            allow: ['VIEW_CHANNEL', 'READ_MESSAGE_HISTORY']
+                        },
+                        {
+                            id: roleWerewolves.id,
+                            allow: ['VIEW_CHANNEL', 'READ_MESSAGE_HISTORY']
+                        },
+                    ]);
+                    for (const player in this.villagers) {
+                        message.guild.members.cache.get(this.villagers[player]).roles.add(roleVillagers)
+                    }
+                    cchannel.send('This is the channel where you will all discus who to kill each round. But beware, the **werewolves** are also somewhere in this room!')
                 });
             }
 
@@ -93,20 +115,6 @@ module.exports = {
                 return this.assiginedRoles.push(this.uniqueRoles[roleNumber]);
             }
 
-            channelPerms(role, channel) {
-                const everyone = message.guild.roles.everyone.id
-                channel.overwritePermissions([
-                    {
-                        id: everyone,
-                        deny: ['VIEW_CHANNEL']
-                    },
-                    {
-                        id: role.id,
-                        allow: ['VIEW_CHANNEL', 'READ_MESSAGE_HISTORY']
-                    }
-                ]);
-            }
-
             async getReaction(filter, time) {
                 await this.msg.awaitReactions(filter, { max: 1, time: time, errors: ['time'] })
                 .then(collected => {
@@ -119,4 +127,3 @@ module.exports = {
         var game = new Game
     }
 }
-
