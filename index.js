@@ -1,11 +1,10 @@
 // Requiring dependancies
-const { Client, Collection, GuildMember, Guild } = require('discord.js'); // Requiring discord.js library for use in this file
+const { Client, Collection } = require('discord.js'); // Requiring discord.js library for use in this file
 const { readdirSync } = require('fs'); // For reading the commands directory
 const Enmap = require('enmap'); // For per server config
 const { sep } = require("path"); // For reading subfolders in commands directory
 const { generateEmbed, commandUsage } = require('./utils'); // Importing the embed function from utils to prevent reused code
 const { token } = require('./config.json') // Loading the token from our config file
-const { Structures } = require('discord.js'); // Loading structures so we can add things to the guild
 
 const client = new Client()
 
@@ -113,4 +112,3 @@ if (process.env.DEBUG) {
 }
 
 client.login(token); // Logging into the bot app with your secret token
-

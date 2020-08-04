@@ -10,6 +10,9 @@ module.exports = {
                 this.players = [];
                 this.werewolves = [];
                 this.villagers = [];
+                this.werewolvesChannel;
+                this.globalChannel;
+                this.voteCount = 0;
                 this.checker = (arr, target) => target.every(v => arr.includes(v));
                 this.init();
             }
@@ -64,6 +67,7 @@ module.exports = {
                 }});
                 message.guild.channels.create('Werewolves party - Werewolves', 'text')
                 .then(async channel => {
+                    this.werewolvesChannel = channel;
                     const everyone = message.guild.roles.everyone.id
                     await channel.overwritePermissions([
                         {
@@ -80,8 +84,9 @@ module.exports = {
                     }
                     channel.send('This is the channel where you, the werewolves, will decide who to kill Don\'t worry, this channel is private so you won\'t get any villagers snooping around.')
                 });
-                message.guild.channels.create('Werewolves party - Villagers', 'text')
+                await message.guild.channels.create('Werewolves party - Villagers', 'text')
                 .then(async channel => {
+                    this.globalChannel = channel
                     const everyone = message.guild.roles.everyone.id
                     await channel.overwritePermissions([
                         {
@@ -102,6 +107,8 @@ module.exports = {
                     }
                     channel.send('This is the channel where you will all discus who to kill each round. But beware, the **werewolves** are also somewhere in this room!')
                 });
+
+                this.night();
             }
 
             assignRole(player) {
@@ -122,6 +129,15 @@ module.exports = {
                     return reaction;
 
                 });
+            }
+
+            async night() {
+                this.globalChannel.send('It is night time and you all fall to sleep. There are werewolves snooping around the village choosing one person to eat tonight');
+                this.werewolvesChannel.send('Night has fallen and you must discuss and agree on a villager to kill. You have 5 minutes to decide, and once you have both tag them.');
+            }
+
+            async day() {
+
             }
         }
         var game = new Game

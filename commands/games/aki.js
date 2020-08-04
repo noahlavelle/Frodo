@@ -17,7 +17,7 @@ module.exports = {
             async init() {
                 await this.aki.start();
                 message.channel.send('Are you thinking of a character and ready to begin? y / n').then(msg => this.msg = msg);
-                const filter = m => m.content == 'y' && m.author == message.author || m.content == 'n' && m.author == message.author;
+                const filter = m => m.content.toLowerCase() == 'y' && m.author == message.author || m.content.toLowerCase() == 'n' && m.author == message.author;
                 const response = await this.getResponse(filter);
                 if (response == 'y') this.run(); else game = null;
             }
