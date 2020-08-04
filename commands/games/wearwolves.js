@@ -1,11 +1,11 @@
 class Game {
-    constructor(message) {
+    constructor(message, client) {
+        this.client = client;
         this.message = message;
         this.uniqueRoles = ['werewolf', 'werewolf2', 'seer'];
         this.players = [];
         this.werewolves = [];
         this.villagers = [];
-        this.voteCount = 0;
         this.checker = (arr, target) => target.every(v => arr.includes(v));
     }
 
@@ -31,7 +31,7 @@ class Game {
 
     async startGame() {
         const filter = (reaction, user) => reaction.emoji.name === '🟢' && user.id === this.message.author.id;
-        await this.getReaction(filter, 600000);
+        await this.getReaction(filter, 600000, this.msg);
         const values = Array.from(this.reaction.users.cache.values());
         for (const value in values) {
             if (!values[value].bot) {
@@ -110,21 +110,47 @@ class Game {
         return this.assiginedRoles.push(this.uniqueRoles[roleNumber]);
     }
 
-    async getReaction(filter, time) {
-        await this.msg.awaitReactions(filter, { max: 1, time: time, errors: ['time'] })
+    async getReaction(filter, time, message) {
+        await message.awaitReactions(filter, { max: 1, time: time, errors: ['time'] })
             .then(collected => {
                 const reaction = collected.first();
                 return reaction;
             });
     }
 
-    async night() {
+    night() {
         this.globalChannel.send('It is night time and you all fall to sleep. There are werewolves snooping around the village choosing one person to eat tonight');
-        this.werewolvesChannel.send('Night has fallen and you must discuss and agree on a villager to kill. Once you have decided type ``-kill username``');
-        const filter = m => this.werewolves.includes(m.author.id);
-        let response = await this.getResponse(this.werewolvesChannel, filter);
-        let user = this.message.guild.members.cache.find(m => m.name === 'response');
-        console.log(response, user);
+        this.voteKill(this.werewolvesChannel, 'You must discuss and agree on a villager to kill. Once you have decided type ``-kill username``');
+    }
+
+    async voteKill(channel, message) {
+        console.log('hi');
+        this.voteCount = 0;
+        channel.send(message);
+        let response = await channel.awaitMessages(m => m.content === '-kill ZigDevZat', {
+            max: 1,
+        });
+
+        response = response.get(Array.from(response.keys()).toString()).content;
+
+        response = response.slice(6);
+
+        let user = this.client.users.cache.find(u => u.username === response);
+        let msg = await this.werewolvesChannel.send(`Vote to kill ${user.username}. All players must agree.`);
+        await msg.react('👍');
+        await msg.react('👎');
+        for (const i in this.werewolves) {
+            const filter = reaction => ['👍', '👎'].includes(reaction.emoji.name);
+            let reaction = await this.getReaction(filter, {
+                max: 1,
+            });
+            if (reaction.emoji.name === '👎' && !reaction.bot) {
+                message.edit('Someone dissagreed.');
+                this.voteKill(channel, message);
+            } else if (i === this.werewolves.length - 1) {
+                channel.send(`Vote over, killing ${user.username}`);
+            }
+        }
     }
 
     async getResponse(channel, filter) {
@@ -141,8 +167,8 @@ class Game {
 module.exports = {
     name: 'werewolves',
     description: 'A game of Werewolves',
-    execute(message) {
-        const game = new Game(message);
+    execute(message, args, client) {
+        const game = new Game(message, client);
         game.init();
     },
 };

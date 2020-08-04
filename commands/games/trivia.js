@@ -1,4 +1,4 @@
-const { MessageEmbed } = require('js');
+const { MessageEmbed } = require('discord.js');
 const fetch = require('node-fetch');
 const atob = require('atob');
 
