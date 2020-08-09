@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 const { DMChannel, Collection } = require("discord.js");
 const utils = require('../../utils');
 const { measureTextHeight } = require("jimp");

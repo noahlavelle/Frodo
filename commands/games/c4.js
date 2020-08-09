@@ -7,7 +7,6 @@ class Game { // Creating a game class so there is support for multiple games at 
         this.grid = new Array(6).fill();
         this.footer = [':one:', ':two:', ':three:', ':four:', ':five:', ':six:', ':seven:'];
         this.reactions = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣'];
-        this.progress = true;
     }
 
     async init() {
@@ -15,7 +14,7 @@ class Game { // Creating a game class so there is support for multiple games at 
             this.grid[i] = new Array(7).fill(':white_large_square:');
         }
         this.gridMessage = `${this.grid[0].join('')}\n${this.grid[1].join('')}\n${this.grid[2].join('')}\n${this.grid[3].join('')}\n${this.grid[4].join('')}\n${this.grid[5].join('')}\n${this.footer.join('')}`;
-        this.msg = await this.message.channel.send(this.gridMessage);
+        this.msg = await this.message.channel.send(`This is a game of Connect4 between <@${this.message.author.id}> and <@${this.challenged.id}>\nCurrent Go: :blue_circle: <@${this.message.author.id}>.\n\n${this.gridMessage}`);
         for (let i in this.reactions) {
             this.msg.react(this.reactions[i]);
         }
@@ -25,7 +24,7 @@ class Game { // Creating a game class so there is support for multiple games at 
     async run() {
         await this.posCalcs(this.message.author.id, 'blue');
         await this.posCalcs(this.challenged.id, 'red');
-        if (this.progress) this.run();
+        this.run();
     }
 
     async posCalcs(filterID, color) {
@@ -45,7 +44,16 @@ class Game { // Creating a game class so there is support for multiple games at 
                         this.grid[i][this.position] = `:${color}_circle:`;
                         this.checkWin(color);
                         this.y = i;
-                        return this.msg.edit(`${this.grid[0].join('')}\n${this.grid[1].join('')}\n${this.grid[2].join('')}\n${this.grid[3].join('')}\n${this.grid[4].join('')}\n${this.grid[5].join('')}\n${this.footer.join('')}`);
+                        this.gridMessage = `${this.grid[0].join('')}\n${this.grid[1].join('')}\n${this.grid[2].join('')}\n${this.grid[3].join('')}\n${this.grid[4].join('')}\n${this.grid[5].join('')}\n${this.footer.join('')}`;
+                        let user;
+                        if (color === 'blue') {
+                            user = `<@${this.challenged.id}>`;
+                            color = 'red';
+                        } else {
+                            user = `<@${this.message.author.id}>`;
+                            color = 'blue';
+                        }
+                        return this.msg.edit(`This is a game of Connect4 between <@${this.message.author.id}> and <@${this.challenged.id}>\nCurrent Go: :${color}_circle: ${user}.\n\n${this.gridMessage}`);
                     }
                 }
             }).catch(() => {
@@ -59,16 +67,17 @@ class Game { // Creating a game class so there is support for multiple games at 
         }
     }
 
-    checkWin(color) {
+    async checkWin(color) {
         let streak = 0;
         for (let i in this.grid) {
             for (let j in this.grid) {
                 if (this.grid[i][j].includes('_circle')) streak++;
-                else streak = 0;
-                if (streak === 36) this.win('draw');
+                if (this.grid[i][j] === ':white_large_square:') streak = 0;
+                if (streak === this.grid.length * 7) return this.win('draw');
             }
         }
-        this.checkWinVer(color);
+        await this.checkColumnFull();
+        await this.checkWinVer(color);
         this.checkWinDiag(color);
         this.checkWinDiagLeft(color);
         for (let i in this.grid) {
@@ -76,7 +85,7 @@ class Game { // Creating a game class so there is support for multiple games at 
             for (let j in this.grid[i]) {
                 if (this.grid[i][j] === `:${color}_circle:`) streak++; else streak = 0;
                 if (streak === 4) {
-                    this.win(color);
+                    return this.win(color);
                 }
             }
         }
@@ -91,7 +100,21 @@ class Game { // Creating a game class so there is support for multiple games at 
         for (let i in collumn) {
             if (collumn[i] === `:${color}_circle:`) streak++; else streak = 0;
             if (streak === 4) {
-                this.win(color);
+                return this.win(color);
+            }
+        }
+    }
+
+    checkColumnFull() {
+        let streak = 0;
+        let collumn = [];
+        for (let i in this.grid) {
+            collumn.push(this.grid[i][this.position]);
+        }
+        for (let i in collumn) {
+            if (collumn[i] !== ':white_large_square:') streak++; else streak = 0;
+            if (streak === 6) {
+                this.msg.reactions.cache.get(this.reactions[this.position]).remove();
             }
         }
     }
@@ -120,10 +143,10 @@ class Game { // Creating a game class so there is support for multiple games at 
             }
         }
 
-        for (const item of diagonal) {
-            if (item === `:${color}_circle:`) streak++; else streak = 0;
+        for (i in diagonal) {
+            if (diagonal[i] === `:${color}_circle:`) streak++; else streak = 0;
             if (streak === 4) {
-                this.win(color);
+                return this.win(color);
             }
         }
     }
@@ -152,10 +175,10 @@ class Game { // Creating a game class so there is support for multiple games at 
             }
         }
 
-        for (const item of diagonal) {
-            if (item === `:${color}_circle:`) streak++; else streak = 0;
+        for (i in diagonal) {
+            if (diagonal[i] === `:${color}_circle:`) streak++; else streak = 0;
             if (streak === 4) {
-                this.win(color);
+                return this.win(color);
             }
         }
     }
@@ -173,7 +196,6 @@ class Game { // Creating a game class so there is support for multiple games at 
         utils.inGame = utils.inGame.filter(i => i !== this.challenged.id);
         this.msg.edit(`${this.grid[0].join('')}\n${this.grid[1].join('')}\n${this.grid[2].join('')}\n${this.grid[3].join('')}\n${this.grid[4].join('')}\n${this.grid[5].join('')}\n${this.footer.join('')}\n\n${win}`);
         this.msg.reactions.removeAll().catch(error => console.error('Failed to clear reactions: ', error));
-        this.progress = false;
     }
 }
 
@@ -188,6 +210,7 @@ module.exports = {
         if (utils.inGame.includes(message.author.id)) return message.reply('You are allready in a game. Please finish that first.');
         if (utils.inGame.includes(challenged.id)) return message.reply('That user is allready in a game. Try again in a minute.');
         utils.inGame.push(challenged.id, message.author.id);
+
         const game = new Game(message, challenged);
         game.init();
     },
