@@ -8,7 +8,7 @@
 <br />
 <p align="center">
   <a href="https://github.com/NoahLavelle/Frodo">
-    <img src="https://i.imgur.com/isGWJ9E.jpg" alt="Logo" width="180" height="180">
+    <img src="https://i.imgur.com/i5TtW0m.png" alt="Logo" width="180" height="180">
   </a>
 
   <h3 align="center">FRODO - Discord Games Bot</h3>
