@@ -1,3 +1,4 @@
+
 [![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
@@ -8,7 +9,7 @@
 <br />
 <p align="center">
   <a href="https://github.com/NoahLavelle/Frodo">
-    <img src="https://i.imgur.com/i5TtW0m.png" alt="Logo" width="180" height="180">
+    <img src="https://i.imgur.com/VZSq2qr.png" alt="Logo" width="260" height="200">
   </a>
 
   <h3 align="center">FRODO - Discord Games Bot</h3>
