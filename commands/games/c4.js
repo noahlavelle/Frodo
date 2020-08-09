@@ -57,7 +57,9 @@ class Game { // Creating a game class so there is support for multiple games at 
                     }
                 }
             }).catch(() => {
-                this.msg.edit('This game has timed out.');
+                this.msg.edit('This game has timed out.');                
+                utils.inGame = utils.inGame.filter(i => i !== this.message.author.id);
+                utils.inGame = utils.inGame.filter(i => i !== this.challenged.id);
                 this.msg.reactions.removeAll().catch(error => console.error('Failed to clear reactions: ', error));
             });
 
