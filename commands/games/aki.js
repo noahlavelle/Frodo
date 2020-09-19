@@ -26,7 +26,7 @@ class Game {
                 { name: 'Progress:', value: this.aki.progress },
             ));
 
-        const filter = m => /^[yn]$/i.test(m.content) && m.author === this.message.author;
+        const filter = m => /^[0-5]$/i.test(m.content) && m.author === this.message.author;
         const response = await this.getResponse(filter);
         if (response === '5') await this.aki.back();
         else await this.aki.step(parseInt(response));

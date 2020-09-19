@@ -65,8 +65,6 @@ client.on('message', message => {
         prefix = client.settings.get(message.guild.id, 'prefix');// Gets the prefix
     }
 
-    console.log(prefix);
-
     if (message.content.indexOf(prefix) !== 0) return; // Stops if the message does not begin with the prefix
 
     const args = message.content.split(/\s+/g);
