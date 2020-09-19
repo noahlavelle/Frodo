@@ -8,6 +8,10 @@ module.exports = {
     userPermissions: ['ADMINISTRATOR'],
     guildOnly: true,
     execute(message, args, client) {
+	if (!message.guild.me.hasPermission("ADMINISTRATOR")) {
+		message.channel.send('I need `Administrator` to make a back-up')
+		return
+	}
         const prefix = client.settings.get(message.guild.id, 'prefix');
         backup.create(message.guild, {
             jsonBeautify: true,

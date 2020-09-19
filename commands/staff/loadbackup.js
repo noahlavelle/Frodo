@@ -9,6 +9,10 @@ module.exports = {
     args: true,
     usage: '<backupID>',
     execute(message, args) {
+	if (!message.guild.me.hasPermission("ADMINISTRATOR")) {
+		message.channel.send('I need `Administrator` to do that')
+		return
+	}
         let backupID = args[0];
         backup.fetch(backupID).then(async () => {
             message.channel.send(':warning: | When the backup is loaded, all the channels, roles, etc. will be replaced! Type `-confirm` to confirm!');
