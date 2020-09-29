@@ -20,7 +20,7 @@
     <a href="https://github.com/NoahLavelle/Frodo"><strong>Explore the Repo»</strong></a>
     <br />
     <br />
-    <a href="https://discord.com/api/oauth2/authorize?client_id=737984800689750090&permissions=8&scope=bot">Invite to your server</a>
+    <a href="https://discord.com/oauth2/authorize?client_id=734746193082581084&permissions=268691536&scope=bot">Invite to your server</a>
     ·
     <a href="https://github.com/NoahLavelle/Frodo/issues">Report Bug</a>
     ·
