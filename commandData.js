@@ -6,6 +6,7 @@ const rps_1 = require("./commands/rps");
 const akinator_1 = require("./commands/akinator");
 const anagrams_1 = require("./commands/anagrams");
 const oxo_1 = require("./commands/oxo");
+const hangman_1 = require("./commands/hangman");
 const CommandHandlers = {
     'connectfour': (interaction) => {
         new connectFour_1.ConnectFour(interaction);
@@ -15,6 +16,9 @@ const CommandHandlers = {
     },
     'oxo': (interaction) => {
         new oxo_1.Oxo(interaction);
+    },
+    'hangman': (interaction) => {
+        new hangman_1.Hangman(interaction);
     },
     'akinator': (interaction) => {
         new akinator_1.Akinator(interaction);
@@ -53,6 +57,18 @@ var CommandData;
     CommandData.oxoCommandData = {
         name: 'oxo',
         description: 'A game of noughts and crosses (tick tack toe)',
+        options: [
+            {
+                name: 'playertwo',
+                type: 'USER',
+                description: 'The user that you want to challenge',
+                required: true,
+            },
+        ],
+    };
+    CommandData.hangmanCommandData = {
+        name: 'hangman',
+        description: 'A game of hangman',
         options: [
             {
                 name: 'playertwo',

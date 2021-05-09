@@ -3,6 +3,7 @@ import {Rps} from './commands/rps';
 import {Akinator} from './commands/akinator';
 import {Anagrams} from './commands/anagrams';
 import {Oxo} from './commands/oxo';
+import {Hangman} from './commands/hangman';
 
 const CommandHandlers = {
 	'connectfour': (interaction) => {
@@ -13,6 +14,9 @@ const CommandHandlers = {
 	},
 	'oxo': (interaction) => {
 		new Oxo(interaction);
+	},
+	'hangman': (interaction) => {
+		new Hangman(interaction);
 	},
 	'akinator': (interaction) => {
 		new Akinator(interaction);
@@ -52,6 +56,19 @@ namespace CommandData {
 	export const oxoCommandData = {
 		name: 'oxo',
 		description: 'A game of noughts and crosses (tick tack toe)',
+		options: [
+			{
+				name: 'playertwo',
+				type: 'USER',
+				description: 'The user that you want to challenge',
+				required: true,
+			},
+		],
+	};
+
+	export const hangmanCommandData = {
+		name: 'hangman',
+		description: 'A game of hangman',
 		options: [
 			{
 				name: 'playertwo',

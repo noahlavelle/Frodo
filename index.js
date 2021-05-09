@@ -12,6 +12,7 @@ client.once('ready', async () => {
     await client.guilds.cache.get('839919274395303946')?.commands.create(commandData_1.CommandData.akinatorCommandData);
     await client.guilds.cache.get('839919274395303946')?.commands.create(commandData_1.CommandData.anagramsCommandData);
     await client.guilds.cache.get('839919274395303946')?.commands.create(commandData_1.CommandData.oxoCommandData);
+    await client.guilds.cache.get('839919274395303946')?.commands.create(commandData_1.CommandData.hangmanCommandData);
     console.log('Ready');
 });
 client.on('interaction', async (interaction) => {
