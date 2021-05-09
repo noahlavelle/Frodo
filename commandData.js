@@ -4,6 +4,7 @@ exports.CommandData = exports.CommandHandlers = void 0;
 const connectFour_1 = require("./commands/connectFour");
 const rps_1 = require("./commands/rps");
 const akinator_1 = require("./commands/akinator");
+const countdown_1 = require("./commands/countdown");
 const CommandHandlers = {
     'connectfour': (interaction) => {
         new connectFour_1.ConnectFour(interaction);
@@ -13,6 +14,9 @@ const CommandHandlers = {
     },
     'akinator': (interaction) => {
         new akinator_1.Akinator(interaction);
+    },
+    'countdown': (interaction) => {
+        new countdown_1.Countdown(interaction);
     },
 };
 exports.CommandHandlers = CommandHandlers;
@@ -45,6 +49,10 @@ var CommandData;
     CommandData.akinatorCommandData = {
         name: 'akinator',
         description: 'A game of akinator against the AI',
+    };
+    CommandData.countdownCommandData = {
+        name: 'countdown',
+        description: 'A round of countdown as seen on the TV program',
     };
 })(CommandData || (CommandData = {}));
 exports.CommandData = CommandData;

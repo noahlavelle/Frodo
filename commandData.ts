@@ -1,6 +1,7 @@
 import {ConnectFour} from './commands/connectFour';
 import {Rps} from './commands/rps';
 import {Akinator} from './commands/akinator';
+import {Countdown} from './commands/countdown';
 
 const CommandHandlers = {
 	'connectfour': (interaction) => {
@@ -11,6 +12,9 @@ const CommandHandlers = {
 	},
 	'akinator': (interaction) => {
 		new Akinator(interaction);
+	},
+	'countdown': (interaction) => {
+		new Countdown(interaction);
 	},
 };
 
@@ -44,6 +48,11 @@ namespace CommandData {
 	export const akinatorCommandData = {
 		name: 'akinator',
 		description: 'A game of akinator against the AI',
+	};
+
+	export const countdownCommandData = {
+		name: 'countdown',
+		description: 'A round of countdown as seen on the TV program',
 	};
 }
 

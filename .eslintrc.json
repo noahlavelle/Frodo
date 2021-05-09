@@ -18,7 +18,7 @@
         "indent": ["error", "tab"],
         "no-tabs": "off",
         "no-mixed-spaces-and-tabs": "off",
-        "max-len": ["error", { "code": 180 }],
+        "max-len": "off",
         "linebreak-style": ["error", "windows"],
         "require-jsdoc": "off",
         "no-unused-vars": "warn"

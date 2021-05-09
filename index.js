@@ -16,10 +16,11 @@ const commandData_1 = require("./commandData");
 const client = new Discord.Client({ intents: [discord_js_1.Intents.ALL] });
 exports.client = client;
 client.once('ready', () => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c;
+    var _a, _b, _c, _d;
     yield ((_a = client.guilds.cache.get('839919274395303946')) === null || _a === void 0 ? void 0 : _a.commands.create(commandData_1.CommandData.connectFourCommandData));
     yield ((_b = client.guilds.cache.get('839919274395303946')) === null || _b === void 0 ? void 0 : _b.commands.create(commandData_1.CommandData.rpsCommandData));
     yield ((_c = client.guilds.cache.get('839919274395303946')) === null || _c === void 0 ? void 0 : _c.commands.create(commandData_1.CommandData.akinatorCommandData));
+    yield ((_d = client.guilds.cache.get('839919274395303946')) === null || _d === void 0 ? void 0 : _d.commands.create(commandData_1.CommandData.countdownCommandData));
     console.log('Ready');
 }));
 client.on('interaction', (interaction) => __awaiter(void 0, void 0, void 0, function* () {
