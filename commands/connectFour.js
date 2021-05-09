@@ -1,16 +1,8 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ConnectFour = void 0;
 const index_1 = require("../index");
+const utils_1 = require("./utils");
 var SlotType;
 (function (SlotType) {
     SlotType[SlotType["Empty"] = 0] = "Empty";
@@ -45,64 +37,59 @@ class ConnectFour {
         this.header = `<@${this.players[0].id}> has challenged <@${this.players[1].id}> to a game of connect four.\nCurrent Go: ${SlotText[1]} <@${this.currentPlayer.id}>\n\n`;
         this.runGame();
     }
-    runGame() {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (this.players[1] == null || this.players[1].bot) {
-                yield this.interaction.reply('The player could not be found or was a bot');
-                return;
-            }
-            yield this.interaction.fetchReply().then((msg) => this.message = msg);
-            this.generateGrid();
-            this.updateMessage();
-            for (const value of Object.keys(NumberReactions)) {
-                yield this.message.react(value);
-            }
-            const filter = (reaction, user) => {
-                return Object.keys(NumberReactions).includes(reaction.emoji.name) && this.currentPlayer == user;
-            };
-            while (true) {
-                this.header = `<@${this.players[0].id}> has challenged <@${this.players[1].id}> to a game of connect four.
+    async runGame() {
+        if (this.players[1] == null || this.players[1].bot) {
+            await this.interaction.reply('The player could not be found or was a bot');
+            return;
+        }
+        await this.interaction.fetchReply().then((msg) => this.message = msg);
+        this.generateGrid();
+        this.updateMessage();
+        for (const value of Object.keys(NumberReactions)) {
+            await this.message.react(value);
+        }
+        const filter = (reaction, user) => {
+            return Object.keys(NumberReactions).includes(reaction.emoji.name) && this.currentPlayer == user;
+        };
+        while (true) {
+            this.header = `<@${this.players[0].id}> has challenged <@${this.players[1].id}> to a game of connect four.
 						\nCurrent Go: ${SlotText[this.isPlayerOne ? 2 : 1]} ${this.isPlayerOne ? this.players[1] : this.players[0]}\n\n`;
-                yield this.message.awaitReactions(filter, { max: 1 })
-                    .then((collected) => __awaiter(this, void 0, void 0, function* () {
-                    const reaction = collected.first();
-                    const columnNumber = NumberReactions[reaction.emoji.name] - 1;
-                    let rowNumber = GridDimensions.y - 1;
-                    const userReactions = this.message.reactions.cache.filter((reaction) => reaction.users.cache.has(this.currentPlayer.id));
-                    for (const reaction of userReactions.values()) {
-                        yield reaction.users.remove(this.currentPlayer.id);
+            await this.message.awaitReactions(filter, { max: 1 })
+                .then(async (collected) => {
+                const reaction = collected.first();
+                const columnNumber = NumberReactions[reaction.emoji.name] - 1;
+                let rowNumber = GridDimensions.y - 1;
+                await utils_1.removeReaction(this.message, this.interaction.user);
+                for (let i = GridDimensions.y - 1; i >= 0; i--) {
+                    if (this.grid[i][columnNumber] == SlotType.Empty) {
+                        this.grid[i][columnNumber] = this.isPlayerOne ? SlotType.PlayerOne : SlotType.PlayerTwo;
+                        this.updateMessage();
+                        break;
                     }
-                    for (let i = GridDimensions.y - 1; i >= 0; i--) {
-                        if (this.grid[i][columnNumber] == SlotType.Empty) {
-                            this.grid[i][columnNumber] = this.isPlayerOne ? SlotType.PlayerOne : SlotType.PlayerTwo;
-                            this.updateMessage();
-                            break;
-                        }
-                        rowNumber--;
-                    }
-                    let isWin = false;
-                    try {
-                        isWin = this.checkHorizontalWin(rowNumber);
+                    rowNumber--;
+                }
+                let isWin = false;
+                try {
+                    isWin = this.checkHorizontalWin(rowNumber);
+                    if (!isWin) {
+                        isWin = this.checkVerticalWin(columnNumber);
                         if (!isWin) {
-                            isWin = this.checkVerticalWin(columnNumber);
-                            if (!isWin) {
-                                isWin = this.checkDiagonalWin(columnNumber, rowNumber, true);
-                                if (!isWin)
-                                    isWin = this.checkDiagonalWin(columnNumber, rowNumber, false);
-                            }
+                            isWin = this.checkDiagonalWin(columnNumber, rowNumber, true);
+                            if (!isWin)
+                                isWin = this.checkDiagonalWin(columnNumber, rowNumber, false);
                         }
                     }
-                    catch (IndexOutOfRangeException) {
-                        return;
-                    }
-                    if (isWin) {
-                        this.win();
-                    }
-                    this.isPlayerOne = !this.isPlayerOne;
-                    this.currentPlayer = this.isPlayerOne ? this.players[0] : this.players[1];
-                }));
-            }
-        });
+                }
+                catch (IndexOutOfRangeException) {
+                    return;
+                }
+                if (isWin) {
+                    this.win();
+                }
+                this.isPlayerOne = !this.isPlayerOne;
+                this.currentPlayer = this.isPlayerOne ? this.players[0] : this.players[1];
+            });
+        }
     }
     generateGrid() {
         for (let i = 0; i < GridDimensions.y; i++) {
@@ -163,7 +150,7 @@ class ConnectFour {
                 row++;
             }
         }
-        catch (_a) {
+        catch {
             column = isRight ? column + 1 : column - 1;
             row--;
         }
@@ -183,15 +170,13 @@ class ConnectFour {
                 column = isRight ? column + 1 : column - 1;
             }
         }
-        catch (_b) { }
+        catch { }
         return false;
     }
-    win() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.interaction.fetchReply().then((msg) => this.message = msg);
-            yield this.message.reactions.removeAll();
-            yield this.interaction.editReply(this.message.content += `\n\n<@${this.currentPlayer.id}> wins!`);
-        });
+    async win() {
+        await this.interaction.fetchReply().then((msg) => this.message = msg);
+        await this.message.reactions.removeAll();
+        await this.interaction.editReply(this.message.content += `\n\n<@${this.currentPlayer.id}> wins!`);
     }
 }
 exports.ConnectFour = ConnectFour;

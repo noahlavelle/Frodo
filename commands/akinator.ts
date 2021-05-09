@@ -2,6 +2,7 @@ import {Aki} from 'aki-api';
 
 const region = 'en';
 import {CommandInteraction, Message, MessageEmbed} from 'discord.js';
+import {removeReaction} from './utils';
 
 const NumberReactions = {
 	'1️⃣': 0,
@@ -48,7 +49,7 @@ export class Akinator {
 			await this.message.awaitReactions(filter, {max: 1}).then(async (collected) => {
 				const response = NumberReactions[collected.first().emoji.name];
 
-				await this.removeReaction();
+				await removeReaction(this.message, this.interaction.user);
 
 				if (response == 5) {
 					await this.aki.back();
@@ -85,7 +86,7 @@ export class Akinator {
 			await this.updateWinMessage('Am I right?', i);
 
 			await this.message.awaitReactions(filter, {max: 1}).then(async (collected) => {
-				await this.removeReaction();
+				await removeReaction(this.message, this.interaction.user);
 				if (collected.first().emoji.name == Object.keys(LetterReactions)[0]) {
 					await this.updateWinMessage('I win again!', i);
 					await this.message.reactions.removeAll();
@@ -122,12 +123,5 @@ export class Akinator {
 				},
 				{name: 'Progress:', value: this.aki.progress},
 			));
-	}
-
-	async removeReaction() {
-		const userReactions = this.message.reactions.cache.filter((reaction) => reaction.users.cache.has(this.interaction.user.id));
-		for (const reaction of userReactions.values()) {
-			await reaction.users.remove(this.interaction.user.id);
-		}
 	}
 }

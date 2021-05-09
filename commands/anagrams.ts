@@ -1,4 +1,5 @@
 import {CommandInteraction, Message, MessageEmbed} from 'discord.js';
+import {removeReaction} from './utils';
 
 const fetch = require('node-fetch');
 
@@ -7,7 +8,7 @@ const LetterReactions = {
 	'🇻': 1,
 };
 
-export class Countdown {
+export class Anagrams {
 	message: Message;
 	interaction: CommandInteraction;
 	vowels: string[];
@@ -49,6 +50,7 @@ export class Countdown {
 		while (letters.length < 9) {
 			await this.message.awaitReactions(filter, {max: 1}).then(async (collected) => {
 				const reactionNumber = LetterReactions[collected.first().emoji.name];
+				await removeReaction(this.message, this.interaction.user);
 				letters += reactionNumber == 0 ? this.vowels[Math.floor(Math.random() * this.vowels.length)] : this.consonants[Math.floor(Math.random() * this.consonants.length)];
 				await this.updateMessage(letters, '');
 			});

@@ -1,5 +1,6 @@
 import {CommandInteraction, Message, User} from 'discord.js';
 import {client} from '../index';
+import {removeReaction} from './utils';
 
 enum SlotType {
 	Empty,
@@ -77,10 +78,7 @@ class ConnectFour {
 					const columnNumber = NumberReactions[reaction.emoji.name] - 1;
 					let rowNumber = GridDimensions.y - 1;
 
-					const userReactions = this.message.reactions.cache.filter((reaction) => reaction.users.cache.has(this.currentPlayer.id));
-					for (const reaction of userReactions.values()) {
-						await reaction.users.remove(this.currentPlayer.id);
-					}
+					await removeReaction(this.message, this.interaction.user);
 
 					for (let i = GridDimensions.y - 1; i >= 0; i--) {
 						if (this.grid[i][columnNumber] == SlotType.Empty) {

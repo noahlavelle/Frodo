@@ -4,7 +4,8 @@ exports.CommandData = exports.CommandHandlers = void 0;
 const connectFour_1 = require("./commands/connectFour");
 const rps_1 = require("./commands/rps");
 const akinator_1 = require("./commands/akinator");
-const countdown_1 = require("./commands/countdown");
+const anagrams_1 = require("./commands/anagrams");
+const oxo_1 = require("./commands/oxo");
 const CommandHandlers = {
     'connectfour': (interaction) => {
         new connectFour_1.ConnectFour(interaction);
@@ -12,11 +13,14 @@ const CommandHandlers = {
     'rps': (interaction) => {
         new rps_1.Rps(interaction);
     },
+    'oxo': (interaction) => {
+        new oxo_1.Oxo(interaction);
+    },
     'akinator': (interaction) => {
         new akinator_1.Akinator(interaction);
     },
-    'countdown': (interaction) => {
-        new countdown_1.Countdown(interaction);
+    'anagrams': (interaction) => {
+        new anagrams_1.Anagrams(interaction);
     },
 };
 exports.CommandHandlers = CommandHandlers;
@@ -46,12 +50,24 @@ var CommandData;
             },
         ],
     };
+    CommandData.oxoCommandData = {
+        name: 'oxo',
+        description: 'A game of noughts and crosses (tick tack toe)',
+        options: [
+            {
+                name: 'playertwo',
+                type: 'USER',
+                description: 'The user that you want to challenge',
+                required: true,
+            },
+        ],
+    };
     CommandData.akinatorCommandData = {
         name: 'akinator',
         description: 'A game of akinator against the AI',
     };
-    CommandData.countdownCommandData = {
-        name: 'countdown',
+    CommandData.anagramsCommandData = {
+        name: 'anagrams',
         description: 'A round of countdown as seen on the TV program',
     };
 })(CommandData || (CommandData = {}));
