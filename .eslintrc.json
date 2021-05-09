@@ -1,0 +1,26 @@
+{
+    "env": {
+        "browser": true,
+        "es2021": true
+    },
+    "extends": [
+        "google"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaVersion": 12,
+        "sourceType": "module"
+    },
+    "plugins": [
+        "@typescript-eslint"
+    ],
+    "rules": {
+        "indent": ["error", "tab"],
+        "no-tabs": "off",
+        "no-mixed-spaces-and-tabs": "off",
+        "max-len": ["error", { "code": 180 }],
+        "linebreak-style": ["error", "windows"],
+        "require-jsdoc": "off",
+        "no-unused-vars": "warn"
+    }
+}
