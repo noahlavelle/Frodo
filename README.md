@@ -52,7 +52,7 @@ The bot will currently has quite a few games. The full list currently is
 * Hangman
 * Rock Paper Scissors <b>(Completed)</b>
 * Trivia
-* OXO
+* OXO <b>(Completed)</b>
 * Anagrams <b>(Completed)</b>
 * Werewolves
 
