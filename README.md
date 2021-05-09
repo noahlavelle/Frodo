@@ -47,13 +47,13 @@ You may be familiar with the original Frodo bot. This is the updated version tha
 ### Features
 
 The bot will currently has quite a few games. The full list currently is
-* Connect 4 (Completed),
-* Akinator,
-* Hangman,
-* Rock Paper Scissors,
-* Trivia,
-* Tick Tack Toe,
-* Countdown style anagrams.
+* Connect 4 <b>(Completed)</b>
+* Akinator <b>(Completed)</b>
+* Hangman
+* Rock Paper Scissors <b>(Completed)</b>
+* Trivia
+* Tick Tack Toe
+* Countdown
 * Werewolves
 
 ### Built With
