@@ -4,7 +4,7 @@ exports.removeReaction = void 0;
 async function removeReaction(message, user) {
     const userReactions = message.reactions.cache.filter((reaction) => reaction.users.cache.has(user.id));
     for (const reaction of userReactions.values()) {
-        await reaction.users.remove(this.interaction.user.id);
+        await reaction.users.remove(user.id);
     }
 }
 exports.removeReaction = removeReaction;

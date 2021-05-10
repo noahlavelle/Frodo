@@ -5,8 +5,9 @@ const connectFour_1 = require("./commands/connectFour");
 const rps_1 = require("./commands/rps");
 const akinator_1 = require("./commands/akinator");
 const anagrams_1 = require("./commands/anagrams");
-const oxo_1 = require("./commands/oxo");
+const ttt_1 = require("./commands/ttt");
 const hangman_1 = require("./commands/hangman");
+const werewolf_1 = require("./commands/werewolf");
 const CommandHandlers = {
     'connectfour': (interaction) => {
         new connectFour_1.ConnectFour(interaction);
@@ -14,8 +15,8 @@ const CommandHandlers = {
     'rps': (interaction) => {
         new rps_1.Rps(interaction);
     },
-    'oxo': (interaction) => {
-        new oxo_1.Oxo(interaction);
+    'ttt': (interaction) => {
+        new ttt_1.Ttt(interaction);
     },
     'hangman': (interaction) => {
         new hangman_1.Hangman(interaction);
@@ -25,6 +26,9 @@ const CommandHandlers = {
     },
     'anagrams': (interaction) => {
         new anagrams_1.Anagrams(interaction);
+    },
+    'werewolf': (interaction) => {
+        new werewolf_1.Werewolf(interaction);
     },
 };
 exports.CommandHandlers = CommandHandlers;
@@ -54,8 +58,8 @@ var CommandData;
             },
         ],
     };
-    CommandData.oxoCommandData = {
-        name: 'oxo',
+    CommandData.tttCommandData = {
+        name: 'ttt',
         description: 'A game of noughts and crosses (tick tack toe)',
         options: [
             {
@@ -85,6 +89,10 @@ var CommandData;
     CommandData.anagramsCommandData = {
         name: 'anagrams',
         description: 'A round of countdown as seen on the TV program',
+    };
+    CommandData.werewolfCommandData = {
+        name: 'werewolf',
+        description: 'The classic party social deduction game',
     };
 })(CommandData || (CommandData = {}));
 exports.CommandData = CommandData;

@@ -2,8 +2,9 @@ import {ConnectFour} from './commands/connectFour';
 import {Rps} from './commands/rps';
 import {Akinator} from './commands/akinator';
 import {Anagrams} from './commands/anagrams';
-import {Oxo} from './commands/oxo';
+import {Ttt} from './commands/ttt';
 import {Hangman} from './commands/hangman';
+import {Werewolf} from './commands/werewolf';
 
 const CommandHandlers = {
 	'connectfour': (interaction) => {
@@ -12,8 +13,8 @@ const CommandHandlers = {
 	'rps': (interaction) => {
 		new Rps(interaction);
 	},
-	'oxo': (interaction) => {
-		new Oxo(interaction);
+	'ttt': (interaction) => {
+		new Ttt(interaction);
 	},
 	'hangman': (interaction) => {
 		new Hangman(interaction);
@@ -23,6 +24,9 @@ const CommandHandlers = {
 	},
 	'anagrams': (interaction) => {
 		new Anagrams(interaction);
+	},
+	'werewolf': (interaction) => {
+		new Werewolf(interaction);
 	},
 };
 
@@ -53,8 +57,8 @@ namespace CommandData {
 		],
 	};
 
-	export const oxoCommandData = {
-		name: 'oxo',
+	export const tttCommandData = {
+		name: 'ttt',
 		description: 'A game of noughts and crosses (tick tack toe)',
 		options: [
 			{
@@ -87,6 +91,11 @@ namespace CommandData {
 	export const anagramsCommandData = {
 		name: 'anagrams',
 		description: 'A round of countdown as seen on the TV program',
+	};
+
+	export const werewolfCommandData = {
+		name: 'werewolf',
+		description: 'The classic party social deduction game',
 	};
 }
 

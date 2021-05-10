@@ -14,7 +14,7 @@ const NumberReactions = {
 };
 
 
-export class Oxo {
+export class Ttt {
 	interaction: CommandInteraction;
 	message: Message;
 	players: User[];

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Oxo = void 0;
+exports.Ttt = void 0;
 const index_1 = require("../index");
 const NumberReactions = {
     '1️⃣': 1,
@@ -13,7 +13,7 @@ const NumberReactions = {
     '8️⃣': 8,
     '9️⃣': 9,
 };
-class Oxo {
+class Ttt {
     constructor(interaction) {
         this.interaction = interaction;
         this.players = [this.interaction.user, index_1.client.users.cache.find((user) => user.id == interaction.options[0].value)];
@@ -116,5 +116,5 @@ class Oxo {
         await this.interaction.editReply(`${this.players[0]} has challenged ${this.players[1]} to a game of oxo.\nCurrent go: ${this.isPlayerOne ? ':regional_indicator_o:' : ':regional_indicator_x:'} ${this.players[0]}\n\n${this.grid.map((e) => e.join('')).join('\n')}`);
     }
 }
-exports.Oxo = Oxo;
-//# sourceMappingURL=oxo.js.map
+exports.Ttt = Ttt;
+//# sourceMappingURL=ttt.js.map
