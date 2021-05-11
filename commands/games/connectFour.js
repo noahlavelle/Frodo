@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ConnectFour = void 0;
-const index_1 = require("../index");
+const index_1 = require("../../index");
 const utils_1 = require("./utils");
 var SlotType;
 (function (SlotType) {

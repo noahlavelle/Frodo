@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Rps = void 0;
-const index_1 = require("../index");
+const index_1 = require("../../index");
 var WinScenario;
 (function (WinScenario) {
     WinScenario[WinScenario["Tie"] = 0] = "Tie";

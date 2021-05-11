@@ -1,10 +1,14 @@
-import {ConnectFour} from './commands/connectFour';
-import {Rps} from './commands/rps';
-import {Akinator} from './commands/akinator';
-import {Anagrams} from './commands/anagrams';
-import {Ttt} from './commands/ttt';
-import {Hangman} from './commands/hangman';
-import {Werewolf} from './commands/werewolf';
+import {ConnectFour} from './commands/games/connectFour';
+import {Rps} from './commands/games/rps';
+import {Akinator} from './commands/games/akinator';
+import {Anagrams} from './commands/games/anagrams';
+import {Ttt} from './commands/games/ttt';
+import {Hangman} from './commands/games/hangman';
+import {Werewolf} from './commands/games/werewolf';
+import {fact} from './commands/chat/fact';
+import {fortune} from './commands/chat/fortune';
+import {joke} from './commands/chat/joke';
+import {insult} from './commands/chat/insult';
 
 const CommandHandlers = {
 	'connectfour': (interaction) => {
@@ -27,6 +31,19 @@ const CommandHandlers = {
 	},
 	'werewolf': (interaction) => {
 		new Werewolf(interaction);
+	},
+
+	'fact': (interaction) => {
+		fact(interaction);
+	},
+	'fortune': (interaction) => {
+		fortune(interaction);
+	},
+	'joke': (interaction) => {
+		joke(interaction);
+	},
+	'insult': (interaction) => {
+		insult(interaction);
 	},
 };
 
@@ -96,6 +113,23 @@ namespace CommandData {
 	export const werewolfCommandData = {
 		name: 'werewolf',
 		description: 'The classic party social deduction game',
+	};
+
+	export const factCommandData = {
+		name: 'fact',
+		description: 'Sends a random fact',
+	};
+	export const fortuneCommandData = {
+		name: 'fortune',
+		description: 'Sends a random fortune',
+	};
+	export const jokeCommandData = {
+		name: 'joke',
+		description: 'Sends a random joke',
+	};
+	export const insultCommandData = {
+		name: 'insult',
+		description: 'Sends a random insult',
 	};
 }
 

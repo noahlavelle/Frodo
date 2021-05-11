@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Ttt = void 0;
-const index_1 = require("../index");
+const index_1 = require("../../index");
 const NumberReactions = {
     '1️⃣': 1,
     '2️⃣': 2,

@@ -15,6 +15,10 @@ client.once('ready', async () => {
     // await client.guilds.cache.get('839919274395303946')?.commands.create(CommandData.tttCommandData);
     // await client.guilds.cache.get('839919274395303946')?.commands.create(CommandData.hangmanCommandData);
     // await client.guilds.cache.get('839919274395303946')?.commands.create(CommandData.werewolfCommandData);
+    // await client.guilds.cache.get('839919274395303946')?.commands.create(CommandData.factCommandData);
+    // await client.guilds.cache.get('839919274395303946')?.commands.create(CommandData.fortuneCommandData);
+    // await client.guilds.cache.get('839919274395303946')?.commands.create(CommandData.jokeCommandData);
+    // await client.guilds.cache.get('839919274395303946')?.commands.create(CommandData.insultCommandData);
     console.log('Ready');
 });
 client.on('interaction', async (interaction) => {

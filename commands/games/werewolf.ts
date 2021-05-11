@@ -1,6 +1,6 @@
 import {CommandInteraction, Message, MessageEmbed, Role, TextChannel, User} from 'discord.js';
-import {PartyLobby} from '../partyLobby';
-import {EmbedColor} from '../index';
+import {PartyLobby} from '../../partyLobby';
+import {EmbedColor} from '../../index';
 
 enum Roles {
 	Seer,
@@ -19,6 +19,7 @@ export class Werewolf extends PartyLobby {
 	generalChannel: TextChannel;
 	werewolvesChannel: TextChannel;
 	werewolves: User[];
+	gameRunning = true;
 
 	constructor(interaction) {
 		super(interaction, 'Werewolf', '**Werewolf** is a classic social deduction party game. ' +
@@ -47,7 +48,7 @@ export class Werewolf extends PartyLobby {
 		this.players = players;
 		await this.createChannels();
 
-		while (true) {
+		while (this.gameRunning) {
 			await this.sendNightMessages();
 			const werewolvesFilter = (msg: Message) => {
 				return msg.content.split(' ').length == 1 && msg.mentions.users.size == 1 && !this.werewolves.includes(msg.mentions.users.first());
@@ -56,43 +57,47 @@ export class Werewolf extends PartyLobby {
 				return msg.content.split(' ').length == 1 && msg.mentions.users.size == 1;
 			};
 
-			await this.werewolvesChannel.awaitMessages(werewolvesFilter, {max: 1}).then(async (collected) => {
-				await this.killPlayer(collected.first().mentions.users.first());
-				await this.generalChannel.send('', new MessageEmbed()
-					.setTitle('Day Time:')
-					.setDescription(`It is now day. The person who has been killed is ${collected.first().mentions.users.first()}. You now need to choose who to kill. Once you decided just mention them in an empty message.`)
-					.setColor(EmbedColor));
-
-				let targetChosen = false;
-				while (!targetChosen) {
-					await this.generalChannel.awaitMessages(generalFilter, {max: 1}).then(async (collected) => {
-						const message = await this.generalChannel.send('', new MessageEmbed()
-							.setTitle('Voting:')
-							.setDescription(`${collected.first().mentions.users.first()} has been chosen. After 15 seconds has passed the votes will be collected and they will be killed if there is a majority`)
+			try {
+				await this.werewolvesChannel.awaitMessages(werewolvesFilter, {max: 1}).then(async (collected) => {
+					if (collected.first() != null) {
+						await this.killPlayer(collected.first().mentions.users.first());
+						await this.generalChannel.send('', new MessageEmbed()
+							.setTitle('Day Time:')
+							.setDescription(`It is now day. The person who has been killed is ${collected.first().mentions.users.first()}. You now need to choose who to kill. Once you decided just mention them in an empty message.`)
 							.setColor(EmbedColor));
 
-						await message.react(Object.keys(this.buttonReactions)[0]);
-						await message.react(Object.keys(this.buttonReactions)[1]);
-						await wait(5000);
+						let targetChosen = false;
+						while (!targetChosen) {
+							await this.generalChannel.awaitMessages(generalFilter, {max: 1}).then(async (collected) => {
+								const message = await this.generalChannel.send('', new MessageEmbed()
+									.setTitle('Voting:')
+									.setDescription(`${collected.first().mentions.users.first()} has been chosen. After 15 seconds has passed the votes will be collected and they will be killed if there is a majority`)
+									.setColor(EmbedColor));
 
-						const voteCount = message.reactions.cache.filter((reaction) => reaction.emoji.name == Object.keys(this.buttonReactions)[0]).first().count;
-						const skipCount = message.reactions.cache.filter((reaction) => reaction.emoji.name == Object.keys(this.buttonReactions)[1]).first().count;
-						if (voteCount > skipCount) {
-							targetChosen = true;
-							await this.generalChannel.send('', new MessageEmbed()
-								.setTitle('Voting:')
-								.setDescription(`${collected.first().mentions.users.first()} has been killed`)
-								.setColor(EmbedColor));
-							await this.killPlayer(collected.first().mentions.users.first());
-						} else {
-							await this.generalChannel.send('', new MessageEmbed()
-								.setTitle('Voting:')
-								.setDescription(`The vote has failed. To try again just mention someone in a blank message`)
-								.setColor(EmbedColor));
+								await message.react(Object.keys(this.buttonReactions)[0]);
+								await message.react(Object.keys(this.buttonReactions)[1]);
+								await wait(5000);
+
+								const voteCount = message.reactions.cache.filter((reaction) => reaction.emoji.name == Object.keys(this.buttonReactions)[0]).first().count;
+								const skipCount = message.reactions.cache.filter((reaction) => reaction.emoji.name == Object.keys(this.buttonReactions)[1]).first().count;
+								if (voteCount > skipCount) {
+									targetChosen = true;
+									await this.generalChannel.send('', new MessageEmbed()
+										.setTitle('Voting:')
+										.setDescription(`${collected.first().mentions.users.first()} has been killed`)
+										.setColor(EmbedColor));
+									await this.killPlayer(collected.first().mentions.users.first());
+								} else {
+									await this.generalChannel.send('', new MessageEmbed()
+										.setTitle('Voting:')
+										.setDescription(`The vote has failed. To try again just mention someone in a blank message`)
+										.setColor(EmbedColor));
+								}
+							});
 						}
-					});
-				}
-			});
+					}
+				});
+			} catch {}
 		}
 	}
 
@@ -111,10 +116,12 @@ export class Werewolf extends PartyLobby {
 			await this.werewolvesChannel.delete('Game ended');
 			await this.generalChannel.delete('Game ended');
 			await this.message.channel.send('The game of werewolf has finished. The winners are the werewolves!');
+			this.gameRunning = false;
 		} else if (werewolfCount == 0) {
 			await this.werewolvesChannel.delete('Game ended');
 			await this.generalChannel.delete('Game ended');
 			await this.message.channel.send('The game of werewolf has finished. The winners are the villagers!');
+			this.gameRunning = false;
 		}
 	}
 

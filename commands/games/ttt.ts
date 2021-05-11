@@ -1,5 +1,5 @@
 import {CommandInteraction, Message, User} from 'discord.js';
-import {client} from '../index';
+import {client} from '../../index';
 
 const NumberReactions = {
 	'1️⃣': 1,

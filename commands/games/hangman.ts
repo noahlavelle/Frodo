@@ -1,5 +1,5 @@
 import {Channel, CommandInteraction, Message, TextChannel, User} from 'discord.js';
-import {client} from '../index';
+import {client} from '../../index';
 
 const HangmanStages = [
 	'___\n*      |\n*    \n*    \n*      \n*    \n*',

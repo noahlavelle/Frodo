@@ -1,13 +1,17 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CommandData = exports.CommandHandlers = void 0;
-const connectFour_1 = require("./commands/connectFour");
-const rps_1 = require("./commands/rps");
-const akinator_1 = require("./commands/akinator");
-const anagrams_1 = require("./commands/anagrams");
-const ttt_1 = require("./commands/ttt");
-const hangman_1 = require("./commands/hangman");
-const werewolf_1 = require("./commands/werewolf");
+const connectFour_1 = require("./commands/games/connectFour");
+const rps_1 = require("./commands/games/rps");
+const akinator_1 = require("./commands/games/akinator");
+const anagrams_1 = require("./commands/games/anagrams");
+const ttt_1 = require("./commands/games/ttt");
+const hangman_1 = require("./commands/games/hangman");
+const werewolf_1 = require("./commands/games/werewolf");
+const fact_1 = require("./commands/chat/fact");
+const fortune_1 = require("./commands/chat/fortune");
+const joke_1 = require("./commands/chat/joke");
+const insult_1 = require("./commands/chat/insult");
 const CommandHandlers = {
     'connectfour': (interaction) => {
         new connectFour_1.ConnectFour(interaction);
@@ -29,6 +33,18 @@ const CommandHandlers = {
     },
     'werewolf': (interaction) => {
         new werewolf_1.Werewolf(interaction);
+    },
+    'fact': (interaction) => {
+        fact_1.fact(interaction);
+    },
+    'fortune': (interaction) => {
+        fortune_1.fortune(interaction);
+    },
+    'joke': (interaction) => {
+        joke_1.joke(interaction);
+    },
+    'insult': (interaction) => {
+        insult_1.insult(interaction);
     },
 };
 exports.CommandHandlers = CommandHandlers;
@@ -93,6 +109,22 @@ var CommandData;
     CommandData.werewolfCommandData = {
         name: 'werewolf',
         description: 'The classic party social deduction game',
+    };
+    CommandData.factCommandData = {
+        name: 'fact',
+        description: 'Sends a random fact',
+    };
+    CommandData.fortuneCommandData = {
+        name: 'fortune',
+        description: 'Sends a random fortune',
+    };
+    CommandData.jokeCommandData = {
+        name: 'joke',
+        description: 'Sends a random joke',
+    };
+    CommandData.insultCommandData = {
+        name: 'insult',
+        description: 'Sends a random insult',
     };
 })(CommandData || (CommandData = {}));
 exports.CommandData = CommandData;

@@ -1,5 +1,5 @@
 import {CommandInteraction, Message, MessageEmbed, User} from 'discord.js';
-import {removeReaction} from './commands/utils';
+import {removeReaction} from './commands/games/utils';
 
 export class PartyLobby {
 	interaction: CommandInteraction;
