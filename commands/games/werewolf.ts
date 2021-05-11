@@ -10,7 +10,7 @@ enum Roles {
 }
 
 const wait = require('util').promisify(setTimeout);
-const roleStack = [Roles.Werewolf];
+const roleStack = [Roles.Werewolf, Roles.Werewolf];
 
 export class Werewolf extends PartyLobby {
 	interaction: CommandInteraction;

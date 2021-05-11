@@ -1,5 +1,5 @@
 import Discord = require('discord.js');
-import {Intents} from 'discord.js';
+import {Guild, Intents} from 'discord.js';
 import {CommandData, CommandHandlers} from './commandData';
 
 const client = new Discord.Client({intents: [Intents.ALL]});
