@@ -18,6 +18,7 @@ export class Werewolf extends PartyLobby {
 	playerRoles: any[][];
 	generalChannel: TextChannel;
 	werewolvesChannel: TextChannel;
+	werewolves: User[];
 
 	constructor(interaction) {
 		super(interaction, 'Werewolf', '**Werewolf** is a classic social deduction party game. ' +
@@ -25,6 +26,7 @@ export class Werewolf extends PartyLobby {
 
 		this.interaction = interaction;
 		this.playerRoles = [];
+		this.werewolves = [];
 	}
 
 	async gameStarted(players: User[]) {
@@ -34,6 +36,7 @@ export class Werewolf extends PartyLobby {
 		for (const role of roleStack) {
 			const randomIndex = Math.floor(Math.random() * players.length);
 			this.playerRoles.push([this.players[randomIndex], role]);
+			if (role == Roles.Werewolf) this.werewolves.push(this.players[randomIndex]);
 			this.players.splice(randomIndex, 1);
 		}
 
@@ -46,11 +49,14 @@ export class Werewolf extends PartyLobby {
 
 		while (true) {
 			await this.sendNightMessages();
-			const filter = (msg: Message) => {
+			const werewolvesFilter = (msg: Message) => {
+				return msg.content.split(' ').length == 1 && msg.mentions.users.size == 1 && !this.werewolves.includes(msg.mentions.users.first());
+			};
+			const generalFilter = (msg: Message) => {
 				return msg.content.split(' ').length == 1 && msg.mentions.users.size == 1;
 			};
 
-			await this.werewolvesChannel.awaitMessages(filter, {max: 1}).then(async (collected) => {
+			await this.werewolvesChannel.awaitMessages(werewolvesFilter, {max: 1}).then(async (collected) => {
 				await this.killPlayer(collected.first().mentions.users.first());
 				await this.generalChannel.send('', new MessageEmbed()
 					.setTitle('Day Time:')
@@ -59,7 +65,7 @@ export class Werewolf extends PartyLobby {
 
 				let targetChosen = false;
 				while (!targetChosen) {
-					await this.generalChannel.awaitMessages(filter, {max: 1}).then(async (collected) => {
+					await this.generalChannel.awaitMessages(generalFilter, {max: 1}).then(async (collected) => {
 						const message = await this.generalChannel.send('', new MessageEmbed()
 							.setTitle('Voting:')
 							.setDescription(`${collected.first().mentions.users.first()} has been chosen. After 15 seconds has passed the votes will be collected and they will be killed if there is a majority`)
