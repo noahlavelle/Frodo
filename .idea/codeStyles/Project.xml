@@ -15,7 +15,6 @@
       <option name="ENFORCE_TRAILING_COMMA" value="WhenMultiline" />
     </TypeScriptCodeStyleSettings>
     <codeStyleSettings language="JavaScript">
-      <option name="RIGHT_MARGIN" value="100" />
       <option name="INDENT_CASE_FROM_SWITCH" value="false" />
       <option name="ALIGN_MULTILINE_PARAMETERS" value="false" />
       <option name="ALIGN_MULTILINE_FOR" value="false" />
@@ -28,7 +27,6 @@
       </indentOptions>
     </codeStyleSettings>
     <codeStyleSettings language="TypeScript">
-      <option name="RIGHT_MARGIN" value="100" />
       <option name="INDENT_CASE_FROM_SWITCH" value="false" />
       <option name="ALIGN_MULTILINE_PARAMETERS" value="false" />
       <option name="ALIGN_MULTILINE_FOR" value="false" />

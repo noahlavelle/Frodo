@@ -12,6 +12,7 @@
   "dependencies": {
     "aki-api": "^5.2.1",
     "discord.js": "github:discordjs/discord.js",
+    "enmap": "^5.8.5",
     "node-fetch": "^2.6.1"
   },
   "devDependencies": {
