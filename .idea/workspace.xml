@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="a3cc3e2f-3e43-4af7-80f5-c3baf3cd5f74" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/commands/games/trivia.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commandData.js" beforeDir="false" afterPath="$PROJECT_DIR$/commandData.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commandData.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/commandData.js.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commandData.ts" beforeDir="false" afterPath="$PROJECT_DIR$/commandData.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/games/connectFour.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/connectFour.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/games/connectFour.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/connectFour.js.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/games/connectFour.ts" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/connectFour.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/enmap.sqlite-shm" beforeDir="false" afterPath="$PROJECT_DIR$/data/enmap.sqlite-shm" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/enmap.sqlite-wal" beforeDir="false" afterPath="$PROJECT_DIR$/data/enmap.sqlite-wal" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="TypeScript File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1sdAVACCzhp2xWOCb1Zfbk671xG" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.standard" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.standard" value="" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="settings.editor.selected.configurable" value="settings.typescriptcompiler" />
+    <property name="ts.external.directory.path" value="C:\Users\Noah\WebstormProjects\frodo\node_modules\typescript\lib" />
+    <property name="vue.rearranger.settings.migration" value="true" />
+  </component>
+  <component name="RunManager">
+    <configuration name="Frodo" type="NodeJSConfigurationType" path-to-js-file="index.js" working-dir="$PROJECT_DIR$">
+      <envs>
+        <env name="TOKEN" value="ODQwNjYzNDcwMjMwOTk0OTk1.YJbe3g.TrwcBgbDyg2tSysfFiFDTvd0w4c" />
+      </envs>
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="a3cc3e2f-3e43-4af7-80f5-c3baf3cd5f74" name="Default Changelist" comment="" />
+      <created>1621192116337</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1621192116337</updated>
+      <workItem from="1621192119736" duration="2181000" />
+      <workItem from="1622281897530" duration="727000" />
+      <workItem from="1622296490202" duration="619000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+    <option name="exactExcludedFiles">
+      <list>
+        <option value="$PROJECT_DIR$/commands/chat/joke.js.map" />
+        <option value="$PROJECT_DIR$/commands/chat/joke.js" />
+        <option value="$PROJECT_DIR$/commands/chat/fortune.js.map" />
+        <option value="$PROJECT_DIR$/commands/chat/fortune.js" />
+        <option value="$PROJECT_DIR$/commands/chat/insult.js.map" />
+        <option value="$PROJECT_DIR$/commands/chat/insult.js" />
+        <option value="$PROJECT_DIR$/commands/games/werewolf.js.map" />
+        <option value="$PROJECT_DIR$/commands/games/werewolf.js" />
+        <option value="$PROJECT_DIR$/commands/chat/fact.js.map" />
+        <option value="$PROJECT_DIR$/commands/chat/fact.js" />
+        <option value="$PROJECT_DIR$/commands/games/rps.js.map" />
+        <option value="$PROJECT_DIR$/commands/games/rps.js" />
+        <option value="$PROJECT_DIR$/commands/games/ttt.js.map" />
+        <option value="$PROJECT_DIR$/commands/games/ttt.js" />
+        <option value="$PROJECT_DIR$/commands/games/connectFour.js.map" />
+        <option value="$PROJECT_DIR$/commands/games/connectFour.js" />
+        <option value="$PROJECT_DIR$/commands/games/hangman.js.map" />
+        <option value="$PROJECT_DIR$/commands/games/hangman.js" />
+        <option value="$PROJECT_DIR$/commands/games/anagrams.js.map" />
+        <option value="$PROJECT_DIR$/commands/games/anagrams.js" />
+        <option value="$PROJECT_DIR$/commands/games/utils.js.map" />
+        <option value="$PROJECT_DIR$/commands/games/utils.js" />
+        <option value="$PROJECT_DIR$/commands/games/akinator.js.map" />
+        <option value="$PROJECT_DIR$/commands/games/akinator.js" />
+        <option value="$PROJECT_DIR$/commandData.js.map" />
+        <option value="$PROJECT_DIR$/commandData.js" />
+        <option value="$PROJECT_DIR$/partyLobby.js.map" />
+        <option value="$PROJECT_DIR$/partyLobby.js" />
+        <option value="$PROJECT_DIR$/index.js" />
+        <option value="$PROJECT_DIR$/index.js.map" />
+        <option value="$PROJECT_DIR$/commands/games/trivia.js" />
+        <option value="$PROJECT_DIR$/commands/games/trivia.js.map" />
+      </list>
+    </option>
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>

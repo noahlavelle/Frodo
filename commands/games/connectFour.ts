@@ -55,6 +55,7 @@ class ConnectFour {
 			return;
 		}
 
+		await this.interaction.defer();
 		await this.interaction.fetchReply().then((msg) => this.message = msg);
 
 		this.generateGrid();

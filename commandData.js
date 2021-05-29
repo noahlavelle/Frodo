@@ -5,6 +5,7 @@ const connectFour_1 = require("./commands/games/connectFour");
 const rps_1 = require("./commands/games/rps");
 const akinator_1 = require("./commands/games/akinator");
 const anagrams_1 = require("./commands/games/anagrams");
+const { Trivia, triviaCategories } = require('./commands/games/trivia.js');
 const ttt_1 = require("./commands/games/ttt");
 const hangman_1 = require("./commands/games/hangman");
 const werewolf_1 = require("./commands/games/werewolf");
@@ -33,6 +34,12 @@ const CommandHandlers = {
     },
     'werewolf': (interaction) => {
         new werewolf_1.Werewolf(interaction);
+    },
+    'trivia-categories': (interaction) => {
+        triviaCategories(interaction);
+    },
+    'trivia': (interaction) => {
+        new Trivia(interaction);
     },
     'fact': (interaction) => {
         fact_1.fact(interaction);
@@ -125,6 +132,10 @@ var CommandData;
     CommandData.insultCommandData = {
         name: 'insult',
         description: 'Sends a random insult',
+    };
+    CommandData.triviaCategoriesCommandData = {
+        name: 'trivia-categories',
+        description: 'View all Trivia categories',
     };
 })(CommandData || (CommandData = {}));
 exports.CommandData = CommandData;

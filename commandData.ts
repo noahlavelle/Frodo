@@ -2,6 +2,7 @@ import {ConnectFour} from './commands/games/connectFour';
 import {Rps} from './commands/games/rps';
 import {Akinator} from './commands/games/akinator';
 import {Anagrams} from './commands/games/anagrams';
+const {Trivia, triviaCategories} = require('./commands/games/trivia.js');
 import {Ttt} from './commands/games/ttt';
 import {Hangman} from './commands/games/hangman';
 import {Werewolf} from './commands/games/werewolf';
@@ -33,6 +34,13 @@ const CommandHandlers = {
 		new Werewolf(interaction);
 	},
 
+	'trivia-categories': (interaction) => {
+		triviaCategories(interaction);
+	},
+	'trivia': (interaction) => {
+		new Trivia(interaction);
+	},
+
 	'fact': (interaction) => {
 		fact(interaction);
 	},
@@ -48,18 +56,18 @@ const CommandHandlers = {
 };
 
 namespace CommandData {
-    export const connectFourCommandData = {
-    	name: 'connectfour',
-    	description: 'A game of connect four against another player',
-    	options: [
-    		{
-    			name: 'playertwo',
-    			type: 'USER',
-    			description: 'The user that you want to challenge',
-    			required: true,
-    		},
-    	],
-    };
+	export const connectFourCommandData = {
+		name: 'connectfour',
+		description: 'A game of connect four against another player',
+		options: [
+			{
+				name: 'playertwo',
+				type: 'USER',
+				description: 'The user that you want to challenge',
+				required: true,
+			},
+		],
+	};
 
 	export const rpsCommandData = {
 		name: 'rps',
@@ -130,6 +138,10 @@ namespace CommandData {
 	export const insultCommandData = {
 		name: 'insult',
 		description: 'Sends a random insult',
+	};
+	export const triviaCategoriesCommandData = {
+		name: 'trivia-categories',
+		description: 'View all Trivia categories',
 	};
 }
 

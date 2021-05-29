@@ -42,6 +42,7 @@ class ConnectFour {
             await this.interaction.reply('The player could not be found or was a bot');
             return;
         }
+        await this.interaction.defer();
         await this.interaction.fetchReply().then((msg) => this.message = msg);
         this.generateGrid();
         this.updateMessage();
