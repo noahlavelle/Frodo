@@ -9,8 +9,10 @@ const client = new Discord.Client({ intents: [discord_js_1.Intents.ALL] });
 exports.client = client;
 exports.EmbedColor = '#3498db';
 client.once('ready', async () => {
+    client.user.setActivity('/akinator | https://frodo.fun', { type: 'PLAYING' });
     for (const key of Object.keys(commandData_1.CommandData)) { // @ts-ignore
         await client.guilds.cache.get('839919274395303946')?.commands.create(commandData_1.CommandData[key]);
+        await client.guilds.cache.get('853033979803729920')?.commands.create(commandData_1.CommandData[key]);
     }
     console.log('Ready');
 });

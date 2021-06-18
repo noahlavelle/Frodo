@@ -8,8 +8,10 @@ export const EmbedColor = '#3498db';
 
 
 client.once('ready', async () => {
+	client.user.setActivity('/akinator | https://frodo.fun', {type: 'PLAYING'});
 	for (const key of Object.keys(CommandData)) { // @ts-ignore
 		await client.guilds.cache.get('839919274395303946')?.commands.create(CommandData[key]);
+		await client.guilds.cache.get('853033979803729920')?.commands.create(CommandData[key]);
 	}
 	console.log('Ready');
 });

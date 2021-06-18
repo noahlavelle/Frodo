@@ -14,6 +14,7 @@ export class Hangman {
 	interaction: CommandInteraction;
 	message: Message;
 	players: User[];
+	dmMessage: Message;
 	word: string;
 	displayWord = '';
 	wrongGuesses = '';
@@ -34,27 +35,25 @@ export class Hangman {
 		let hasWon = false;
 		await this.interaction.defer();
 		await this.updateMessage('Waiting for a word to be chosen');
-		await this.players[0].send('Choose a word');
-		const dmFilter = (m) => {
-			return true;
-		};
+		this.dmMessage = await this.players[0].send('Choose a word');
 
 		const channelFilter = (m: Message) => {
 			return m.author.id == this.players[0].id;
 		};
 
-		await this.players[0].dmChannel.awaitMessages(dmFilter, {max: 1}).then(async (collected) => {
-			this.word = collected.first().content;
+		await this.players[0].dmChannel.awaitMessages(() => true, {max: 1, time: 300000, errors: ['time']}).then(async (collected) => {
+			this.word = collected.first().content.replace(/ /g, '');
 			for (let i = 0; i < this.word.length; i++) this.displayWord += '-';
 			await this.updateMessage(`\`\`${this.displayWord}\`\`\n Wrong Guesses: ${this.wrongGuesses}`);
 			await this.interaction.fetchReply().then((msg) => this.message = msg);
-			const filter = (m: Message) => {
-				return this.message.author.id == this.players[1].id;
-			};
+		}).catch((err) => {
+			hasWon = true;
+			this.dmMessage.edit('You didn\'t enter a word fast enough!');
+			return this.interaction.editReply(`${this.interaction.user} took too long to put a word in!`);
 		});
 
 		while (!hasWon) {
-			await this.message.channel.awaitMessages(channelFilter, {max: 1}).then((collected) => {
+			await this.message.channel.awaitMessages(channelFilter, {max: 1, time: 300000, errors: ['time']}).then((collected) => {
 				const letter = collected.first().content[0];
 				collected.first().delete();
 				if (this.word.includes(letter)) {

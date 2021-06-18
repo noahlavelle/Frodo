@@ -7,6 +7,7 @@ const akinator_1 = require("./commands/games/akinator");
 const anagrams_1 = require("./commands/games/anagrams");
 const { Trivia, triviaCategories } = require('./commands/games/trivia.js');
 const ttt_1 = require("./commands/games/ttt");
+const othello_1 = require("./commands/games/othello");
 const hangman_1 = require("./commands/games/hangman");
 const werewolf_1 = require("./commands/games/werewolf");
 const fact_1 = require("./commands/chat/fact");
@@ -40,6 +41,9 @@ const CommandHandlers = {
     },
     'trivia': (interaction) => {
         new Trivia(interaction);
+    },
+    'othello': (interaction) => {
+        new othello_1.Othello(interaction);
     },
     'fact': (interaction) => {
         fact_1.fact(interaction);
@@ -116,6 +120,18 @@ var CommandData;
     CommandData.werewolfCommandData = {
         name: 'werewolf',
         description: 'The classic party social deduction game',
+    };
+    CommandData.othello = {
+        name: 'othello',
+        description: 'A game of othello against another player',
+        options: [
+            {
+                name: 'playertwo',
+                type: 'USER',
+                description: 'The user that you want to challenge',
+                required: true,
+            },
+        ],
     };
     CommandData.factCommandData = {
         name: 'fact',

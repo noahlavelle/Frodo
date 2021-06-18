@@ -30,7 +30,7 @@ const errorEmbed = new discord_js_1.MessageEmbed()
         .setTitle('Question Categories')
         .setDescription(cats)
         .addField('Difficulties', 'Easy\nMedium\nHard\nAny')
-        .setFooter('Type /triv <difficulty> <category> and make sure to not use any spaces in the category');
+        .setFooter('Type /trivia <difficulty> <category> and make sure to not use any spaces in the category');
     // eslint-disable-next-line prefer-const
     let commandArray = [];
     games.forEach((cat) => commandArray.push({
@@ -38,7 +38,7 @@ const errorEmbed = new discord_js_1.MessageEmbed()
         value: cat.name,
     }));
     index_1.client.once('ready', async () => {
-        await index_1.client.guilds.cache.get('839919274395303946')?.commands.create({
+        const command = {
             name: 'trivia',
             description: 'A game of Trivia',
             options: [
@@ -73,7 +73,9 @@ const errorEmbed = new discord_js_1.MessageEmbed()
                     choices: commandArray,
                 },
             ],
-        });
+        };
+        await index_1.client.guilds.cache.get('839919274395303946')?.commands.create(command);
+        await index_1.client.guilds.cache.get('853033979803729920')?.commands.create(command);
     });
 })();
 class Trivia {

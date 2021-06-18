@@ -2,18 +2,29 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a3cc3e2f-3e43-4af7-80f5-c3baf3cd5f74" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/commands/games/trivia.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/commands/games/othello.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/commandData.js" beforeDir="false" afterPath="$PROJECT_DIR$/commandData.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/commandData.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/commandData.js.map" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/commandData.ts" beforeDir="false" afterPath="$PROJECT_DIR$/commandData.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/games/akinator.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/akinator.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/games/akinator.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/akinator.js.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/games/akinator.ts" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/akinator.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/games/anagrams.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/anagrams.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/games/anagrams.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/anagrams.js.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/games/anagrams.ts" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/anagrams.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/commands/games/connectFour.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/connectFour.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/commands/games/connectFour.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/connectFour.js.map" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/commands/games/connectFour.ts" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/connectFour.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/enmap.sqlite-shm" beforeDir="false" afterPath="$PROJECT_DIR$/data/enmap.sqlite-shm" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/enmap.sqlite-wal" beforeDir="false" afterPath="$PROJECT_DIR$/data/enmap.sqlite-wal" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/games/hangman.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/hangman.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/games/hangman.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/hangman.js.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/games/hangman.ts" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/hangman.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/games/trivia.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/trivia.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/games/trivia.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/trivia.js.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/games/trivia.ts" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/trivia.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/index.js.map" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -52,14 +63,11 @@
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="settings.editor.selected.configurable" value="settings.typescriptcompiler" />
-    <property name="ts.external.directory.path" value="C:\Users\Noah\WebstormProjects\frodo\node_modules\typescript\lib" />
+    <property name="ts.external.directory.path" value="C:\Users\danie\OneDrive - Ralph Allen School\Documents\Programming\Frodo\node_modules\typescript\lib" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="RunManager">
     <configuration name="Frodo" type="NodeJSConfigurationType" path-to-js-file="index.js" working-dir="$PROJECT_DIR$">
-      <envs>
-        <env name="TOKEN" value="ODQwNjYzNDcwMjMwOTk0OTk1.YJbe3g.TrwcBgbDyg2tSysfFiFDTvd0w4c" />
-      </envs>
       <method v="2" />
     </configuration>
   </component>
@@ -74,6 +82,27 @@
       <workItem from="1621192119736" duration="2181000" />
       <workItem from="1622281897530" duration="727000" />
       <workItem from="1622296490202" duration="619000" />
+      <workItem from="1622584882136" duration="1389000" />
+      <workItem from="1622753925310" duration="1297000" />
+      <workItem from="1622836923024" duration="3003000" />
+      <workItem from="1622849721732" duration="1859000" />
+      <workItem from="1622878424359" duration="6791000" />
+      <workItem from="1622910249590" duration="3620000" />
+      <workItem from="1622919836708" duration="1690000" />
+      <workItem from="1622925133097" duration="16000" />
+      <workItem from="1622970512383" duration="1453000" />
+      <workItem from="1622972691832" duration="481000" />
+      <workItem from="1622975661804" duration="7712000" />
+      <workItem from="1622992694008" duration="598000" />
+      <workItem from="1622995393916" duration="1825000" />
+      <workItem from="1622998319198" duration="436000" />
+      <workItem from="1623004044561" duration="2452000" />
+      <workItem from="1623007670112" duration="1718000" />
+      <workItem from="1623078674411" duration="38000" />
+      <workItem from="1623078813819" duration="4703000" />
+      <workItem from="1623255269893" duration="5445000" />
+      <workItem from="1623449399118" duration="1268000" />
+      <workItem from="1624049886064" duration="4698000" />
     </task>
     <servers />
   </component>
@@ -113,6 +142,8 @@
         <option value="$PROJECT_DIR$/index.js.map" />
         <option value="$PROJECT_DIR$/commands/games/trivia.js" />
         <option value="$PROJECT_DIR$/commands/games/trivia.js.map" />
+        <option value="$PROJECT_DIR$/commands/games/othello.js" />
+        <option value="$PROJECT_DIR$/commands/games/othello.js.map" />
       </list>
     </option>
   </component>

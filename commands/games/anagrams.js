@@ -5,8 +5,8 @@ const discord_js_1 = require("discord.js");
 const utils_1 = require("./utils");
 const fetch = require('node-fetch');
 const LetterReactions = {
-    '🇨': 0,
-    '🇻': 1,
+    '🇻': 0,
+    '🇨': 1,
 };
 class Anagrams {
     constructor(interaction) {
@@ -38,12 +38,23 @@ class Anagrams {
             return Object.keys(LetterReactions).includes(reaction.emoji.name) && user.id == this.interaction.user.id;
         };
         while (letters.length < 9) {
-            await this.message.awaitReactions(filter, { max: 1 }).then(async (collected) => {
-                const reactionNumber = LetterReactions[collected.first().emoji.name];
-                await utils_1.removeReaction(this.message, this.interaction.user);
-                letters += reactionNumber == 0 ? this.vowels[Math.floor(Math.random() * this.vowels.length)] : this.consonants[Math.floor(Math.random() * this.consonants.length)];
-                await this.updateMessage(letters, '');
-            });
+            try {
+                await this.message.awaitReactions(filter, {
+                    max: 1,
+                    time: 300000,
+                    errors: ['time'],
+                }).then(async (collected) => {
+                    const reactionNumber = LetterReactions[collected.first().emoji.name];
+                    await utils_1.removeReaction(this.message, this.interaction.user);
+                    letters += reactionNumber == 0 ? this.vowels[Math.floor(Math.random() * this.vowels.length)] : this.consonants[Math.floor(Math.random() * this.consonants.length)];
+                    await this.updateMessage(letters, '');
+                });
+            }
+            catch (err) {
+                this.message.reactions.removeAll();
+                return this.interaction.editReply('The game has timed out!');
+            }
+            ;
         }
         await this.message.reactions.removeAll();
         await this.updateMessage(letters, '\nYour 30 seconds starts now!');
@@ -61,7 +72,7 @@ class Anagrams {
                 await fetch(`http://www.anagramica.com/all/:${letters}`)
                     .then((res) => res.json())
                     .then((json) => solved = json);
-                await this.updateMessage(letters, `\nYour choice of ${word} was ${solved.all.includes(word.toLowerCase()) ? 'an' : 'not an'} option. To see a full list of words go to https://word.tips/unscramble/${letters}?v=v330`);
+                await this.updateMessage(letters, `\nYour choice of ${word} was ${solved.all.includes(word.toLowerCase()) ? 'an' : 'not an'} option. To see a full list of words click [here](https://word.tips/unscramble/${letters})`);
             });
         }, 30000);
     }

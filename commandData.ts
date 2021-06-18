@@ -4,6 +4,7 @@ import {Akinator} from './commands/games/akinator';
 import {Anagrams} from './commands/games/anagrams';
 const {Trivia, triviaCategories} = require('./commands/games/trivia.js');
 import {Ttt} from './commands/games/ttt';
+import {Othello} from './commands/games/othello';
 import {Hangman} from './commands/games/hangman';
 import {Werewolf} from './commands/games/werewolf';
 import {fact} from './commands/chat/fact';
@@ -39,6 +40,9 @@ const CommandHandlers = {
 	},
 	'trivia': (interaction) => {
 		new Trivia(interaction);
+	},
+	'othello': (interaction) => {
+		new Othello(interaction);
 	},
 
 	'fact': (interaction) => {
@@ -121,6 +125,19 @@ namespace CommandData {
 	export const werewolfCommandData = {
 		name: 'werewolf',
 		description: 'The classic party social deduction game',
+	};
+
+	export const othello = {
+		name: 'othello',
+		description: 'A game of othello against another player',
+		options: [
+			{
+				name: 'playertwo',
+				type: 'USER',
+				description: 'The user that you want to challenge',
+				required: true,
+			},
+		],
 	};
 
 	export const factCommandData = {

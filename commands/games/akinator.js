@@ -6,11 +6,20 @@ const region = 'en';
 const discord_js_1 = require("discord.js");
 const utils_1 = require("./utils");
 const NumberReactions = {
-    '1️⃣': 0,
-    '2️⃣': 1,
-    '3️⃣': 2,
-    '4️⃣': 3,
-    '5️⃣': 4,
+    '851065666341699584': 0,
+    '851065679682469888': 1,
+    '851065688436899861': 2,
+    '851065697873690654': 3,
+    '851065706735992893': 4,
+    '851065718644801546': 5,
+};
+const NumberReactionsFilter = {
+    'l1': 0,
+    'l2': 1,
+    'l3': 2,
+    'l4': 3,
+    'l5': 4,
+    'l6': 5,
 };
 const LetterReactions = {
     '🇾': 0,
@@ -24,7 +33,7 @@ class Akinator {
     }
     async runGame() {
         await this.interaction.defer();
-        await this.interaction.fetchReply().then((msg) => this.message = msg);
+        this.message = await this.interaction.fetchReply();
         await this.aki.start();
         let hasWon = false;
         await this.updateMessage();
@@ -32,12 +41,11 @@ class Akinator {
             await this.message.react(reaction);
         }
         const filter = (reaction, user) => {
-            return Object.keys(NumberReactions).includes(reaction.emoji.name) && user.id == this.interaction.user.id;
+            return Object.keys(NumberReactionsFilter).includes(reaction.emoji.name) && user.id == this.interaction.user.id;
         };
         while (!hasWon) {
-            this.interaction.fetchReply().then((msg) => this.message = msg);
-            await this.message.awaitReactions(filter, { max: 1 }).then(async (collected) => {
-                const response = NumberReactions[collected.first().emoji.name];
+            await this.message.awaitReactions(filter, { max: 1, time: 300000, errors: ['time'] }).then(async (collected) => {
+                const response = NumberReactionsFilter[collected.first().emoji.name];
                 await utils_1.removeReaction(this.message, this.interaction.user);
                 if (response == 5) {
                     await this.aki.back();
@@ -52,6 +60,10 @@ class Akinator {
                     await this.win();
                     return;
                 }
+            }).catch((err) => {
+                hasWon = true;
+                this.interaction.editReply('The game has timed out!');
+                this.message.reactions.removeAll();
             });
         }
     }
@@ -78,22 +90,22 @@ class Akinator {
         }
     }
     async updateWinMessage(description, i) {
-        await this.interaction.editReply('', new discord_js_1.MessageEmbed()
+        await this.interaction.editReply(new discord_js_1.MessageEmbed()
             .setTitle('Akinator:')
             .setColor('#3498db')
             .addFields({ name: 'Name:', value: this.aki.answers[i].name }, { name: 'Description:', value: this.aki.answers[i].description })
             .setImage(this.aki.answers[i].absolute_picture_path)
-            .setThumbnail('https://play-lh.googleusercontent.com/rjX8LZCV-MaY3o927R59GkEwDOIRLGCXFphaOTeFFzNiYY6SQ4a-B_5t7eUPlGANrcw')
+            .setThumbnail('https://frodo.fun/static/img/frodoAssets/aki.png')
             .setDescription(description));
     }
     async updateMessage() {
-        await this.interaction.editReply('', new discord_js_1.MessageEmbed()
+        await this.interaction.editReply(new discord_js_1.MessageEmbed()
             .setTitle('Akinator:')
             .setColor('#3498db')
-            .setThumbnail('https://play-lh.googleusercontent.com/rjX8LZCV-MaY3o927R59GkEwDOIRLGCXFphaOTeFFzNiYY6SQ4a-B_5t7eUPlGANrcw')
+            .setThumbnail('https://frodo.fun/static/img/frodoAssets/aki.png')
             .addFields({ name: 'Question:', value: this.aki.question }, {
             name: 'Answers:',
-            value: `\n0: ${this.aki.answers[0]}\n1: ${this.aki.answers[1]}\n2: ${this.aki.answers[2]}\n3: ${this.aki.answers[3]}\n4: ${this.aki.answers[4]}\n5: Back`,
+            value: `\n1: ${this.aki.answers[0]}\n2: ${this.aki.answers[1]}\n3: ${this.aki.answers[2]}\n4: ${this.aki.answers[3]}\n5: ${this.aki.answers[4]}\n6: Back`,
         }, { name: 'Progress:', value: this.aki.progress }));
     }
 }

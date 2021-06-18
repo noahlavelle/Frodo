@@ -26,7 +26,7 @@ const errorEmbed: MessageEmbed = new MessageEmbed()
 		.setTitle('Question Categories')
 		.setDescription(cats)
 		.addField('Difficulties', 'Easy\nMedium\nHard\nAny')
-		.setFooter('Type /triv <difficulty> <category> and make sure to not use any spaces in the category');
+		.setFooter('Type /trivia <difficulty> <category> and make sure to not use any spaces in the category');
 	// eslint-disable-next-line prefer-const
 	let commandArray: Object[] = [];
 	games.forEach((cat) => commandArray.push({
@@ -34,7 +34,7 @@ const errorEmbed: MessageEmbed = new MessageEmbed()
 		value: cat.name,
 	}));
 	client.once('ready', async () => {
-		await client.guilds.cache.get('839919274395303946')?.commands.create({
+		const command = {
 			name: 'trivia',
 			description: 'A game of Trivia',
 			options: [
@@ -69,7 +69,9 @@ const errorEmbed: MessageEmbed = new MessageEmbed()
 					choices: commandArray,
 				},
 			],
-		});
+		};
+		await client.guilds.cache.get('839919274395303946')?.commands.create(command);
+		await client.guilds.cache.get('853033979803729920')?.commands.create(command);
 	});
 })();
 

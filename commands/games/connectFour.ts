@@ -1,5 +1,5 @@
-import {CommandInteraction, Message, User} from 'discord.js';
-import {client} from '../../index';
+import {CommandInteraction, Message, MessageEmbed, User} from 'discord.js';
+import {client, EmbedColor} from '../../index';
 import {removeReaction} from './utils';
 
 enum SlotType {
@@ -14,19 +14,32 @@ const GridDimensions = {
 };
 
 const SlotText = {
-	0: '⬜',
-	1: '🔵',
-	2: '🔴',
+	0: '<:wr:852255175258275841>',
+	1: '<:c1:852258262052765706>',
+	2: '<:c2:852258272945242172>',
+};
+const PlayerTextClear = {
+	0: '<:c1c:852259321134841876>',
+	1: '<:c2c:852259332053008384>',
 };
 
 const NumberReactions = {
-	'1️⃣': 1,
-	'2️⃣': 2,
-	'3️⃣': 3,
-	'4️⃣': 4,
-	'5️⃣': 5,
-	'6️⃣': 6,
-	'7️⃣': 7,
+	'851065666341699584': 0,
+	'851065679682469888': 1,
+	'851065688436899861': 2,
+	'851065697873690654': 3,
+	'851065706735992893': 4,
+	'851065718644801546': 5,
+	'851065729570963456': 6,
+};
+const NumberReactionsFilter = {
+	'l1': 1,
+	'l2': 2,
+	'l3': 3,
+	'l4': 4,
+	'l5': 5,
+	'l6': 6,
+	'l7': 7,
 };
 
 class ConnectFour {
@@ -34,18 +47,20 @@ class ConnectFour {
 	players: User[];
 	currentPlayer: User;
 	grid: SlotType[][];
-	header: string;
 	message: Message;
 	isPlayerOne: boolean;
 
 	constructor(interaction: CommandInteraction) {
 		this.interaction = interaction;
-		this.players = [interaction.user, client.users.cache.find((user) => user.id == interaction.options[0].value)];
+		if (Math.round(Math.random()) === 0) {
+			this.players = [this.interaction.user, client.users.cache.find((user) => user.id == interaction.options[0].value)];
+		} else {
+			this.players = [client.users.cache.find((user) => user.id == interaction.options[0].value), this.interaction.user];
+		};
 		this.currentPlayer = this.players[0];
 		this.isPlayerOne = true;
 		this.grid = [];
 
-		this.header = `<@${this.players[0].id}> has challenged <@${this.players[1].id}> to a game of connect four.\nCurrent Go: ${SlotText[1]} <@${this.currentPlayer.id}>\n\n`;
 		this.runGame();
 	}
 
@@ -59,27 +74,24 @@ class ConnectFour {
 		await this.interaction.fetchReply().then((msg) => this.message = msg);
 
 		this.generateGrid();
-		this.updateMessage();
+		this.updateMessage(true);
 
 		for (const value of Object.keys(NumberReactions)) {
 			await this.message.react(value);
 		}
 
 		const filter = (reaction, user) => {
-			return Object.keys(NumberReactions).includes(reaction.emoji.name) && this.currentPlayer == user;
+			return Object.keys(NumberReactionsFilter).includes(reaction.emoji.name) && this.currentPlayer == user;
 		};
 
 		while (true) {
-			this.header = `<@${this.players[0].id}> has challenged <@${this.players[1].id}> to a game of connect four.
-						\nCurrent Go: ${SlotText[this.isPlayerOne ? 2 : 1]} ${this.isPlayerOne ? this.players[1] : this.players[0]}\n\n`;
-
 			await this.message.awaitReactions(filter, {max: 1})
 				.then(async (collected) => {
 					const reaction = collected.first();
-					const columnNumber = NumberReactions[reaction.emoji.name] - 1;
+					const columnNumber = NumberReactionsFilter[reaction.emoji.name] - 1;
 					let rowNumber = GridDimensions.y - 1;
 
-					await removeReaction(this.message, this.interaction.user);
+					await removeReaction(this.message, this.currentPlayer);
 
 					for (let i = GridDimensions.y - 1; i >= 0; i--) {
 						if (this.grid[i][columnNumber] == SlotType.Empty) {
@@ -124,8 +136,8 @@ class ConnectFour {
 		}
 	}
 
-	updateMessage() {
-		let message = this.header;
+	updateMessage(start?) {
+		let message = '';
 		this.grid.forEach((i: SlotType[]) => {
 			i.forEach((j: SlotType) => {
 				message += SlotText[j];
@@ -134,9 +146,17 @@ class ConnectFour {
 			message += '\n';
 		});
 
-		message += ':one::two::three::four::five::six::seven:';
+		message += '<:l1:851065666341699584><:l2:851065679682469888><:l3:851065688436899861><:l4:851065697873690654><:l5:851065706735992893><:l6:851065718644801546><:l7:851065729570963456>';
 
-		this.interaction.editReply(message);
+		start ? this.interaction.editReply(`<@${this.interaction.user.id}> challenged <@${this.interaction.options[0].value}> to a game of Connect Four!`,
+			new MessageEmbed()
+				.setColor(EmbedColor)
+				.setDescription(`Current go: ${PlayerTextClear[this.isPlayerOne ? 0 : 1]} ${this.isPlayerOne ? this.players[0] : this.players[1]}\n\n${message}`),
+		) : this.interaction.editReply(`<@${this.interaction.user.id}> challenged <@${this.interaction.options[0].value}> to a game of Connect Four!`,
+			new MessageEmbed()
+				.setColor(EmbedColor)
+				.setDescription(`Current go: ${PlayerTextClear[this.isPlayerOne ? 1 : 0]} ${this.isPlayerOne ? this.players[1] : this.players[0]}\n\n${message}`),
+		);
 	}
 
 	checkHorizontalWin(row: number) {
@@ -206,6 +226,25 @@ class ConnectFour {
 		await this.interaction.fetchReply().then((msg) => this.message = msg);
 		await this.message.reactions.removeAll();
 		await this.interaction.editReply(this.message.content += `\n\n<@${this.currentPlayer.id}> wins!`);
+		this.updateMessageWin();
+	}
+	updateMessageWin() {
+		let message = '';
+		this.grid.forEach((i: SlotType[]) => {
+			i.forEach((j: SlotType) => {
+				message += SlotText[j];
+			});
+
+			message += '\n';
+		});
+
+		message += '<:l1:851065666341699584><:l2:851065679682469888><:l3:851065688436899861><:l4:851065697873690654><:l5:851065706735992893><:l6:851065718644801546><:l7:851065729570963456>';
+
+		this.interaction.editReply(`<@${this.interaction.user.id}> challenged <@${this.interaction.options[0].value}> to a game of Connect Four!\n\n${this.isPlayerOne ? this.players[1] : this.players[0]} Won!\n`,
+			new MessageEmbed()
+				.setColor(EmbedColor)
+				.setDescription(`\n${message}`),
+		);
 	}
 }
 
