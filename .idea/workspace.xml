@@ -1,30 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="a3cc3e2f-3e43-4af7-80f5-c3baf3cd5f74" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/commands/games/othello.ts" afterDir="false" />
+    <list default="true" id="a3cc3e2f-3e43-4af7-80f5-c3baf3cd5f74" name="Default Changelist" comment="fixed some commands">
+      <change afterPath="$PROJECT_DIR$/commands/games/othello.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/commands/games/othello.js.map" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/commandData.js" beforeDir="false" afterPath="$PROJECT_DIR$/commandData.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/commandData.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/commandData.js.map" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/commandData.ts" beforeDir="false" afterPath="$PROJECT_DIR$/commandData.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/games/akinator.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/akinator.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/games/akinator.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/akinator.js.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/games/akinator.ts" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/akinator.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/games/anagrams.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/anagrams.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/games/anagrams.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/anagrams.js.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/games/anagrams.ts" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/anagrams.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/games/connectFour.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/connectFour.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/games/connectFour.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/connectFour.js.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/games/connectFour.ts" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/connectFour.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/commands/games/hangman.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/hangman.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/games/hangman.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/hangman.js.map" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/commands/games/hangman.ts" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/hangman.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/games/trivia.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/trivia.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/games/trivia.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/trivia.js.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/games/trivia.ts" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/trivia.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/index.js.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/games/othello.ts" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/othello.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,6 +26,14 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
   </component>
   <component name="ProjectId" id="1sdAVACCzhp2xWOCb1Zfbk671xG" />
   <component name="ProjectLevelVcsManager">
@@ -102,8 +96,20 @@
       <workItem from="1623078813819" duration="4703000" />
       <workItem from="1623255269893" duration="5445000" />
       <workItem from="1623449399118" duration="1268000" />
-      <workItem from="1624049886064" duration="4698000" />
+      <workItem from="1624049886064" duration="4973000" />
+      <workItem from="1624091108270" duration="4700000" />
+      <workItem from="1624105110515" duration="2518000" />
+      <workItem from="1624124944901" duration="263000" />
+      <workItem from="1624188228633" duration="6032000" />
     </task>
+    <task id="LOCAL-00001" summary="fixed some commands">
+      <created>1624057983961</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1624057983961</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -161,6 +167,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <MESSAGE value="fixed some commands" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed some commands" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

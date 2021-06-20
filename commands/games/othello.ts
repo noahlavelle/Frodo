@@ -1,17 +1,19 @@
-import {CommandInteraction, GuildEmoji, Message, MessageEmbed, User} from 'discord.js';
+import {CommandInteraction, Message, MessageEmbed, User} from 'discord.js';
 import {client} from '../../index';
 import {removeReaction} from './utils';
 
-const gridEmojis: any[] = [
+const clearEmojis = [
+	'<:p0c:851057388030525440>',
+	'<:p1c:851057401003900938>',
+];
+
+const gridEmojis = [
 	'<:gr:851050647302438912>',
 	'<:p0:851054097129144340>',
 	'<:p1:851054110673076224>',
 	'<:sr:851055934172430336>',
 ];
-const clearEmojis = [
-	'<:p0c:851057388030525440>',
-	'<:p1c:851057401003900938>',
-];
+
 
 const letterReactions = {
 	'851062972055158836': 0,
@@ -66,12 +68,15 @@ function changeInt(int: number) {
 export class Othello {
 	interaction: CommandInteraction;
 	grid: number[][];
+	helpGrid: number[][];
 	players: User[];
 	message: Message;
 	playersGo: number;
 	row: number;
 	column: number;
 	playing: boolean;
+	help: boolean;
+	tipsEmojis: string[];
 
 	constructor(interaction) {
 		this.playing = true;
@@ -86,7 +91,32 @@ export class Othello {
 			[0, 0, 0, 0, 0, 0, 0, 0],
 			[0, 0, 0, 0, 0, 0, 0, 0],
 		];
-		for (let i = 1; i < 9; i++) {
+
+		this.helpGrid = [
+			[0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 1, 0, 0, 0],
+			[0, 0, 0, 0, 0, 1, 0, 0],
+			[0, 0, 1, 0, 0, 0, 0, 0],
+			[0, 0, 0, 1, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0],
+		];
+		this.help = interaction.options[1]?.value;
+		this.tipsEmojis = this.help ? [
+			'<:gr:851050647302438912>',
+			'<:0o:855787570834046976>',
+			'<:1o:855787570864586782>',
+			'<:0os:855787570872057856>',
+			'<:1os:855787570943098920>',
+		] : [
+			'<:gr:851050647302438912>',
+			'<:gr:851050647302438912>',
+			'<:gr:851050647302438912>',
+			'<:sr:851055934172430336>',
+			'<:sr:851055934172430336>',
+		];
+		for (let i = 1; i < 10; i++) {
 			this.grid[-i] = [];
 			this.grid[i + 7] = [];
 		};
@@ -103,6 +133,7 @@ export class Othello {
 		if (this.interaction.user.id === this.interaction.options[0].value) return this.interaction.reply('You can\'t play othello with yourself!');
 		await this.updateMessage();
 		await this.reactToMessage(this.message);
+		this.makeTipReaction();
 		this.playerGo();
 	};
 	async playerGo() {
@@ -116,19 +147,21 @@ export class Othello {
 
 				if (letter) {
 					this.row = letterReactionsFilter[collected.first().emoji.name];
-					this.grid.forEach((row, rowIndex) => {
-						row.forEach((value, columnIndex) => {
-							if (value === 3) this.grid[rowIndex][columnIndex] = 0;
-						});
-					});
+					this.clearGridSelection();
 					if (this.column === undefined) {
 						this.grid[this.row].forEach((value, columnNumber) => {
-							if (value === 0) {
+							if (this.helpGrid[this.row][columnNumber] && value === 0) {
+								this.helpGrid[this.row][columnNumber]++;
+								this.helpGrid[this.row][columnNumber]++;
+							} else if (value === 0) {
 								this.grid[this.row][columnNumber] = 3;
 							};
 						});
 					} else {
-						if (this.grid[this.row][this.column] === 0) {
+						if (this.helpGrid[this.row][this.column] && this.grid[this.row][this.column] === 0) {
+							this.helpGrid[this.row][this.column]++;
+							this.helpGrid[this.row][this.column]++;
+						} else if (this.grid[this.row][this.column] === 0) {
 							this.grid[this.row][this.column] = 3;
 						} else {
 							this.row = undefined;
@@ -138,19 +171,22 @@ export class Othello {
 					};
 				} else if (number) {
 					this.column = numberReactionsFilter[collected.first().emoji.name];
-					this.grid.forEach((row, rowIndex) => {
-						row.forEach((value, columnIndex) => {
-							if (value === 3) this.grid[rowIndex][columnIndex] = 0;
-						});
-					});
+					this.clearGridSelection();
 					if (this.row === undefined) {
 						this.grid.forEach((row, rowNumber) => {
-							if (row[this.column] === 0) {
+							if (row.length === 0) return;
+							if (this.helpGrid[rowNumber][this.column] && row[this.column] === 0) {
+								this.helpGrid[rowNumber][this.column]++;
+								this.helpGrid[rowNumber][this.column]++;
+							} else if (row[this.column] === 0) {
 								this.grid[rowNumber][this.column] = 3;
 							};
 						});
 					} else {
-						if (this.grid[this.row][this.column] === 0) {
+						if (this.helpGrid[this.row][this.column] && this.grid[this.row][this.column] === 0) {
+							this.helpGrid[this.row][this.column]++;
+							this.helpGrid[this.row][this.column]++;
+						} else if (this.grid[this.row][this.column] === 0) {
 							this.grid[this.row][this.column] = 3;
 						} else {
 							this.row = undefined;
@@ -159,22 +195,18 @@ export class Othello {
 						};
 					};
 				} else if (control) {
-					this.grid.forEach((row, rowIndex) => {
-						row.forEach((value, columnIndex) => {
-							if (value === 3) this.grid[rowIndex][columnIndex] = 0;
-						});
-					});
+					this.clearGridSelection();
 					const action = controlReactions[collected.first().emoji.name];
 					if (action === 0) {
 						if (this.row !== undefined && this.column !== undefined) {
-							if (this.checkGrid(this.row, this.column, false)) {
+							if (this.checkGrid(this.row, this.column, 0)) {
 								if (this.grid[this.row][this.column] === 1 || this.grid[this.row][this.column] === 2) {
 									this.row = undefined;
 									this.column = undefined;
 									return this.playerGo();
 								};
 								// @ts-ignore
-								this.checkGrid(this.row, this.column, true).forEach((direction) => {
+								this.checkGrid(this.row, this.column, 1).forEach((direction) => {
 									const otherPlayer = changeInt(this.playersGo) + 1;
 									const player = this.playersGo + 1;
 									let pos = [this.row, this.column];
@@ -193,30 +225,41 @@ export class Othello {
 								this.column = undefined;
 								this.playersGo = changeInt(this.playersGo);
 								let nextPlayerCanGo = false;
+								this.resetHelpGrid();
 
+								const moves = [];
 								this.grid.forEach((row, rowIndex) => {
-									if (nextPlayerCanGo) return;
 									row.forEach((value, columnIndex) => {
-										if (nextPlayerCanGo) return;
 										if (value !== 0) return;
-										// @ts-ignore
-										nextPlayerCanGo = this.checkGrid(rowIndex, columnIndex, false);
+										if (this.checkGrid(rowIndex, columnIndex, 0)) {
+											moves.push([rowIndex, columnIndex]);
+											nextPlayerCanGo = true;
+										};
 									});
 								});
-								if (!nextPlayerCanGo) {
+								if (nextPlayerCanGo) {
+									moves.forEach((move) => {
+										this.helpGrid[move[0]][move[1]] = this.playersGo + 1;
+									});
+								} else {
 									this.playersGo = changeInt(this.playersGo);
 									let otherPlayerCanGo = false;
+									this.resetHelpGrid();
 
 									this.grid.forEach((row, rowIndex) => {
-										if (otherPlayerCanGo) return;
 										row.forEach((value, columnIndex) => {
-											if (otherPlayerCanGo) return;
 											if (value !== 0) return;
-											// @ts-ignore
-											otherPlayerCanGo = this.checkGrid(rowIndex, columnIndex, false);
+											if (this.checkGrid(rowIndex, columnIndex, 0)) {
+												moves.push([rowIndex, columnIndex]);
+												otherPlayerCanGo = true;
+											};
 										});
 									});
-									if (!otherPlayerCanGo) {
+									if (otherPlayerCanGo) {
+										moves.forEach((move) => {
+											this.helpGrid[move[0]][move[1]] = this.playersGo + 1;
+										});
+									} else {
 										return this.gameOver();
 									};
 								};
@@ -237,28 +280,30 @@ export class Othello {
 			})
 			.catch((err) => {
 				this.message.reactions.removeAll();
-				return this.interaction.editReply('The game has timed out!');
+				return this.message.edit('The game has timed out!');
 			});
 	};
 
 	checkGrid(row, column, returnArray) {
-		let allow = false;
-		const returnArr = [];
-		if (this.grid[row][column] !== 0) return allow = false;
+		const rtn = [false, [], []];
+		if (this.grid[row][column] !== 0) return false;
 		([[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]]).forEach((direction) => {
-			if (allow || (!row && !column)) return;
+			if (rtn[0] || (!Number.isInteger(parseInt(row)) && !Number.isInteger(parseInt(column)))) return;
 			let pos = [row, column];
 			if (this.grid[row + direction[0]][column + direction[1]] !== changeInt(this.playersGo) + 1) return;
 			for (let i = 1; i < 9; i++) {
 				pos = [pos[0] + direction[0], pos[1] + direction[1]];
 				if (this.grid[pos[0]][pos[1]] === 0) return;
 				if (i !== 1 && this.grid[pos[0]][pos[1]] === this.playersGo + 1) {
-					if (returnArray) return returnArr.push(direction);
-					return allow = true;
+					rtn[0] = true;
+					// @ts-ignore
+					rtn[1].push(direction);
+					// @ts-ignore
+					rtn[2].push(pos);
 				};
 			};
 		});
-		return returnArray ? returnArr : allow;
+		return rtn[returnArray];
 	};
 
 	async updateMessage() {
@@ -302,8 +347,8 @@ export class Othello {
 		let text = '';
 		if (black === white) text = 'You Drew!';
 		else if (black > white) text = `<@${this.players[0].id}> Won!`;
-		else if (white > black) text = `<@${this.players[0].id} Won!`;
-		this.interaction.editReply(text,
+		else if (white > black) text = `<@${this.players[1].id}> Won!`;
+		this.message.edit(text,
 			new MessageEmbed()
 				.setColor('#78B159')
 				.setFooter(`${this.players[0].username}: ${black}, ${this.players[1].username}: ${white}`)
@@ -328,7 +373,11 @@ export class Othello {
 		];
 		this.grid.forEach((row, rowNumber) => {
 			row.forEach((value, columnNumber) => {
-				grid[rowNumber + 1][columnNumber + 1] = gridEmojis[value];
+				if (value === 0) {
+					grid[rowNumber + 1][columnNumber + 1] = this.tipsEmojis[this.helpGrid[rowNumber][columnNumber]];
+				} else {
+					grid[rowNumber + 1][columnNumber + 1] = gridEmojis[value];
+				};
 			});
 		});
 		grid.forEach((arr, index) => {
@@ -348,4 +397,58 @@ export class Othello {
 		};
 		return undefined;
 	};
+	resetHelpGrid() {
+		this.helpGrid = [
+			[0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0],
+		];
+	};
+	clearGridSelection() {
+		this.grid.forEach((row, rowIndex) => {
+			row.forEach((value, columnIndex) => {
+				if (value === 3) this.grid[rowIndex][columnIndex] = 0;
+				if (this.helpGrid[rowIndex][columnIndex] === 3 || this.helpGrid[rowIndex][columnIndex] === 4) {
+					this.helpGrid[rowIndex][columnIndex]--;
+					this.helpGrid[rowIndex][columnIndex]--;
+				};
+			});
+		});
+	};
+	async makeTipReaction() {
+		this.message = await this.interaction.fetchReply();
+		await this.message.react('<:tip:856171946663084073>');
+		this.waitTipReaction();
+	};
+	waitTipReaction() {
+		const filter = (reaction, user) => reaction.emoji.name === 'tip' && (this.players[0].id === user.id || this.players[1].id === user.id);
+		this.message.awaitReactions(filter, {max: 1}).then((collected) => {
+			if (this.playing) {
+				const r = this.message.reactions.cache.find((r) => r.emoji.name === 'tip');
+				r.users.remove(this.players[0]);
+				r.users.remove(this.players[1]);
+				this.help = !this.help;
+				this.tipsEmojis = this.help ? [
+					'<:gr:851050647302438912>',
+					'<:0o:855787570834046976>',
+					'<:1o:855787570864586782>',
+					'<:0os:855787570872057856>',
+					'<:1os:855787570943098920>',
+				] : [
+					'<:gr:851050647302438912>',
+					'<:gr:851050647302438912>',
+					'<:gr:851050647302438912>',
+					'<:sr:851055934172430336>',
+					'<:sr:851055934172430336>',
+				];
+				this.updateMessage();
+				this.waitTipReaction();
+			};
+		});
+	}
 };

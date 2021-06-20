@@ -131,6 +131,12 @@ var CommandData;
                 description: 'The user that you want to challenge',
                 required: true,
             },
+            {
+                name: 'showmoves',
+                type: 'BOOLEAN',
+                description: 'Will show you your options that you can move to for the game',
+                required: false,
+            },
         ],
     };
     CommandData.factCommandData = {

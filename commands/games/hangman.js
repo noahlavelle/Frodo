@@ -29,7 +29,7 @@ class Hangman {
         await this.updateMessage('Waiting for a word to be chosen');
         this.dmMessage = await this.players[0].send('Choose a word');
         const channelFilter = (m) => {
-            return m.author.id == this.players[0].id;
+            return m.author.id == this.players[1].id;
         };
         await this.players[0].dmChannel.awaitMessages(() => true, { max: 1, time: 300000, errors: ['time'] }).then(async (collected) => {
             this.word = collected.first().content.replace(/ /g, '');
