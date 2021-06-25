@@ -14,6 +14,10 @@ const fact_1 = require("./commands/chat/fact");
 const fortune_1 = require("./commands/chat/fortune");
 const joke_1 = require("./commands/chat/joke");
 const insult_1 = require("./commands/chat/insult");
+const help_1 = require("./commands/Utils/help");
+const uptime_1 = require("./commands/Utils/uptime");
+const avatar_1 = require("./commands/Utils/avatar");
+const ping_1 = require("./commands/Utils/ping");
 const CommandHandlers = {
     'connectfour': (interaction) => {
         new connectFour_1.ConnectFour(interaction);
@@ -36,7 +40,7 @@ const CommandHandlers = {
     'werewolf': (interaction) => {
         new werewolf_1.Werewolf(interaction);
     },
-    'trivia-categories': (interaction) => {
+    'triviacategories': (interaction) => {
         triviaCategories(interaction);
     },
     'trivia': (interaction) => {
@@ -56,6 +60,18 @@ const CommandHandlers = {
     },
     'insult': (interaction) => {
         insult_1.insult(interaction);
+    },
+    'help': (interaction) => {
+        help_1.help(interaction);
+    },
+    'uptime': (interaction) => {
+        uptime_1.uptime(interaction);
+    },
+    'avatar': (interaction) => {
+        avatar_1.avatar(interaction);
+    },
+    'ping': (interaction) => {
+        ping_1.ping(interaction);
     },
 };
 exports.CommandHandlers = CommandHandlers;
@@ -154,10 +170,38 @@ var CommandData;
     CommandData.insultCommandData = {
         name: 'insult',
         description: 'Sends a random insult',
+        options: [{
+                name: 'player',
+                type: 'USER',
+                description: 'Pick a person to insult!',
+                required: false,
+            }],
     };
     CommandData.triviaCategoriesCommandData = {
-        name: 'trivia-categories',
+        name: 'triviacategories',
         description: 'View all Trivia categories',
+    };
+    CommandData.helpCommandData = {
+        name: 'help',
+        description: 'Get help using Frodo',
+    };
+    CommandData.uptimeCommandData = {
+        name: 'uptime',
+        description: 'View the uptime of Frodo',
+    };
+    CommandData.avatarCommandData = {
+        name: 'avatar',
+        description: 'Get a user\'s avatar',
+        options: [{
+                name: 'user',
+                type: 'USER',
+                description: 'The user that you would like to get thier avatar',
+                required: true,
+            }],
+    };
+    CommandData.pingCommandData = {
+        name: 'ping',
+        description: 'Check Frodo\'s ping',
     };
 })(CommandData || (CommandData = {}));
 exports.CommandData = CommandData;

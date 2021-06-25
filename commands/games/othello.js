@@ -314,7 +314,7 @@ class Othello {
         if (this.grid[row][column] !== 0)
             return false;
         ([[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]]).forEach((direction) => {
-            if (rtn[0] || (!Number.isInteger(parseInt(row)) && !Number.isInteger(parseInt(column))))
+            if (!Number.isInteger(parseInt(row)) && !Number.isInteger(parseInt(column)))
                 return;
             let pos = [row, column];
             if (this.grid[row + direction[0]][column + direction[1]] !== changeInt(this.playersGo) + 1)
@@ -327,8 +327,6 @@ class Othello {
                     rtn[0] = true;
                     // @ts-ignore
                     rtn[1].push(direction);
-                    // @ts-ignore
-                    rtn[2].push(pos);
                 }
                 ;
             }

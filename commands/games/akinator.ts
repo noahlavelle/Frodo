@@ -106,6 +106,10 @@ export class Akinator {
 				}
 			});
 		}
+		if (!choiceMade) {
+			await this.updateWinMessage('I don\'t know, you win!', this.aki.guessCount - 1);
+			await this.message.reactions.removeAll();
+		}
 	}
 
 	async updateWinMessage(description : string, i : number) {

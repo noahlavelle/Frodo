@@ -1,18 +1,50 @@
-import {CommandInteraction, Message, User} from 'discord.js';
-import {client} from '../../index';
+import {CommandInteraction, Message, MessageEmbed, User} from 'discord.js';
+import {client, EmbedColor} from '../../index';
 
 const NumberReactions = {
-	'1️⃣': 1,
-	'2️⃣': 2,
-	'3️⃣': 3,
-	'4️⃣': 4,
-	'5️⃣': 5,
-	'6️⃣': 6,
-	'7️⃣': 7,
-	'8️⃣': 8,
-	'9️⃣': 9,
+	'856566113851932672': 1,
+	'856566113872510976': 2,
+	'856566113818902558': 3,
+	'856566113894400030': 4,
+	'856566113605648405': 5,
+	'856566113864122408': 6,
+	'856566113763328051': 7,
+	'856566114006728714': 8,
+	'856566113881161798': 9,
 };
-
+const NumberReactionsFilter = {
+	't1': 1,
+	't2': 2,
+	't3': 3,
+	't4': 4,
+	't5': 5,
+	't6': 6,
+	't7': 7,
+	't8': 8,
+	't9': 9,
+};
+const Grid = [
+	[`<:t1:856566113851932672>`, `<:t2:856566113872510976>`, `<:t3:856566113818902558>`],
+	[`<:t4:856566113894400030>`, `<:t5:856566113605648405>`, `<:t6:856566113864122408>`],
+	[`<:t7:856566113763328051>`, `<:t8:856566114006728714>`, `<:t9:856566113881161798>`],
+];
+const GridFilter = [
+	`<:t1:856566113851932672>`,
+	`<:t2:856566113872510976>`,
+	`<:t3:856566113818902558>`,
+	`<:t4:856566113894400030>`,
+	`<:t5:856566113605648405>`,
+	`<:t6:856566113864122408>`,
+	`<:t7:856566113763328051>`,
+	`<:t8:856566114006728714>`,
+	`<:t9:856566113881161798>`,
+];
+const PlayerEmojis = [
+	'<:tx:856571744486424576>',
+	'<:to:856571744545406976>',
+	'<:txc:856571744584466452>',
+	'<:toc:856571744458244146>',
+];
 
 export class Ttt {
 	interaction: CommandInteraction;
@@ -24,7 +56,11 @@ export class Ttt {
 
 	constructor(interaction) {
 		this.interaction = interaction;
-		this.players = [this.interaction.user, client.users.cache.find((user) => user.id == interaction.options[0].value)];
+		if (Math.round(Math.random()) === 0) {
+			this.players = [this.interaction.user, client.users.cache.find((user) => user.id == interaction.options[0].value)];
+		} else {
+			this.players = [client.users.cache.find((user) => user.id == interaction.options[0].value), this.interaction.user];
+		};
 		this.currentPlayer = this.players[0];
 		this.isPlayerOne = true;
 		this.grid = [];
@@ -43,7 +79,7 @@ export class Ttt {
 		for (let i = 0; i < 3; i++) {
 			this.grid.push([]);
 			for (let j = 0; j < 3; j++) {
-				this.grid[i].push(':white_large_square:');
+				this.grid[i].push(Grid[i][j]);
 			}
 		}
 
@@ -53,21 +89,18 @@ export class Ttt {
 		}
 
 		const filter = (reaction, user) => {
-			return Object.keys(NumberReactions).includes(reaction.emoji.name) && this.currentPlayer.id == user.id;
+			return Object.keys(NumberReactionsFilter).includes(reaction.emoji.name) && this.currentPlayer.id == user.id;
 		};
 
 		while (!hasWon) {
-			await this.message.awaitReactions(filter, {max: 1}).then(async (collected) => {
-				const selectedNumber = NumberReactions[collected.first().emoji.name];
-				const userReactions = this.message.reactions.cache.filter((reaction) => reaction.users.cache.has(this.currentPlayer.id));
-				for (const reaction of userReactions.values()) {
-					await reaction.users.remove(this.currentPlayer.id);
-				}
+			await this.message.awaitReactions(filter, {max: 1, time: 300000, errors: ['time']}).then(async (collected) => {
+				const selectedNumber = NumberReactionsFilter[collected.first().emoji.name];
+				await this.message.reactions.cache.get(Object.keys(NumberReactions)[selectedNumber - 1]).remove();
 
 				const rowNumber = Math.ceil(selectedNumber / 3) - 1;
 				const columnNumber = (selectedNumber - (rowNumber * 3)) - 1;
-				if (this.grid[rowNumber][columnNumber] != ':white_large_square:') return;
-				this.grid[rowNumber][columnNumber] = this.isPlayerOne ? ':regional_indicator_o:' : ':regional_indicator_x:';
+				if (!GridFilter.includes(this.grid[rowNumber][columnNumber])) return;
+				this.grid[rowNumber][columnNumber] = this.isPlayerOne ? PlayerEmojis[0] : PlayerEmojis[1];
 
 				let isWin: boolean;
 				isWin = this.checkHorizontalWin(rowNumber);
@@ -76,21 +109,37 @@ export class Ttt {
 				isWin = !isWin ? this.checkDiagonalWin(false) : isWin;
 
 				if (isWin) {
-					await this.win();
 					hasWon = true;
+					return this.win();
+				}
+				let draw = true;
+				this.grid.forEach((row) => {
+					row.forEach((value) => {
+						if (GridFilter.includes(value)) draw = false;
+					});
+				});
+				if (draw) {
+					hasWon = true;
+					return this.draw();
 				}
 
 				this.isPlayerOne = !this.isPlayerOne;
 				this.currentPlayer = this.isPlayerOne ? this.players[0] : this.players[1];
 				await this.updateMessage();
-			});
+			})
+				.catch(async (err) => {
+					hasWon = true;
+					await this.interaction.fetchReply().then((msg) => this.message = msg);
+					await this.message.reactions.removeAll();
+					await this.message.edit('The game has timed out!');
+				});
 		}
 	}
 
 	checkHorizontalWin(rowNumber: number) {
 		let streak = 0;
 		for (let i = 0; i < 3; i++) {
-			if (this.grid[rowNumber][i] == (this.isPlayerOne ? ':regional_indicator_o:' : ':regional_indicator_x:')) {
+			if (this.grid[rowNumber][i] == (this.isPlayerOne ? PlayerEmojis[0] : PlayerEmojis[1])) {
 				streak++;
 				if (streak == 3) {
 					return true;
@@ -121,7 +170,7 @@ export class Ttt {
 	checkIfWin(i : number, streak : number) {
 		const rowNumber = Math.ceil((i + 1) / 3) - 1;
 		const columnNumber = (i - (rowNumber * 3));
-		if (this.grid[rowNumber][columnNumber] == (this.isPlayerOne ? ':regional_indicator_o:' : ':regional_indicator_x:')) {
+		if (this.grid[rowNumber][columnNumber] == (this.isPlayerOne ? PlayerEmojis[0] : PlayerEmojis[1])) {
 			streak++;
 		}
 
@@ -129,13 +178,35 @@ export class Ttt {
 	}
 
 	async win() {
-		await this.message.reactions.removeAll();
 		await this.interaction.fetchReply().then((msg) => this.message = msg);
-		await this.interaction.editReply(this.message.content + `\n\n${this.isPlayerOne ? this.players[0] : this.players[1]} has won!`);
+		await this.message.reactions.removeAll();
+		await this.interaction.editReply(`${this.isPlayerOne ? this.players[0] : this.players[1]} has won!`, {
+			embeds: [(
+				new MessageEmbed()
+					.setColor(EmbedColor)
+					.setDescription(`\n\n${this.grid.map((e) => e.join('')).join('\n')}`)
+			)],
+		});
+	}
+	async draw() {
+		await this.interaction.fetchReply().then((msg) => this.message = msg);
+		await this.message.reactions.removeAll();
+		await this.interaction.editReply(`You drew!`, {
+			embeds: [(
+				new MessageEmbed()
+					.setColor(EmbedColor)
+					.setDescription(`\n\n${this.grid.map((e) => e.join('')).join('\n')}`)
+			)],
+		});
 	}
 
 	async updateMessage() {
-		await this.interaction.editReply(`${this.players[0]} has challenged ${this.players[1]} to a game of oxo.\nCurrent go: ${this.isPlayerOne ? ':regional_indicator_o:' : ':regional_indicator_x:'
-		} ${this.players[0]}\n\n${this.grid.map((e) => e.join('')).join('\n')}`);
+		await this.interaction.editReply(`${this.players[0]} has challenged ${this.players[1]} to a game of tic tac toe!`, {
+			embeds: [(
+				new MessageEmbed()
+					.setColor(EmbedColor)
+					.setDescription(`\nCurrent go: ${this.isPlayerOne ? PlayerEmojis[2] : PlayerEmojis[3]} ${this.currentPlayer}\n\n${this.grid.map((e) => e.join('')).join('\n')}`)
+			)],
+		});
 	}
 }

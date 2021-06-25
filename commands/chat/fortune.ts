@@ -1,12 +1,12 @@
 import fetch = require('node-fetch');
 import {CommandInteraction} from 'discord.js';
 
-export function fortune(interaction: CommandInteraction) {
-	fetch('http://yerkee.com/api/fortune')
+export async function fortune(interaction: CommandInteraction) {
+	await interaction.defer();
+	fetch('https://fortuneapi.herokuapp.com/')
 		.then((res) => res.json())
-		.then(async (json) => interaction.reply(json.fortune))
+		.then(async (json) => interaction.editReply(json))
 		.catch(async (err) => {
 			await interaction.reply('We could not find you a fortune :confused:');
-			return console.error(err);
 		});
 }

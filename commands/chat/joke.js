@@ -2,23 +2,23 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.joke = void 0;
 const fetch = require("node-fetch");
-function joke(interaction) {
+async function joke(interaction) {
+    await interaction.defer();
     fetch('https://v2.jokeapi.dev/joke/Any?blacklistFlags=nsfw,religious,political,racist,sexist,explicit')
         .then((res) => res.json())
         .then(async (json) => {
         if (json.setup) {
-            await interaction.reply(`${json.setup}\n${json.delivery}`);
+            await interaction.editReply(`${json.setup}\n${json.delivery}`);
         }
         else if (json.joke) {
-            await interaction.reply(`${json.joke}`);
+            await interaction.editReply(`${json.joke}`);
         }
         else if (json.additionalInfo) {
-            await interaction.reply(json.additionalInfo);
+            await interaction.editReply(json.additionalInfo);
         }
     })
         .catch(async (err) => {
-        await interaction.reply('We could not find you an insult :confused:');
-        return console.error(err);
+        await interaction.editReply('We could not find you an insult :confused:');
     });
 }
 exports.joke = joke;

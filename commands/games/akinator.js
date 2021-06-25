@@ -88,6 +88,10 @@ class Akinator {
                 }
             });
         }
+        if (!choiceMade) {
+            await this.updateWinMessage('I don\'t know, you win!', this.aki.guessCount - 1);
+            await this.message.reactions.removeAll();
+        }
     }
     async updateWinMessage(description, i) {
         await this.interaction.editReply(new discord_js_1.MessageEmbed()

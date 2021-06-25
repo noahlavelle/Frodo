@@ -70,8 +70,13 @@ const errorEmbed: MessageEmbed = new MessageEmbed()
 				},
 			],
 		};
-		await client.guilds.cache.get('839919274395303946')?.commands.create(command);
-		await client.guilds.cache.get('853033979803729920')?.commands.create(command);
+		// // @ts-ignore
+		// await client.guilds.cache.get('839919274395303946')?.commands.create(command);
+		// // @ts-ignore
+		// await client.guilds.cache.get('853033979803729920')?.commands.create(command);
+		// @ts-ignore
+		// await client.application.commands.create(command);
+		console.log('Trivia made!');
 	});
 })();
 
@@ -86,22 +91,14 @@ export class Trivia {
 	}
 
 	async init() {
-		let value: String;
-		const difficulty = this.interaction.options[0]?.value;
-		const category = this.interaction.options[1]?.value;
+		let difficulty;
+		let category;
+		this.interaction.options.forEach((option) => {
+			if (option.name === 'category') category = option.value;
+			if (option.name === 'difficulty') difficulty = option.value;
+		});
 
-		if (!difficulty || difficulty == 'any' && !category) value = `Generating a trivia question!`;
-		else if (difficulty && !category) value = `Generating a ${difficulty} trivia question!`;
-		else if (category) {
-			if (difficulty == 'any') value = `Generating a trivia question from the ${category} category!`;
-			else value = `Generating a ${difficulty} trivia question from the ${category} category!`;
-		}
-
-		await this.interaction.reply(
-			new MessageEmbed()
-				.setColor(EmbedColor)
-				.setDescription(value),
-		);
+		await this.interaction.defer();
 
 		let url: String = 'https://opentdb.com/api.php?amount=1&encode=base64';
 		if (difficulty && difficulty != 'any') url += `&difficulty=${difficulty}`;
@@ -120,16 +117,28 @@ export class Trivia {
 		}
 		if (json.response_code != 0) return this.interaction.editReply(errorEmbed);
 		let options: string[] = [];
-		const optionsTimeOut: string[] = [];
-		const optionsAnswerCorrect: string[] = [];
-		const optionsAnswerIncorrect: string[] = [];
+		let optionsTimeOut: string[] = [];
+		let optionsAnswerCorrect: string[] = [];
+		let optionsAnswerIncorrect: string[] = [];
 		let answer;
-		if (atob(json.results[0].type) == 'boolean') {
+		if (atob(json.results[0].type) === 'boolean') {
 			options = [
 				`${letterMap[0]} - True`,
 				`${letterMap[1]} - False`,
 			];
-			answer = atob(json.results[0].correct_answer) == 'True' ? 0 : 1;
+			optionsTimeOut = [
+				`${letterMap[0]} - ${atob(json.results[0].correct_answer) === 'True' ? '**' : ''}True${atob(json.results[0].correct_answer) === 'True' ? '**' : ''}`,
+				`${letterMap[1]} - ${atob(json.results[0].correct_answer) === 'True' ? '**' : ''}False${atob(json.results[0].correct_answer) === 'True' ? '**' : ''}`,
+			];
+			optionsAnswerCorrect = [
+				`${letterMap[0]} - True${atob(json.results[0].correct_answer) === 'True' ? ' :white_check_mark:' : ''}`,
+				`${letterMap[1]} - False${atob(json.results[0].correct_answer) === 'False' ? ' :white_check_mark:' : ''}`,
+			];
+			optionsAnswerIncorrect = [
+				`${letterMap[0]} - True`,
+				`${letterMap[1]} - False`,
+			];
+			answer = atob(json.results[0].correct_answer) === 'True' ? 0 : 1;
 		} else {
 			const ranQ = Math.round(Math.random() * 3);
 			answer = ranQ;

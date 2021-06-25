@@ -11,6 +11,10 @@ import {fact} from './commands/chat/fact';
 import {fortune} from './commands/chat/fortune';
 import {joke} from './commands/chat/joke';
 import {insult} from './commands/chat/insult';
+import {help} from './commands/Utils/help';
+import {uptime} from './commands/Utils/uptime';
+import {avatar} from './commands/Utils/avatar';
+import {ping} from './commands/Utils/ping';
 
 const CommandHandlers = {
 	'connectfour': (interaction) => {
@@ -35,7 +39,7 @@ const CommandHandlers = {
 		new Werewolf(interaction);
 	},
 
-	'trivia-categories': (interaction) => {
+	'triviacategories': (interaction) => {
 		triviaCategories(interaction);
 	},
 	'trivia': (interaction) => {
@@ -56,6 +60,18 @@ const CommandHandlers = {
 	},
 	'insult': (interaction) => {
 		insult(interaction);
+	},
+	'help': (interaction) => {
+		help(interaction);
+	},
+	'uptime': (interaction) => {
+		uptime(interaction);
+	},
+	'avatar': (interaction) => {
+		avatar(interaction);
+	},
+	'ping': (interaction) => {
+		ping(interaction);
 	},
 };
 
@@ -161,10 +177,38 @@ namespace CommandData {
 	export const insultCommandData = {
 		name: 'insult',
 		description: 'Sends a random insult',
+		options: [{
+			name: 'player',
+			type: 'USER',
+			description: 'Pick a person to insult!',
+			required: false,
+		}],
 	};
 	export const triviaCategoriesCommandData = {
-		name: 'trivia-categories',
+		name: 'triviacategories',
 		description: 'View all Trivia categories',
+	};
+	export const helpCommandData = {
+		name: 'help',
+		description: 'Get help using Frodo',
+	};
+	export const uptimeCommandData = {
+		name: 'uptime',
+		description: 'View the uptime of Frodo',
+	};
+	export const avatarCommandData = {
+		name: 'avatar',
+		description: 'Get a user\'s avatar',
+		options: [{
+			name: 'user',
+			type: 'USER',
+			description: 'The user that you would like to get thier avatar',
+			required: true,
+		}],
+	};
+	export const pingCommandData = {
+		name: 'ping',
+		description: 'Check Frodo\'s ping',
 	};
 }
 

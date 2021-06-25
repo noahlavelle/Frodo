@@ -1,24 +1,63 @@
 import Discord = require('discord.js');
-import {Guild, Intents} from 'discord.js';
+import {Intents, MessageEmbed} from 'discord.js';
 import {CommandData, CommandHandlers} from './commandData';
 
 // @ts-ignore
 const client = new Discord.Client({intents: [Intents.ALL]});
 export const EmbedColor = '#3498db';
+export const timestamp = Date.now();
 
+
+function statusRotation(statuses, speed) {
+	let current = 0;
+	setInterval(() => {
+		const activity = statuses[current];
+		if (typeof(activity[0]) === 'function') activity[0] = activity[0]();
+		client.user.setActivity(activity[0], {type: activity[1] || 'PLAYING'});
+		current++;
+		current %= statuses.length;
+	}, speed);
+};
 
 client.once('ready', async () => {
-	client.user.setActivity('/akinator | https://frodo.fun', {type: 'PLAYING'});
+	statusRotation([
+		['Frodo V2 is here!'],
+		['Type @Frodo'],
+		['.help'],
+		[() => `${client.guilds.cache.size} servers!`, 'WATCHING'],
+	], 10000);
 	for (const key of Object.keys(CommandData)) { // @ts-ignore
-		await client.guilds.cache.get('839919274395303946')?.commands.create(CommandData[key]);
-		await client.guilds.cache.get('853033979803729920')?.commands.create(CommandData[key]);
+		// await client.application.commands.create(CommandData[key]);
+		// await client.guilds.cache.get('839919274395303946')?.commands.create(CommandData[key]);
+		// await client.guilds.cache.get('853033979803729920')?.commands.create(CommandData[key]);
 	}
 	console.log('Ready');
 });
 
+
 client.on('interaction', async (interaction) => {
 	if (!interaction.isCommand()) return;
 	CommandHandlers[interaction.commandName](interaction);
+});
+const helpEmbed = (auth) => {
+	return new MessageEmbed()
+		.setColor(EmbedColor)
+		.setTitle('Frodo V2 is here!')
+		.setDescription('Frodo has updated! We now use slash commands, all commands have been revamped and many bugs have been fixed and we have two new commands, werewolf and othello! But there\'s one step you need to take to use the new version.')
+		.addField('New Permissions:', `In order to use slash commands, you need to give Frodo new permissions. Someone from this server with the \`Manage Server\` permission can authorise it at https://slash.frodo.fun\nThis server currently has slash commands ${auth ? '`Enabled`' : '`Disabled`'} for Frodo.`)
+		.addField('How to use new commands:', 'Once Frodo has been given the new permissions, type `/` to view its commands!')
+		.addField('Not Working?', 'Let us know at our [feedback page](https://frodo.fun/feedback) and we will be in contact to fix your issue!');
+};
+client.on('message', async (message) => {
+	if (message.content.startsWith('.') || message.content.includes(`<@!${client.user.id}>`)) {
+		let auth = true;
+		try {
+			await message.guild.commands.fetchPermissions();
+		} catch (err) {
+			auth = false;
+		};
+		await message.reply(helpEmbed(auth));
+	};
 });
 
 // login to Discord with your app's token

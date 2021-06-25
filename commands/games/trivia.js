@@ -74,8 +74,13 @@ const errorEmbed = new discord_js_1.MessageEmbed()
                 },
             ],
         };
-        await index_1.client.guilds.cache.get('839919274395303946')?.commands.create(command);
-        await index_1.client.guilds.cache.get('853033979803729920')?.commands.create(command);
+        // // @ts-ignore
+        // await client.guilds.cache.get('839919274395303946')?.commands.create(command);
+        // // @ts-ignore
+        // await client.guilds.cache.get('853033979803729920')?.commands.create(command);
+        // @ts-ignore
+        // await client.application.commands.create(command);
+        console.log('Trivia made!');
     });
 })();
 class Trivia {
@@ -86,22 +91,15 @@ class Trivia {
         this.init();
     }
     async init() {
-        let value;
-        const difficulty = this.interaction.options[0]?.value;
-        const category = this.interaction.options[1]?.value;
-        if (!difficulty || difficulty == 'any' && !category)
-            value = `Generating a trivia question!`;
-        else if (difficulty && !category)
-            value = `Generating a ${difficulty} trivia question!`;
-        else if (category) {
-            if (difficulty == 'any')
-                value = `Generating a trivia question from the ${category} category!`;
-            else
-                value = `Generating a ${difficulty} trivia question from the ${category} category!`;
-        }
-        await this.interaction.reply(new discord_js_1.MessageEmbed()
-            .setColor(index_1.EmbedColor)
-            .setDescription(value));
+        let difficulty;
+        let category;
+        this.interaction.options.forEach((option) => {
+            if (option.name === 'category')
+                category = option.value;
+            if (option.name === 'difficulty')
+                difficulty = option.value;
+        });
+        await this.interaction.defer();
         let url = 'https://opentdb.com/api.php?amount=1&encode=base64';
         if (difficulty && difficulty != 'any')
             url += `&difficulty=${difficulty}`;
@@ -123,16 +121,28 @@ class Trivia {
         if (json.response_code != 0)
             return this.interaction.editReply(errorEmbed);
         let options = [];
-        const optionsTimeOut = [];
-        const optionsAnswerCorrect = [];
-        const optionsAnswerIncorrect = [];
+        let optionsTimeOut = [];
+        let optionsAnswerCorrect = [];
+        let optionsAnswerIncorrect = [];
         let answer;
-        if (atob(json.results[0].type) == 'boolean') {
+        if (atob(json.results[0].type) === 'boolean') {
             options = [
                 `${letterMap[0]} - True`,
                 `${letterMap[1]} - False`,
             ];
-            answer = atob(json.results[0].correct_answer) == 'True' ? 0 : 1;
+            optionsTimeOut = [
+                `${letterMap[0]} - ${atob(json.results[0].correct_answer) === 'True' ? '**' : ''}True${atob(json.results[0].correct_answer) === 'True' ? '**' : ''}`,
+                `${letterMap[1]} - ${atob(json.results[0].correct_answer) === 'True' ? '**' : ''}False${atob(json.results[0].correct_answer) === 'True' ? '**' : ''}`,
+            ];
+            optionsAnswerCorrect = [
+                `${letterMap[0]} - True${atob(json.results[0].correct_answer) === 'True' ? ' :white_check_mark:' : ''}`,
+                `${letterMap[1]} - False${atob(json.results[0].correct_answer) === 'False' ? ' :white_check_mark:' : ''}`,
+            ];
+            optionsAnswerIncorrect = [
+                `${letterMap[0]} - True`,
+                `${letterMap[1]} - False`,
+            ];
+            answer = atob(json.results[0].correct_answer) === 'True' ? 0 : 1;
         }
         else {
             const ranQ = Math.round(Math.random() * 3);
