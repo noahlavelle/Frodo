@@ -1,4 +1,13 @@
-import {CommandInteraction, Message, MessageEmbed, Role, TextChannel, User} from 'discord.js';
+import {
+	CommandInteraction,
+	Message,
+	MessageEmbed,
+	MessageReaction,
+	ReactionEmoji,
+	Role,
+	TextChannel,
+	User,
+} from 'discord.js';
 import {PartyLobby} from '../../partyLobby';
 import {EmbedColor} from '../../index';
 
@@ -8,9 +17,10 @@ enum Roles {
 	Werewolf,
 	Villager,
 }
+const selectionReactions = ['🇦', '🇧', '🇨', '🇩', '🇪', '🇫', '🇬', '🇭', '🇮', '🇯', '🇰', '🇱', '🇲', '🇳', '🇴', '🇵', '🇶', '🇷', '🇸', '🇹', '🇺', '🇻', '🇼', '🇽', '🇾', '🇿', '0️⃣', '1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'];
 
 const wait = require('util').promisify(setTimeout);
-const roleStack = [Roles.Werewolf, Roles.Werewolf];
+const roleStack = [Roles.Werewolf];
 
 export class Werewolf extends PartyLobby {
 	interaction: CommandInteraction;
@@ -57,48 +67,54 @@ export class Werewolf extends PartyLobby {
 				return msg.content.split(' ').length == 1 && msg.mentions.users.size == 1;
 			};
 
-			try {
-				await this.werewolvesChannel.awaitMessages(werewolvesFilter, {max: 1}).then(async (collected) => {
-					if (collected.first() != null) {
-						await this.killPlayer(collected.first().mentions.users.first());
-						await this.generalChannel.send('', new MessageEmbed()
-							.setTitle('Day Time:')
-							.setDescription(`It is now day. The person who has been killed is ${collected.first().mentions.users.first()}. You now need to choose who to kill. Once you decided just mention them in an empty message.`)
-							.setColor(EmbedColor));
-
-						let targetChosen = false;
-						while (!targetChosen) {
-							await this.generalChannel.awaitMessages(generalFilter, {max: 1}).then(async (collected) => {
-								const message = await this.generalChannel.send('', new MessageEmbed()
-									.setTitle('Voting:')
-									.setDescription(`${collected.first().mentions.users.first()} has been chosen. After 15 seconds has passed the votes will be collected and they will be killed if there is a majority`)
-									.setColor(EmbedColor));
-
-								await message.react(Object.keys(this.buttonReactions)[0]);
-								await message.react(Object.keys(this.buttonReactions)[1]);
-								await wait(5000);
-
-								const voteCount = message.reactions.cache.filter((reaction) => reaction.emoji.name == Object.keys(this.buttonReactions)[0]).first().count;
-								const skipCount = message.reactions.cache.filter((reaction) => reaction.emoji.name == Object.keys(this.buttonReactions)[1]).first().count;
-								if (voteCount > skipCount) {
-									targetChosen = true;
-									await this.generalChannel.send('', new MessageEmbed()
-										.setTitle('Voting:')
-										.setDescription(`${collected.first().mentions.users.first()} has been killed`)
-										.setColor(EmbedColor));
-									await this.killPlayer(collected.first().mentions.users.first());
-								} else {
-									await this.generalChannel.send('', new MessageEmbed()
-										.setTitle('Voting:')
-										.setDescription(`The vote has failed. To try again just mention someone in a blank message`)
-										.setColor(EmbedColor));
-								}
-							});
-						}
-					}
-				});
-			} catch {}
+			const werewolvesVictimIndex = await this.runVictimSelection(15000, true);
+			await this.sendDayMessages(this.playerRoles[werewolvesVictimIndex][0]);
+			const villagersVictimIndex = await this.runVictimSelection(15000, false);
+			await this.generalChannel.send(`${this.playerRoles[villagersVictimIndex][0]} was successfully killed.`);
 		}
+	}
+
+	async runVictimSelection(voteTime: number, isWerewolvesVote: boolean) {
+		let victimDescription = '';
+		const identifiers = [];
+		let actualIndex = 0;
+		this.playerRoles.forEach((data) => {
+			if (!isWerewolvesVote || (!this.werewolves.includes(data[0]) && isWerewolvesVote)) {
+				victimDescription += `${selectionReactions[actualIndex]}: ${data[0].username}\n`;
+				identifiers.push(selectionReactions[actualIndex]);
+			} else {
+				actualIndex -= 1;
+			}
+
+			actualIndex ++;
+		});
+
+		const victimEmbed = new MessageEmbed()
+			.setTitle('Chose Victim:')
+			.setColor(EmbedColor)
+			.setDescription(victimDescription + `\nYou now have ${Math.round(voteTime / 60000)} minute(s) to decide. At the end of the time the most voted player will be killed, but if it is a draw nobody will die`);
+		const victimSelectionMessage = isWerewolvesVote ? await this.werewolvesChannel.send({embeds: [victimEmbed]}) : await this.generalChannel.send({embeds: [victimEmbed]});
+		for (const identifier of identifiers) {
+			await victimSelectionMessage.react(identifier);
+		}
+
+		let selectedUserIndex = 0;
+		await sleep(voteTime);
+		let leadingReaction = ['', 0];
+		victimSelectionMessage.reactions.cache.forEach((reaction) => {
+			if (reaction.count > leadingReaction[1]) {
+				leadingReaction = [reaction.emoji.name, reaction.count];
+			}
+		});
+
+		selectionReactions.forEach((emoji: string, i: number) => {
+			if (leadingReaction[0] == emoji) {
+				selectedUserIndex = i;
+				return;
+			}
+		});
+
+		return selectedUserIndex;
 	}
 
 	async checkWin() {
@@ -113,34 +129,54 @@ export class Werewolf extends PartyLobby {
 		}
 
 		if (werewolfCount >= villagerCount) {
-			await this.werewolvesChannel.delete('Game ended');
-			await this.generalChannel.delete('Game ended');
-			await this.message.channel.send('The game of werewolf has finished. The winners are the werewolves!');
-			this.gameRunning = false;
+			await this.endGame(true);
 		} else if (werewolfCount == 0) {
-			await this.werewolvesChannel.delete('Game ended');
-			await this.generalChannel.delete('Game ended');
-			await this.message.channel.send('The game of werewolf has finished. The winners are the villagers!');
-			this.gameRunning = false;
+			await this.endGame(false);
 		}
 	}
 
+	async endGame(hasWerewolvesWon: boolean) {
+		await this.werewolvesChannel.delete();
+		await this.generalChannel.delete();
+		await this.message.channel.send(`The game of werewolf has ended. The winners are the ${hasWerewolvesWon ? 'werewolves' : 'villagers'}!`);
+		this.gameRunning = false;
+	}
+
 	async killPlayer(player: User) {
-		await this.generalChannel.updateOverwrite(player.id, {SEND_MESSAGES: false});
-		await this.werewolvesChannel.updateOverwrite(player.id, {SEND_MESSAGES: false});
+		await this.generalChannel.permissionOverwrites.edit(player.id, {SEND_MESSAGES: false});
+		await this.werewolvesChannel.permissionOverwrites.edit(player.id, {SEND_MESSAGES: false});
 		this.players.splice(this.players.indexOf(player));
 		await this.checkWin();
 	}
 
+	async sendDayMessages(victim: User) {
+		await this.generalChannel.send({embeds: [
+			new MessageEmbed()
+				.setTitle('Day Time:')
+				.setDescription(`As dawn breaks you discover the dead body of ${victim}. It is your job to decide who to kill`)
+				.setColor(EmbedColor),
+		]});
+		await this.werewolvesChannel.send({embeds: [
+			new MessageEmbed()
+				.setTitle('Day Time:')
+				.setDescription(`${victim} was successfully killed, and now you need to go to the ${this.generalChannel} to convince the villagers you are innocent`)
+				.setColor(EmbedColor),
+		]});
+	}
+
 	async sendNightMessages() {
-		await this.generalChannel.send('', new MessageEmbed()
-			.setTitle('Night Time:')
-			.setDescription('The werewolves will now decide who to kill. If you have a special role you will be DMd when you need to make a choice')
-			.setColor(EmbedColor));
-		await this.werewolvesChannel.send('', new MessageEmbed()
-			.setTitle('Night Time:')
-			.setDescription('You need to choose who to kill. When you have chosen who to kill just mention them in an empty message')
-			.setColor(EmbedColor));
+		await this.generalChannel.send({embeds: [
+			new MessageEmbed()
+				.setTitle('Night Time:')
+				.setDescription('The werewolves will now decide who to kill. If you have a special role you will be DMd when you need to make a choice')
+				.setColor(EmbedColor),
+		]});
+		await this.werewolvesChannel.send({embeds: [
+			new MessageEmbed()
+				.setTitle('Night Time:')
+				.setDescription('You need to choose who to kill. When you have chosen who to kill just mention them in an empty message')
+				.setColor(EmbedColor),
+		]});
 	}
 
 	async createChannels() {
@@ -170,23 +206,31 @@ export class Werewolf extends PartyLobby {
 		}
 
 		this.generalChannel = await this.interaction.guild.channels.create('Werewolf - General', {
-			type: 'text',
+			type: 'GUILD_TEXT',
 			permissionOverwrites: generalPermissionsOverride,
 		});
 		this.werewolvesChannel = await this.interaction.guild.channels.create('Werewolf - Werewolves', {
-			type: 'text',
+			type: 'GUILD_TEXT',
 			permissionOverwrites: werewolvesPermissionOverride,
 		});
 
-		await this.generalChannel.send('', new MessageEmbed()
-			.setTitle('Werewolf')
-			.setDescription('Welcome to Werewolf. This is the channel for everyone, so keep your role here secret. If you have a special role like seer or doctor you will be ' +
-				'DMd. Werewolves have a private channel that villagers cannot see.')
-			.setColor(EmbedColor));
+		await this.generalChannel.send({embeds: [
+			new MessageEmbed()
+				.setTitle('Werewolf')
+				.setDescription('Welcome to Werewolf. This is the channel for everyone, so keep your role here secret. If you have a special role like seer or doctor you will be ' +
+					'DMd. Werewolves have a private channel that villagers cannot see.')
+				.setColor(EmbedColor),
+		]});
 
-		await this.werewolvesChannel.send('', new MessageEmbed()
-			.setTitle('Werewolf')
-			.setDescription('Welcome to werewolf. You are all werewolves and your goal is to kill all the villagers')
-			.setColor(EmbedColor));
+		await this.werewolvesChannel.send({embeds: [
+			new MessageEmbed()
+				.setTitle('Werewolf')
+				.setDescription('Welcome to werewolf. You are all werewolves and your goal is to kill all the villagers')
+				.setColor(EmbedColor),
+		]});
 	}
+}
+
+function sleep(ms) {
+	return new Promise((resolve) => setTimeout(resolve, ms));
 }

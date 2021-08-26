@@ -78,7 +78,7 @@ class Ttt {
         }
         await this.updateMessage();
         for (const reaction of Object.keys(NumberReactions)) {
-            await this.message.react(reaction);
+            await this.message.reactions.add(reaction);
         }
         const filter = (reaction, user) => {
             return Object.keys(NumberReactionsFilter).includes(reaction.emoji.name) && this.currentPlayer.id == user.id;
@@ -180,7 +180,7 @@ class Ttt {
         });
     }
     async updateMessage() {
-        await this.interaction.editReply(`${this.players[0]} has challenged ${this.players[1]} to a game of tic tac toe!`, {
+        await this.interaction.editReply(`${this.interaction.user} has challenged <@${this.interaction.options[0].value}> to a game of tic tac toe!`, {
             embeds: [(new discord_js_1.MessageEmbed()
                     .setColor(index_1.EmbedColor)
                     .setDescription(`\nCurrent go: ${this.isPlayerOne ? PlayerEmojis[2] : PlayerEmojis[3]} ${this.currentPlayer}\n\n${this.grid.map((e) => e.join('')).join('\n')}`))],

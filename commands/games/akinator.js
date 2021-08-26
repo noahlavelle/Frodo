@@ -28,12 +28,12 @@ const LetterReactions = {
 class Akinator {
     constructor(interaction) {
         this.interaction = interaction;
-        this.aki = new aki_api_1.Aki(region);
+        this.aki = new aki_api_1.Aki({ region, childMode: false });
         this.runGame();
     }
     async runGame() {
-        await this.interaction.defer();
-        this.message = await this.interaction.fetchReply();
+        await this.interaction.deferReply();
+        this.message = await utils_1.getMessage(this.interaction);
         await this.aki.start();
         let hasWon = false;
         await this.updateMessage();
@@ -44,7 +44,7 @@ class Akinator {
             return Object.keys(NumberReactionsFilter).includes(reaction.emoji.name) && user.id == this.interaction.user.id;
         };
         while (!hasWon) {
-            await this.message.awaitReactions(filter, { max: 1, time: 300000, errors: ['time'] }).then(async (collected) => {
+            await this.message.awaitReactions({ filter, max: 1, time: 300000, errors: ['time'] }).then(async (collected) => {
                 const response = NumberReactionsFilter[collected.first().emoji.name];
                 await utils_1.removeReaction(this.message, this.interaction.user);
                 if (response == 5) {
@@ -79,7 +79,7 @@ class Akinator {
         }
         for (let i = 0; i < this.aki.guessCount && !choiceMade; i++) {
             await this.updateWinMessage('Am I right?', i);
-            await this.message.awaitReactions(filter, { max: 1 }).then(async (collected) => {
+            await this.message.awaitReactions({ filter, max: 1 }).then(async (collected) => {
                 await utils_1.removeReaction(this.message, this.interaction.user);
                 if (collected.first().emoji.name == Object.keys(LetterReactions)[0]) {
                     await this.updateWinMessage('I win again!', i);
@@ -94,23 +94,28 @@ class Akinator {
         }
     }
     async updateWinMessage(description, i) {
-        await this.interaction.editReply(new discord_js_1.MessageEmbed()
-            .setTitle('Akinator:')
-            .setColor('#3498db')
-            .addFields({ name: 'Name:', value: this.aki.answers[i].name }, { name: 'Description:', value: this.aki.answers[i].description })
-            .setImage(this.aki.answers[i].absolute_picture_path)
-            .setThumbnail('https://frodo.fun/static/img/frodoAssets/aki.png')
-            .setDescription(description));
+        const answers = this.aki.answers[i];
+        await this.interaction.editReply({ embeds: [
+                new discord_js_1.MessageEmbed()
+                    .setTitle('Akinator:')
+                    .setColor('#3498db')
+                    .addFields({ name: 'Name:', value: answers.name }, { name: 'Description:', value: answers.description })
+                    .setImage(answers.absolute_picture_path)
+                    .setThumbnail('https://frodo.fun/static/img/frodoAssets/aki.png')
+                    .setDescription(description),
+            ] });
     }
     async updateMessage() {
-        await this.interaction.editReply(new discord_js_1.MessageEmbed()
-            .setTitle('Akinator:')
-            .setColor('#3498db')
-            .setThumbnail('https://frodo.fun/static/img/frodoAssets/aki.png')
-            .addFields({ name: 'Question:', value: this.aki.question }, {
-            name: 'Answers:',
-            value: `\n1: ${this.aki.answers[0]}\n2: ${this.aki.answers[1]}\n3: ${this.aki.answers[2]}\n4: ${this.aki.answers[3]}\n5: ${this.aki.answers[4]}\n6: Back`,
-        }, { name: 'Progress:', value: this.aki.progress }));
+        await this.interaction.editReply({ embeds: [
+                new discord_js_1.MessageEmbed()
+                    .setTitle('Akinator:')
+                    .setColor('#3498db')
+                    .setThumbnail('https://frodo.fun/static/img/frodoAssets/aki.png')
+                    .addFields({ name: 'Question:', value: this.aki.question }, {
+                    name: 'Answers:',
+                    value: `\n1: ${this.aki.answers[0]}\n2: ${this.aki.answers[1]}\n3: ${this.aki.answers[2]}\n4: ${this.aki.answers[3]}\n5: ${this.aki.answers[4]}\n6: Back`,
+                }, { name: 'Progress:', value: String(this.aki.progress) }),
+            ] });
     }
 }
 exports.Akinator = Akinator;

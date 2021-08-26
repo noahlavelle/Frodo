@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.joke = void 0;
 const fetch = require("node-fetch");
 async function joke(interaction) {
-    await interaction.defer();
+    await interaction.deferReply();
     fetch('https://v2.jokeapi.dev/joke/Any?blacklistFlags=nsfw,religious,political,racist,sexist,explicit')
         .then((res) => res.json())
         .then(async (json) => {

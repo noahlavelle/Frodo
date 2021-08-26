@@ -1,5 +1,5 @@
 import {CommandInteraction, Message, MessageEmbed} from 'discord.js';
-import {removeReaction} from './utils';
+import {getMessage, removeReaction} from './utils';
 
 const fetch = require('node-fetch');
 
@@ -34,8 +34,8 @@ export class Anagrams {
 	}
 
 	async runGame() {
-		await this.interaction.defer();
-		this.interaction.fetchReply().then((msg) => this.message = msg);
+		await this.interaction.deferReply();
+		this.message = await getMessage(this.interaction);
 		let letters = '';
 		await this.updateMessage(letters, '');
 
@@ -49,7 +49,8 @@ export class Anagrams {
 
 		while (letters.length < 9) {
 			try {
-				await this.message.awaitReactions(filter, {
+				await this.message.awaitReactions({
+					filter,
 					max: 1,
 					time: 300000,
 					errors: ['time'],
@@ -90,15 +91,17 @@ export class Anagrams {
 	}
 
 	async updateMessage(letters: string, playAttachment: string) {
-		await this.interaction.editReply('', new MessageEmbed()
-			.setTitle('Countdown')
-			.setColor('#3498db')
-			.addFields(
-				{
-					name: 'How to Play:',
-					value: 'You must choose nine letters by pressing either the vowel or Consonant button. You will then have 30 seconds to find the largest word you can.',
-				},
-				{name: 'Play:', value: (letters == '' ? '...' : letters) + playAttachment},
-			));
+		await this.interaction.editReply({embeds: [
+			new MessageEmbed()
+				.setTitle('Countdown')
+				.setColor('#3498db')
+				.addFields(
+					{
+						name: 'How to Play:',
+						value: 'You must choose nine letters by pressing either the vowel or Consonant button. You will then have 30 seconds to find the largest word you can.',
+					},
+					{name: 'Play:', value: (letters == '' ? '...' : letters) + playAttachment},
+				),
+		]});
 	}
 }

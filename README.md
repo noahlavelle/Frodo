@@ -9,22 +9,22 @@
 <br />
 <p align="center">
   <a href="https://github.com/NoahLavelle/Frodo">
-    <img src="https://i.imgur.com/VZSq2qr.png" alt="Logo" width="260" height="200">
+    <img src="https://frodo.fun/static/img/frodo-bg-rect.svg" alt="Logo" width="260" height="200">
   </a>
 
-<h3 align="center">FrodoSlash - Discord Games Bot</h3>
+<h3 align="center">Frodo - Discord Games Bot</h3>
 
 <p align="center">
-    A work in progress server entertainment bot that aims to have economy games, games like Werewolves, easy to use party features and fun mini games. It will also have per server configs and features like total server backups. 
+    A work in progress server entertainment bot that aims to have economy games, games like Werewolves, easy to use party features and fun mini games.
     <br />
     <a href="https://github.com/NoahLavelle/Frodo"><strong>Explore the Repo»</strong></a>
     <br />
     <br />
-    <a href="https://discord.com/oauth2/authorize?client_id=734746193082581084&permissions=268691536&scope=bot">Invite to your server</a>
+    <a href="https://invite.frodo.fun">Invite to your server</a>
     ·
-    <a href="https://github.com/NoahLavelle/Frodo/issues">Report Bug</a>
+    <a href="https://frodo.fun/feedback">Report Bug</a>
     ·
-    <a href="https://github.com/NoahLavelle/Frodo/issues">Request Feature</a>
+    <a href="https://frodo.fun/feedback">Request Feature</a>
 </p>
 
 

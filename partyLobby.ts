@@ -1,5 +1,5 @@
 import {CommandInteraction, Message, MessageEmbed, User} from 'discord.js';
-import {removeReaction} from './commands/games/utils';
+import {getMessage, removeReaction} from './commands/games/utils';
 
 export class PartyLobby {
 	interaction: CommandInteraction;
@@ -26,8 +26,8 @@ export class PartyLobby {
 	}
 
 	async createLobby() {
-		await this.interaction.defer();
-		await this.interaction.fetchReply().then((message) => this.message = message);
+		await this.interaction.deferReply();
+		this.message = await getMessage(this.interaction);
 		await this.updateMessage();
 		for (let i = 0; i < 2; i++) {
 			await this.message.react(Object.keys(this.buttonReactions)[i]);
@@ -37,7 +37,7 @@ export class PartyLobby {
 			return Object.keys(this.buttonReactions).includes(reaction.emoji.name);
 		};
 
-		const collector = this.message.createReactionCollector(filter);
+		const collector = this.message.createReactionCollector({filter});
 
 		collector.on('collect', async (reaction, user) => {
 			if (user.bot) return;
@@ -72,11 +72,12 @@ export class PartyLobby {
 	}
 
 	async updateMessage() {
-		await this.interaction.editReply('', new MessageEmbed()
-			.setTitle(this.title)
-			.setDescription(this.description)
-			.addFields({name: 'Player Count:', value: this.players.length})
-			.setColor('#3498db'),
-		);
+		await this.interaction.editReply({embeds: [
+			new MessageEmbed()
+				.setTitle(this.title)
+				.setDescription(this.description)
+				.addFields({name: 'Player Count:', value: String(this.players.length)})
+				.setColor('#3498db'),
+		]});
 	}
 }

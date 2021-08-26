@@ -85,7 +85,7 @@ export class Ttt {
 
 		await this.updateMessage();
 		for (const reaction of Object.keys(NumberReactions)) {
-			await this.message.react(reaction);
+			await this.message.reactions.add(reaction);
 		}
 
 		const filter = (reaction, user) => {
@@ -201,7 +201,7 @@ export class Ttt {
 	}
 
 	async updateMessage() {
-		await this.interaction.editReply(`${this.players[0]} has challenged ${this.players[1]} to a game of tic tac toe!`, {
+		await this.interaction.editReply(`${this.interaction.user} has challenged <@${this.interaction.options[0].value}> to a game of tic tac toe!`, {
 			embeds: [(
 				new MessageEmbed()
 					.setColor(EmbedColor)

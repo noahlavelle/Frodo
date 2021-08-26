@@ -1,8 +1,10 @@
+import {SlashCommandBuilder} from '@discordjs/builders';
+
 import {ConnectFour} from './commands/games/connectFour';
 import {Rps} from './commands/games/rps';
 import {Akinator} from './commands/games/akinator';
 import {Anagrams} from './commands/games/anagrams';
-const {Trivia, triviaCategories} = require('./commands/games/trivia.js');
+const {triviaCategories} = require('./commands/games/trivia.js');
 import {Ttt} from './commands/games/ttt';
 import {Othello} from './commands/games/othello';
 import {Hangman} from './commands/games/hangman';
@@ -16,200 +18,207 @@ import {uptime} from './commands/Utils/uptime';
 import {avatar} from './commands/Utils/avatar';
 import {ping} from './commands/Utils/ping';
 
-const CommandHandlers = {
-	'connectfour': (interaction) => {
-		new ConnectFour(interaction);
-	},
-	'rps': (interaction) => {
-		new Rps(interaction);
-	},
-	'ttt': (interaction) => {
-		new Ttt(interaction);
-	},
-	'hangman': (interaction) => {
-		new Hangman(interaction);
-	},
-	'akinator': (interaction) => {
-		new Akinator(interaction);
-	},
-	'anagrams': (interaction) => {
-		new Anagrams(interaction);
-	},
-	'werewolf': (interaction) => {
-		new Werewolf(interaction);
-	},
-
-	'triviacategories': (interaction) => {
-		triviaCategories(interaction);
-	},
-	'trivia': (interaction) => {
-		new Trivia(interaction);
-	},
-	'othello': (interaction) => {
-		new Othello(interaction);
-	},
-
-	'fact': (interaction) => {
-		fact(interaction);
-	},
-	'fortune': (interaction) => {
-		fortune(interaction);
-	},
-	'joke': (interaction) => {
-		joke(interaction);
-	},
-	'insult': (interaction) => {
-		insult(interaction);
-	},
-	'help': (interaction) => {
-		help(interaction);
-	},
-	'uptime': (interaction) => {
-		uptime(interaction);
-	},
-	'avatar': (interaction) => {
-		avatar(interaction);
-	},
-	'ping': (interaction) => {
-		ping(interaction);
-	},
-};
 
 namespace CommandData {
 	export const connectFourCommandData = {
-		name: 'connectfour',
-		description: 'A game of connect four against another player',
-		options: [
-			{
-				name: 'playertwo',
-				type: 'USER',
-				description: 'The user that you want to challenge',
-				required: true,
-			},
-		],
+		data: new SlashCommandBuilder()
+			.setName('connectfour')
+			.setDescription('A game of connect four against another player')
+			.addUserOption((option) => {
+				return option
+					.setName('playertwo')
+					.setDescription('The user that you want to challenge')
+					.setRequired(true);
+			}),
+		execute(interaction) {
+			new ConnectFour(interaction);
+		},
 	};
-
 	export const rpsCommandData = {
-		name: 'rps',
-		description: 'A game of rock paper scissors four against another player',
-		options: [
-			{
-				name: 'playertwo',
-				type: 'USER',
-				description: 'The user that you want to challenge',
-				required: true,
-			},
-		],
+		data: new SlashCommandBuilder()
+			.setName('rps')
+			.setDescription('A game of rock paper scissors four against another player')
+			.addUserOption((option) => {
+				return option
+					.setName('playertwo')
+					.setDescription('The user that you want to challenge')
+					.setRequired(true);
+			}),
+		execute(interaction) {
+			new Rps(interaction);
+		},
 	};
 
 	export const tttCommandData = {
-		name: 'ttt',
-		description: 'A game of noughts and crosses (tick tack toe)',
-		options: [
-			{
-				name: 'playertwo',
-				type: 'USER',
-				description: 'The user that you want to challenge',
-				required: true,
-			},
-		],
+		data: new SlashCommandBuilder()
+			.setName('ttt')
+			.setDescription('A game of noughts and crosses (tick tack toe)')
+			.addUserOption((option) => {
+				return option
+					.setName('playertwo')
+					.setDescription('The user that you want to challenge')
+					.setRequired(true);
+			}),
+		execute(interaction) {
+			new Ttt(interaction);
+		},
 	};
 
 	export const hangmanCommandData = {
-		name: 'hangman',
-		description: 'A game of hangman',
-		options: [
-			{
-				name: 'playertwo',
-				type: 'USER',
-				description: 'The user that you want to challenge',
-				required: true,
-			},
-		],
+		data: new SlashCommandBuilder()
+			.setName('hangman')
+			.setDescription('A game of hangman')
+			.addUserOption((option) => {
+				return option
+					.setName('playertwo')
+					.setDescription('The user that you want to challenge')
+					.setRequired(true);
+			}),
+		execute(interaction) {
+			new Hangman(interaction);
+		},
 	};
 
 	export const akinatorCommandData = {
-		name: 'akinator',
-		description: 'A game of akinator against the AI',
+		data: new SlashCommandBuilder()
+			.setName('akinator')
+			.setDescription('A game of akinator against the AI'),
+		execute(interaction) {
+			new Akinator(interaction);
+		},
 	};
 
 	export const anagramsCommandData = {
-		name: 'anagrams',
-		description: 'A round of countdown as seen on the TV program',
+		data: new SlashCommandBuilder()
+			.setName('anagrams')
+			.setDescription('A round of countdown as seen on the TV program'),
+		execute(interaction) {
+			new Anagrams(interaction);
+		},
 	};
 
 	export const werewolfCommandData = {
-		name: 'werewolf',
-		description: 'The classic party social deduction game',
+		data: new SlashCommandBuilder()
+			.setName('werewolf')
+			.setDescription('The classic party social deduction game'),
+		execute(interaction) {
+			new Werewolf(interaction);
+		},
 	};
 
-	export const othello = {
-		name: 'othello',
-		description: 'A game of othello against another player',
-		options: [
-			{
-				name: 'playertwo',
-				type: 'USER',
-				description: 'The user that you want to challenge',
-				required: true,
-			},
-			{
-				name: 'showmoves',
-				type: 'BOOLEAN',
-				description: 'Will show you your options that you can move to for the game',
-				required: false,
-			},
-		],
+	export const othelloCommandData = {
+		data: new SlashCommandBuilder()
+			.setName('othello')
+			.setDescription('A game of othello against another player')
+			.addUserOption((option) => {
+				return option
+					.setName('playertwo')
+					.setDescription('The user that you want to challenge')
+					.setRequired(true);
+			})
+			.addBooleanOption((option) => {
+				return option
+					.setName('showmoves')
+					.setDescription('Will show you your options that you can move to for the game')
+					.setRequired(false);
+			}),
+		execute(interaction) {
+			new Othello(interaction);
+		},
 	};
 
 	export const factCommandData = {
-		name: 'fact',
-		description: 'Sends a random fact',
+		data: new SlashCommandBuilder()
+			.setName('fact')
+			.setDescription('Sends a random fact'),
+		execute(interaction) {
+			fact(interaction);
+		},
 	};
+
 	export const fortuneCommandData = {
-		name: 'fortune',
-		description: 'Sends a random fortune',
+		data: new SlashCommandBuilder()
+			.setName('fortune')
+			.setDescription('Sends a random fortune'),
+		execute(interaction) {
+			fortune(interaction);
+		},
 	};
+
 	export const jokeCommandData = {
-		name: 'joke',
-		description: 'Sends a random joke',
+		data: new SlashCommandBuilder()
+			.setName('joke')
+			.setDescription('Sends a random joke'),
+		execute(interaction) {
+			joke(interaction);
+		},
 	};
+
 	export const insultCommandData = {
-		name: 'insult',
-		description: 'Sends a random insult',
-		options: [{
-			name: 'player',
-			type: 'USER',
-			description: 'Pick a person to insult!',
-			required: false,
-		}],
+		data: new SlashCommandBuilder()
+			.setName('insult')
+			.setDescription('Sends a random insult')
+			.addUserOption((option) => {
+				return option
+					.setName('user')
+					.setDescription('The user that you want to insult')
+					.setRequired(false);
+			}),
+		execute(interaction) {
+			insult(interaction);
+		},
 	};
-	export const triviaCategoriesCommandData = {
-		name: 'triviacategories',
-		description: 'View all Trivia categories',
+
+	export const triviacategoriesCommandData = {
+		data: new SlashCommandBuilder()
+			.setName('triviacategories')
+			.setDescription('View all Trivia categories'),
+		execute(interaction) {
+			triviaCategories(interaction);
+		},
 	};
+
 	export const helpCommandData = {
-		name: 'help',
-		description: 'Get help using Frodo',
+		data: new SlashCommandBuilder()
+			.setName('help')
+			.setDescription('Get help using Frodo'),
+		execute(interaction) {
+			help(interaction);
+		},
 	};
+
 	export const uptimeCommandData = {
-		name: 'uptime',
-		description: 'View the uptime of Frodo',
+		data: new SlashCommandBuilder()
+			.setName('uptime')
+			.setDescription('View the uptime of Frodo'),
+		execute(interaction) {
+			uptime(interaction);
+		},
 	};
+
 	export const avatarCommandData = {
-		name: 'avatar',
-		description: 'Get a user\'s avatar',
-		options: [{
-			name: 'user',
-			type: 'USER',
-			description: 'The user that you would like to get thier avatar',
-			required: true,
-		}],
+		data: new SlashCommandBuilder()
+			.setName('avatar')
+			.setDescription('Get a user\'s avatar')
+			.addUserOption((option) => {
+				return option
+					.setName('user')
+					.setDescription('The user that you would like to get their avatar')
+					.setRequired(true);
+			}),
+		execute(interaction) {
+			avatar(interaction);
+		},
 	};
+
 	export const pingCommandData = {
-		name: 'ping',
-		description: 'Check Frodo\'s ping',
+		data: new SlashCommandBuilder()
+			.setName('ping')
+			.setDescription('Check Frodo\'s ping'),
+		execute(interaction) {
+			ping(interaction);
+		},
 	};
 }
 
-export {CommandHandlers, CommandData};
+export {CommandData};

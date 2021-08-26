@@ -2,7 +2,7 @@ import fetch = require('node-fetch');
 import {CommandInteraction} from 'discord.js';
 
 export async function joke(interaction: CommandInteraction) {
-	await interaction.defer();
+	await interaction.deferReply();
 	fetch('https://v2.jokeapi.dev/joke/Any?blacklistFlags=nsfw,religious,political,racist,sexist,explicit')
 		.then((res) => res.json())
 		.then(async (json) => {

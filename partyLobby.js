@@ -18,8 +18,8 @@ class PartyLobby {
         this.createLobby();
     }
     async createLobby() {
-        await this.interaction.defer();
-        await this.interaction.fetchReply().then((message) => this.message = message);
+        await this.interaction.deferReply();
+        this.message = await utils_1.getMessage(this.interaction);
         await this.updateMessage();
         for (let i = 0; i < 2; i++) {
             await this.message.react(Object.keys(this.buttonReactions)[i]);
@@ -27,7 +27,7 @@ class PartyLobby {
         const filter = (reaction, user) => {
             return Object.keys(this.buttonReactions).includes(reaction.emoji.name);
         };
-        const collector = this.message.createReactionCollector(filter);
+        const collector = this.message.createReactionCollector({ filter });
         collector.on('collect', async (reaction, user) => {
             if (user.bot)
                 return;
@@ -61,11 +61,13 @@ class PartyLobby {
     gameStarted(players) {
     }
     async updateMessage() {
-        await this.interaction.editReply('', new discord_js_1.MessageEmbed()
-            .setTitle(this.title)
-            .setDescription(this.description)
-            .addFields({ name: 'Player Count:', value: this.players.length })
-            .setColor('#3498db'));
+        await this.interaction.editReply({ embeds: [
+                new discord_js_1.MessageEmbed()
+                    .setTitle(this.title)
+                    .setDescription(this.description)
+                    .addFields({ name: 'Player Count:', value: String(this.players.length) })
+                    .setColor('#3498db'),
+            ] });
     }
 }
 exports.PartyLobby = PartyLobby;

@@ -1,12 +1,11 @@
 import Discord = require('discord.js');
 import {Intents, MessageEmbed} from 'discord.js';
-import {CommandData, CommandHandlers} from './commandData';
+import {CommandData} from './commandData';
 
 // @ts-ignore
-const client = new Discord.Client({intents: [Intents.ALL]});
+const client = new Discord.Client({intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS]});
 export const EmbedColor = '#3498db';
 export const timestamp = Date.now();
-
 
 function statusRotation(statuses, speed) {
 	let current = 0;
@@ -26,19 +25,17 @@ client.once('ready', async () => {
 		['.help'],
 		[() => `${client.guilds.cache.size} servers!`, 'WATCHING'],
 	], 10000);
-	for (const key of Object.keys(CommandData)) { // @ts-ignore
-		// await client.application.commands.create(CommandData[key]);
-		// await client.guilds.cache.get('839919274395303946')?.commands.create(CommandData[key]);
-		// await client.guilds.cache.get('853033979803729920')?.commands.create(CommandData[key]);
-	}
 	console.log('Ready');
 });
 
 
-client.on('interaction', async (interaction) => {
+client.on('interactionCreate', async (interaction) => {
 	if (!interaction.isCommand()) return;
-	CommandHandlers[interaction.commandName](interaction);
+	if (Object.keys(CommandData).includes(`${interaction.commandName}CommandData`)) {
+		CommandData[`${interaction.commandName}CommandData`].execute(interaction);
+	}
 });
+
 const helpEmbed = (auth) => {
 	return new MessageEmbed()
 		.setColor(EmbedColor)
@@ -48,15 +45,17 @@ const helpEmbed = (auth) => {
 		.addField('How to use new commands:', 'Once Frodo has been given the new permissions, type `/` to view its commands!')
 		.addField('Not Working?', 'Let us know at our [feedback page](https://frodo.fun/feedback) and we will be in contact to fix your issue!');
 };
-client.on('message', async (message) => {
-	if (message.content.startsWith('.') || message.content.includes(`<@!${client.user.id}>`)) {
+client.on('messageCreate', async (message) => {
+	if (message.content.startsWith('.') || message.content.includes(client.user.id)) {
 		let auth = true;
 		try {
-			await message.guild.commands.fetchPermissions();
+			// await message.guild.commands.fetchPermissions();
 		} catch (err) {
 			auth = false;
 		};
-		await message.reply(helpEmbed(auth));
+		if (message.content.includes(`<@!${client.user.id}>`) || (message.content.startsWith('.') && !auth)) {
+			await message.reply({embeds: [helpEmbed(auth)]});
+		};
 	};
 });
 

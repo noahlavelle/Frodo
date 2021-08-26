@@ -27,8 +27,8 @@ class Anagrams {
         this.runGame();
     }
     async runGame() {
-        await this.interaction.defer();
-        this.interaction.fetchReply().then((msg) => this.message = msg);
+        await this.interaction.deferReply();
+        this.message = await utils_1.getMessage(this.interaction);
         let letters = '';
         await this.updateMessage(letters, '');
         for (const letter of Object.keys(LetterReactions)) {
@@ -39,7 +39,8 @@ class Anagrams {
         };
         while (letters.length < 9) {
             try {
-                await this.message.awaitReactions(filter, {
+                await this.message.awaitReactions({
+                    filter,
                     max: 1,
                     time: 300000,
                     errors: ['time'],
@@ -77,13 +78,15 @@ class Anagrams {
         }, 30000);
     }
     async updateMessage(letters, playAttachment) {
-        await this.interaction.editReply('', new discord_js_1.MessageEmbed()
-            .setTitle('Countdown')
-            .setColor('#3498db')
-            .addFields({
-            name: 'How to Play:',
-            value: 'You must choose nine letters by pressing either the vowel or Consonant button. You will then have 30 seconds to find the largest word you can.',
-        }, { name: 'Play:', value: (letters == '' ? '...' : letters) + playAttachment }));
+        await this.interaction.editReply({ embeds: [
+                new discord_js_1.MessageEmbed()
+                    .setTitle('Countdown')
+                    .setColor('#3498db')
+                    .addFields({
+                    name: 'How to Play:',
+                    value: 'You must choose nine letters by pressing either the vowel or Consonant button. You will then have 30 seconds to find the largest word you can.',
+                }, { name: 'Play:', value: (letters == '' ? '...' : letters) + playAttachment }),
+            ] });
     }
 }
 exports.Anagrams = Anagrams;

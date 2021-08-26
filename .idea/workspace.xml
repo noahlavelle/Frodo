@@ -2,11 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a3cc3e2f-3e43-4af7-80f5-c3baf3cd5f74" name="Default Changelist" comment="fixed some commands">
-      <change afterPath="$PROJECT_DIR$/commands/Utils/avatar.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/commands/Utils/help.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/commands/Utils/ping.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/commands/Utils/uptime.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/refreshCommands.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/commandData.js" beforeDir="false" afterPath="$PROJECT_DIR$/commandData.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/commandData.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/commandData.js.map" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/commandData.ts" beforeDir="false" afterPath="$PROJECT_DIR$/commandData.ts" afterDir="false" />
@@ -16,8 +14,8 @@
       <change beforePath="$PROJECT_DIR$/commands/chat/fortune.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/chat/fortune.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/commands/chat/fortune.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/commands/chat/fortune.js.map" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/commands/chat/fortune.ts" beforeDir="false" afterPath="$PROJECT_DIR$/commands/chat/fortune.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/chat/insult.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/chat/insult.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/chat/insult.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/commands/chat/insult.js.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/chat/insult.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/chat/insult.js.map" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/commands/chat/insult.ts" beforeDir="false" afterPath="$PROJECT_DIR$/commands/chat/insult.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/commands/chat/joke.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/chat/joke.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/commands/chat/joke.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/commands/chat/joke.js.map" afterDir="false" />
@@ -25,23 +23,26 @@
       <change beforePath="$PROJECT_DIR$/commands/games/akinator.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/akinator.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/commands/games/akinator.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/akinator.js.map" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/commands/games/akinator.ts" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/akinator.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/games/othello.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/othello.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/games/othello.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/othello.js.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/games/othello.ts" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/othello.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/games/rps.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/rps.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/games/rps.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/rps.js.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/games/rps.ts" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/rps.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/games/trivia.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/trivia.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/games/trivia.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/trivia.js.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/games/trivia.ts" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/trivia.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/games/anagrams.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/anagrams.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/games/anagrams.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/anagrams.js.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/games/anagrams.ts" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/anagrams.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/commands/games/ttt.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/ttt.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/commands/games/ttt.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/ttt.js.map" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/commands/games/ttt.ts" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/ttt.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/games/utils.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/utils.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/games/utils.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/utils.js.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/games/utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/utils.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/games/werewolf.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/werewolf.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/games/werewolf.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/werewolf.js.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/games/werewolf.ts" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/werewolf.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/index.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/index.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/index.js.map" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/index.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/partyLobby.js" beforeDir="false" afterPath="$PROJECT_DIR$/partyLobby.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/partyLobby.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/partyLobby.js.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/partyLobby.ts" beforeDir="false" afterPath="$PROJECT_DIR$/partyLobby.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -87,14 +88,26 @@
     <property name="node.js.selected.package.standard" value="" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_package_manager_path" value="npm" />
+    <property name="restartRequiresConfirmation" value="false" />
     <property name="settings.editor.selected.configurable" value="settings.typescriptcompiler" />
-    <property name="ts.external.directory.path" value="C:\Users\danie\OneDrive - Ralph Allen School\Documents\Programming\Frodo\node_modules\typescript\lib" />
+    <property name="ts.external.directory.path" value="S:\Documents\Programming\Frodo\node_modules\typescript\lib" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Node.js.Frodo">
     <configuration name="Frodo" type="NodeJSConfigurationType" path-to-js-file="index.js" working-dir="$PROJECT_DIR$">
+      <envs>
+        <env name="TOKEN" value="NzM3Mjg2NzMyNTEyNDkzNTgw.Xx7Jxw.lqPTcFlhgtDfm-2Jgm8vV3RZKL4" />
+      </envs>
       <method v="2" />
     </configuration>
+    <configuration name="refreshCommands.js" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="$PROJECT_DIR$/refreshCommands.js" working-dir="$PROJECT_DIR$">
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Node.js.refreshCommands.js" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -143,7 +156,17 @@
       <workItem from="1624604480068" duration="2608000" />
       <workItem from="1624607696445" duration="829000" />
       <workItem from="1624611645253" duration="565000" />
-      <workItem from="1624622930376" duration="2513000" />
+      <workItem from="1624622930376" duration="4362000" />
+      <workItem from="1624711718271" duration="604000" />
+      <workItem from="1624735905414" duration="764000" />
+      <workItem from="1624907275615" duration="782000" />
+      <workItem from="1626985394788" duration="388000" />
+      <workItem from="1629822765171" duration="175000" />
+      <workItem from="1629829028603" duration="775000" />
+      <workItem from="1629829818772" duration="74000" />
+      <workItem from="1629834829517" duration="537000" />
+      <workItem from="1629976010915" duration="9831000" />
+      <workItem from="1630004203687" duration="4259000" />
     </task>
     <task id="LOCAL-00001" summary="fixed some commands">
       <created>1624057983961</created>
@@ -159,48 +182,50 @@
     <option name="version" value="3" />
     <option name="exactExcludedFiles">
       <list>
-        <option value="$PROJECT_DIR$/commands/chat/joke.js.map" />
-        <option value="$PROJECT_DIR$/commands/chat/joke.js" />
-        <option value="$PROJECT_DIR$/commands/chat/fortune.js.map" />
-        <option value="$PROJECT_DIR$/commands/chat/fortune.js" />
-        <option value="$PROJECT_DIR$/commands/chat/insult.js.map" />
         <option value="$PROJECT_DIR$/commands/chat/insult.js" />
-        <option value="$PROJECT_DIR$/commands/games/werewolf.js.map" />
-        <option value="$PROJECT_DIR$/commands/games/werewolf.js" />
-        <option value="$PROJECT_DIR$/commands/chat/fact.js.map" />
-        <option value="$PROJECT_DIR$/commands/chat/fact.js" />
-        <option value="$PROJECT_DIR$/commands/games/rps.js.map" />
-        <option value="$PROJECT_DIR$/commands/games/rps.js" />
-        <option value="$PROJECT_DIR$/commands/games/ttt.js.map" />
-        <option value="$PROJECT_DIR$/commands/games/ttt.js" />
-        <option value="$PROJECT_DIR$/commands/games/connectFour.js.map" />
-        <option value="$PROJECT_DIR$/commands/games/connectFour.js" />
-        <option value="$PROJECT_DIR$/commands/games/hangman.js.map" />
-        <option value="$PROJECT_DIR$/commands/games/hangman.js" />
-        <option value="$PROJECT_DIR$/commands/games/anagrams.js.map" />
-        <option value="$PROJECT_DIR$/commands/games/anagrams.js" />
-        <option value="$PROJECT_DIR$/commands/games/utils.js.map" />
-        <option value="$PROJECT_DIR$/commands/games/utils.js" />
-        <option value="$PROJECT_DIR$/commands/games/akinator.js.map" />
+        <option value="$PROJECT_DIR$/commands/chat/insult.js.map" />
+        <option value="$PROJECT_DIR$/refreshCommands.js.map" />
+        <option value="$PROJECT_DIR$/refreshCommands.js" />
         <option value="$PROJECT_DIR$/commands/games/akinator.js" />
-        <option value="$PROJECT_DIR$/commandData.js.map" />
-        <option value="$PROJECT_DIR$/commandData.js" />
-        <option value="$PROJECT_DIR$/partyLobby.js.map" />
-        <option value="$PROJECT_DIR$/partyLobby.js" />
+        <option value="$PROJECT_DIR$/commands/games/anagrams.js" />
+        <option value="$PROJECT_DIR$/commands/games/anagrams.js.map" />
+        <option value="$PROJECT_DIR$/commands/games/trivia.js.map" />
+        <option value="$PROJECT_DIR$/commands/games/ttt.js.map" />
         <option value="$PROJECT_DIR$/index.js" />
         <option value="$PROJECT_DIR$/index.js.map" />
-        <option value="$PROJECT_DIR$/commands/games/trivia.js" />
-        <option value="$PROJECT_DIR$/commands/games/trivia.js.map" />
-        <option value="$PROJECT_DIR$/commands/games/othello.js" />
-        <option value="$PROJECT_DIR$/commands/games/othello.js.map" />
         <option value="$PROJECT_DIR$/commands/Utils/help.js.map" />
-        <option value="$PROJECT_DIR$/commands/Utils/help.js" />
+        <option value="$PROJECT_DIR$/commands/chat/fact.js.map" />
+        <option value="$PROJECT_DIR$/commands/games/rps.js" />
         <option value="$PROJECT_DIR$/commands/Utils/uptime.js.map" />
+        <option value="$PROJECT_DIR$/partyLobby.js.map" />
+        <option value="$PROJECT_DIR$/commandData.js" />
+        <option value="$PROJECT_DIR$/commands/games/hangman.js" />
+        <option value="$PROJECT_DIR$/commands/games/connectFour.js.map" />
+        <option value="$PROJECT_DIR$/commands/chat/joke.js.map" />
+        <option value="$PROJECT_DIR$/commands/games/werewolf.js" />
+        <option value="$PROJECT_DIR$/commands/chat/fortune.js.map" />
+        <option value="$PROJECT_DIR$/commands/games/hangman.js.map" />
+        <option value="$PROJECT_DIR$/commands/Utils/ping.js.map" />
+        <option value="$PROJECT_DIR$/commands/games/akinator.js.map" />
+        <option value="$PROJECT_DIR$/commands/games/othello.js.map" />
+        <option value="$PROJECT_DIR$/commands/games/othello.js" />
+        <option value="$PROJECT_DIR$/commands/games/utils.js" />
+        <option value="$PROJECT_DIR$/commands/Utils/avatar.js" />
+        <option value="$PROJECT_DIR$/partyLobby.js" />
+        <option value="$PROJECT_DIR$/commands/games/connectFour.js" />
+        <option value="$PROJECT_DIR$/commands/games/rps.js.map" />
         <option value="$PROJECT_DIR$/commands/Utils/uptime.js" />
         <option value="$PROJECT_DIR$/commands/Utils/avatar.js.map" />
-        <option value="$PROJECT_DIR$/commands/Utils/avatar.js" />
+        <option value="$PROJECT_DIR$/commands/games/werewolf.js.map" />
         <option value="$PROJECT_DIR$/commands/Utils/ping.js" />
-        <option value="$PROJECT_DIR$/commands/Utils/ping.js.map" />
+        <option value="$PROJECT_DIR$/commands/Utils/help.js" />
+        <option value="$PROJECT_DIR$/commands/chat/joke.js" />
+        <option value="$PROJECT_DIR$/commandData.js.map" />
+        <option value="$PROJECT_DIR$/commands/games/ttt.js" />
+        <option value="$PROJECT_DIR$/commands/chat/fact.js" />
+        <option value="$PROJECT_DIR$/commands/chat/fortune.js" />
+        <option value="$PROJECT_DIR$/commands/games/trivia.js" />
+        <option value="$PROJECT_DIR$/commands/games/utils.js.map" />
       </list>
     </option>
   </component>
