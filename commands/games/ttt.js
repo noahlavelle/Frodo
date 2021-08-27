@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Ttt = void 0;
 const discord_js_1 = require("discord.js");
 const index_1 = require("../../index");
+const utils_1 = require("./utils");
 const NumberReactions = {
     '856566113851932672': 1,
     '856566113872510976': 2,
@@ -51,10 +52,10 @@ class Ttt {
     constructor(interaction) {
         this.interaction = interaction;
         if (Math.round(Math.random()) === 0) {
-            this.players = [this.interaction.user, index_1.client.users.cache.find((user) => user.id == interaction.options[0].value)];
+            this.players = [this.interaction.user, this.interaction.options.getUser('playertwo')];
         }
         else {
-            this.players = [index_1.client.users.cache.find((user) => user.id == interaction.options[0].value), this.interaction.user];
+            this.players = [this.interaction.options.getUser('playertwo'), this.interaction.user];
         }
         ;
         this.currentPlayer = this.players[0];
@@ -68,8 +69,8 @@ class Ttt {
             return;
         }
         let hasWon = false;
-        await this.interaction.defer();
-        await this.interaction.fetchReply().then((msg) => this.message = msg);
+        await this.interaction.deferReply();
+        this.message = await utils_1.getMessage(this.interaction);
         for (let i = 0; i < 3; i++) {
             this.grid.push([]);
             for (let j = 0; j < 3; j++) {
@@ -78,13 +79,13 @@ class Ttt {
         }
         await this.updateMessage();
         for (const reaction of Object.keys(NumberReactions)) {
-            await this.message.reactions.add(reaction);
+            await this.message.react(reaction);
         }
         const filter = (reaction, user) => {
             return Object.keys(NumberReactionsFilter).includes(reaction.emoji.name) && this.currentPlayer.id == user.id;
         };
         while (!hasWon) {
-            await this.message.awaitReactions(filter, { max: 1, time: 300000, errors: ['time'] }).then(async (collected) => {
+            await this.message.awaitReactions({ filter, max: 1, time: 300000, errors: ['time'] }).then(async (collected) => {
                 const selectedNumber = NumberReactionsFilter[collected.first().emoji.name];
                 await this.message.reactions.cache.get(Object.keys(NumberReactions)[selectedNumber - 1]).remove();
                 const rowNumber = Math.ceil(selectedNumber / 3) - 1;
@@ -118,7 +119,6 @@ class Ttt {
             })
                 .catch(async (err) => {
                 hasWon = true;
-                await this.interaction.fetchReply().then((msg) => this.message = msg);
                 await this.message.reactions.removeAll();
                 await this.message.edit('The game has timed out!');
             });
@@ -162,28 +162,35 @@ class Ttt {
         return streak;
     }
     async win() {
-        await this.interaction.fetchReply().then((msg) => this.message = msg);
         await this.message.reactions.removeAll();
-        await this.interaction.editReply(`${this.isPlayerOne ? this.players[0] : this.players[1]} has won!`, {
-            embeds: [(new discord_js_1.MessageEmbed()
+        await this.interaction.editReply({
+            content: `${this.isPlayerOne ? this.players[0] : this.players[1]} has won!`,
+            embeds: [
+                new discord_js_1.MessageEmbed()
                     .setColor(index_1.EmbedColor)
-                    .setDescription(`\n\n${this.grid.map((e) => e.join('')).join('\n')}`))],
+                    .setDescription(`\n\n${this.grid.map((e) => e.join('')).join('\n')}`),
+            ]
         });
     }
     async draw() {
-        await this.interaction.fetchReply().then((msg) => this.message = msg);
         await this.message.reactions.removeAll();
-        await this.interaction.editReply(`You drew!`, {
-            embeds: [(new discord_js_1.MessageEmbed()
+        await this.interaction.editReply({
+            content: `You drew!`,
+            embeds: [
+                new discord_js_1.MessageEmbed()
                     .setColor(index_1.EmbedColor)
-                    .setDescription(`\n\n${this.grid.map((e) => e.join('')).join('\n')}`))],
+                    .setDescription(`\n\n${this.grid.map((e) => e.join('')).join('\n')}`),
+            ]
         });
     }
     async updateMessage() {
-        await this.interaction.editReply(`${this.interaction.user} has challenged <@${this.interaction.options[0].value}> to a game of tic tac toe!`, {
-            embeds: [(new discord_js_1.MessageEmbed()
+        await this.interaction.editReply({
+            content: `${this.interaction.user} has challenged <@${this.interaction.options[0].value}> to a game of tic tac toe!`,
+            embeds: [
+                new discord_js_1.MessageEmbed()
                     .setColor(index_1.EmbedColor)
-                    .setDescription(`\nCurrent go: ${this.isPlayerOne ? PlayerEmojis[2] : PlayerEmojis[3]} ${this.currentPlayer}\n\n${this.grid.map((e) => e.join('')).join('\n')}`))],
+                    .setDescription(`\nCurrent go: ${this.isPlayerOne ? PlayerEmojis[2] : PlayerEmojis[3]} ${this.currentPlayer}\n\n${this.grid.map((e) => e.join('')).join('\n')}`),
+            ]
         });
     }
 }

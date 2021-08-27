@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Othello = void 0;
 const discord_js_1 = require("discord.js");
-const index_1 = require("../../index");
 const utils_1 = require("./utils");
 const clearEmojis = [
     '<:p0c:851057388030525440>',
@@ -89,7 +88,7 @@ class Othello {
             [0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0],
         ];
-        this.help = interaction.options[1]?.value;
+        this.help = interaction.options.getBoolean('showmoves');
         this.tipsEmojis = this.help ? [
             '<:gr:851050647302438912>',
             '<:0o:855787570834046976>',
@@ -114,17 +113,18 @@ class Othello {
     ;
     async startGame() {
         if (Math.round(Math.random()) === 0) {
-            this.players = [this.interaction.user, await index_1.client.users.fetch(String(this.interaction.options[0].value))];
+            this.players = [this.interaction.user, this.interaction.options.getUser('playertwo')];
         }
         else {
-            this.players = [await index_1.client.users.fetch(String(this.interaction.options[0].value)), this.interaction.user];
+            this.players = [this.interaction.options.getUser('playertwo'), this.interaction.user];
         }
         ;
         if (!this.players[1] || this.players[1].bot)
             return this.interaction.reply('The player could not be found or was a bot');
-        if (this.interaction.user.id === this.interaction.options[0].value)
+        if (this.players[0] === this.players[1])
             return this.interaction.reply('You can\'t play othello with yourself!');
         await this.updateMessage();
+        this.message = await utils_1.getMessage(this.interaction);
         await this.reactToMessage(this.message);
         this.makeTipReaction();
         this.playerGo();
@@ -132,7 +132,7 @@ class Othello {
     ;
     async playerGo() {
         const filter = (reaction, user) => (Object.keys(letterReactionsFilter).includes(reaction.emoji.name) || Object.keys(numberReactionsFilter).includes(reaction.emoji.name) || Object.keys(controlReactions).includes(reaction.emoji.name)) && this.players[this.playersGo].id == user.id;
-        await this.message.awaitReactions(filter, { max: 1, time: 300000, errors: ['time'] })
+        await this.message.awaitReactions({ filter, max: 1, time: 300000, errors: ['time'] })
             .then(async (collected) => {
             const letter = Object.keys(letterReactionsFilter).includes(collected.first().emoji.name);
             const number = Object.keys(numberReactionsFilter).includes(collected.first().emoji.name);
@@ -347,17 +347,26 @@ class Othello {
             });
         });
         if (this.interaction.replied) {
-            await this.message.edit(`<@${this.interaction.user.id}> challenged <@${this.interaction.options[0].value}> to a game of othello!`, new discord_js_1.MessageEmbed()
-                .setColor('#78B159')
-                .setFooter(`${this.players[0].username}: ${black}, ${this.players[1].username}: ${white}`)
-                .setDescription(`Current go: ${clearEmojis[this.playersGo]} <@${this.players[this.playersGo].id}>\n\n${this.stringGrid()}`));
+            await this.message.edit({
+                content: `<@${this.interaction.user.id}> challenged ${this.interaction.options.getUser('playertwo')} to a game of othello!`,
+                embeds: [
+                    new discord_js_1.MessageEmbed()
+                        .setColor('#78B159')
+                        .setFooter(`${this.players[0].username}: ${black}, ${this.players[1].username}: ${white}`)
+                        .setDescription(`Current go: ${clearEmojis[this.playersGo]} <@${this.players[this.playersGo].id}>\n\n${this.stringGrid()}`),
+                ]
+            });
         }
         else {
-            await this.interaction.reply(`<@${this.interaction.user.id}> challenged <@${this.interaction.options[0].value}> to a game of othello!`, new discord_js_1.MessageEmbed()
-                .setColor('#78B159')
-                .setFooter(`${this.players[0].username}: ${black}, ${this.players[1].username}: ${white}`)
-                .setDescription(`Current go: ${clearEmojis[this.playersGo]} <@${this.players[this.playersGo].id}>\n\n${this.stringGrid()}`));
-            this.message = await this.interaction.fetchReply();
+            await this.interaction.reply({
+                content: `<@${this.interaction.user.id}> challenged ${this.interaction.options.getUser('playertwo')} to a game of othello!`,
+                embeds: [
+                    new discord_js_1.MessageEmbed()
+                        .setColor('#78B159')
+                        .setFooter(`${this.players[0].username}: ${black}, ${this.players[1].username}: ${white}`)
+                        .setDescription(`Current go: ${clearEmojis[this.playersGo]} <@${this.players[this.playersGo].id}>\n\n${this.stringGrid()}`),
+                ]
+            });
         }
         ;
         return null;
@@ -383,10 +392,15 @@ class Othello {
             text = `<@${this.players[0].id}> Won!`;
         else if (white > black)
             text = `<@${this.players[1].id}> Won!`;
-        this.message.edit(text, new discord_js_1.MessageEmbed()
-            .setColor('#78B159')
-            .setFooter(`${this.players[0].username}: ${black}, ${this.players[1].username}: ${white}`)
-            .setDescription(`\n${this.stringGrid()}`));
+        this.message.edit({
+            content: text,
+            embeds: [
+                new discord_js_1.MessageEmbed()
+                    .setColor('#78B159')
+                    .setFooter(`${this.players[0].username}: ${black}, ${this.players[1].username}: ${white}`)
+                    .setDescription(`\n${this.stringGrid()}`),
+            ]
+        });
     }
     ;
     stringGrid() {
@@ -467,14 +481,13 @@ class Othello {
     }
     ;
     async makeTipReaction() {
-        this.message = await this.interaction.fetchReply();
         await this.message.react('<:tip:856171946663084073>');
         this.waitTipReaction();
     }
     ;
     waitTipReaction() {
         const filter = (reaction, user) => reaction.emoji.name === 'tip' && (this.players[0].id === user.id || this.players[1].id === user.id);
-        this.message.awaitReactions(filter, { max: 1 }).then((collected) => {
+        this.message.awaitReactions({ filter, max: 1 }).then((collected) => {
             if (this.playing) {
                 const r = this.message.reactions.cache.find((r) => r.emoji.name === 'tip');
                 r.users.remove(this.players[0]);

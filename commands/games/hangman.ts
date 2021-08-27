@@ -1,5 +1,6 @@
 import {Channel, CommandInteraction, Message, TextChannel, User} from 'discord.js';
 import {client} from '../../index';
+import {getMessage} from './utils';
 
 const HangmanStages = [
 	'___\n*      |\n*    \n*    \n*      \n*    \n*',
@@ -22,7 +23,7 @@ export class Hangman {
 
 	constructor(interaction) {
 		this.interaction = interaction;
-		this.players = [interaction.user, client.users.cache.find((user) => user.id == interaction.options[0].value)];
+		this.players = [interaction.user, interaction.options.getUser('playertwo')];
 		this.runGame();
 	}
 
@@ -33,7 +34,8 @@ export class Hangman {
 		}
 
 		let hasWon = false;
-		await this.interaction.defer();
+		await this.interaction.deferReply();
+		this.message = await getMessage(this.interaction);
 		await this.updateMessage('Waiting for a word to be chosen');
 		this.dmMessage = await this.players[0].send('Choose a word');
 
@@ -41,11 +43,10 @@ export class Hangman {
 			return m.author.id == this.players[1].id;
 		};
 
-		await this.players[0].dmChannel.awaitMessages(() => true, {max: 1, time: 300000, errors: ['time']}).then(async (collected) => {
+		await this.players[0].dmChannel.awaitMessages({filter: () => true, max: 1, time: 300000, errors: ['time']}).then(async (collected) => {
 			this.word = collected.first().content.replace(/ /g, '');
 			for (let i = 0; i < this.word.length; i++) this.displayWord += '-';
 			await this.updateMessage(`\`\`${this.displayWord}\`\`\n Wrong Guesses: ${this.wrongGuesses}`);
-			await this.interaction.fetchReply().then((msg) => this.message = msg);
 		}).catch((err) => {
 			hasWon = true;
 			this.dmMessage.edit('You didn\'t enter a word fast enough!');
@@ -53,7 +54,7 @@ export class Hangman {
 		});
 
 		while (!hasWon) {
-			await this.message.channel.awaitMessages(channelFilter, {max: 1, time: 300000, errors: ['time']}).then((collected) => {
+			await this.message.channel.awaitMessages({filter: channelFilter, max: 1, time: 300000, errors: ['time']}).then((collected) => {
 				const letter = collected.first().content[0];
 				collected.first().delete();
 				if (this.word.includes(letter)) {

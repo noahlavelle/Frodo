@@ -1,5 +1,6 @@
 import {CommandInteraction, Message, MessageEmbed, User} from 'discord.js';
 import {client, EmbedColor} from '../../index';
+import {getMessage} from './utils';
 
 const NumberReactions = {
 	'856566113851932672': 1,
@@ -57,9 +58,9 @@ export class Ttt {
 	constructor(interaction) {
 		this.interaction = interaction;
 		if (Math.round(Math.random()) === 0) {
-			this.players = [this.interaction.user, client.users.cache.find((user) => user.id == interaction.options[0].value)];
+			this.players = [this.interaction.user, this.interaction.options.getUser('playertwo')];
 		} else {
-			this.players = [client.users.cache.find((user) => user.id == interaction.options[0].value), this.interaction.user];
+			this.players = [this.interaction.options.getUser('playertwo'), this.interaction.user];
 		};
 		this.currentPlayer = this.players[0];
 		this.isPlayerOne = true;
@@ -74,8 +75,8 @@ export class Ttt {
 		}
 
 		let hasWon = false;
-		await this.interaction.defer();
-		await this.interaction.fetchReply().then((msg) => this.message = msg);
+		await this.interaction.deferReply();
+		this.message = await getMessage(this.interaction);
 		for (let i = 0; i < 3; i++) {
 			this.grid.push([]);
 			for (let j = 0; j < 3; j++) {
@@ -85,7 +86,7 @@ export class Ttt {
 
 		await this.updateMessage();
 		for (const reaction of Object.keys(NumberReactions)) {
-			await this.message.reactions.add(reaction);
+			await this.message.react(reaction);
 		}
 
 		const filter = (reaction, user) => {
@@ -93,7 +94,7 @@ export class Ttt {
 		};
 
 		while (!hasWon) {
-			await this.message.awaitReactions(filter, {max: 1, time: 300000, errors: ['time']}).then(async (collected) => {
+			await this.message.awaitReactions({filter, max: 1, time: 300000, errors: ['time']}).then(async (collected) => {
 				const selectedNumber = NumberReactionsFilter[collected.first().emoji.name];
 				await this.message.reactions.cache.get(Object.keys(NumberReactions)[selectedNumber - 1]).remove();
 
@@ -129,7 +130,6 @@ export class Ttt {
 			})
 				.catch(async (err) => {
 					hasWon = true;
-					await this.interaction.fetchReply().then((msg) => this.message = msg);
 					await this.message.reactions.removeAll();
 					await this.message.edit('The game has timed out!');
 				});
@@ -178,35 +178,33 @@ export class Ttt {
 	}
 
 	async win() {
-		await this.interaction.fetchReply().then((msg) => this.message = msg);
 		await this.message.reactions.removeAll();
-		await this.interaction.editReply(`${this.isPlayerOne ? this.players[0] : this.players[1]} has won!`, {
-			embeds: [(
+		await this.interaction.editReply({
+			content: `${this.isPlayerOne ? this.players[0] : this.players[1]} has won!`,
+			embeds: [
 				new MessageEmbed()
 					.setColor(EmbedColor)
-					.setDescription(`\n\n${this.grid.map((e) => e.join('')).join('\n')}`)
-			)],
-		});
+					.setDescription(`\n\n${this.grid.map((e) => e.join('')).join('\n')}`),
+			]});
 	}
 	async draw() {
-		await this.interaction.fetchReply().then((msg) => this.message = msg);
 		await this.message.reactions.removeAll();
-		await this.interaction.editReply(`You drew!`, {
-			embeds: [(
+		await this.interaction.editReply({
+			content: `You drew!`,
+			embeds: [
 				new MessageEmbed()
 					.setColor(EmbedColor)
-					.setDescription(`\n\n${this.grid.map((e) => e.join('')).join('\n')}`)
-			)],
-		});
+					.setDescription(`\n\n${this.grid.map((e) => e.join('')).join('\n')}`),
+			]});
 	}
 
 	async updateMessage() {
-		await this.interaction.editReply(`${this.interaction.user} has challenged <@${this.interaction.options[0].value}> to a game of tic tac toe!`, {
-			embeds: [(
+		await this.interaction.editReply({
+			content: `${this.interaction.user} has challenged <@${this.interaction.options[0].value}> to a game of tic tac toe!`,
+			embeds: [
 				new MessageEmbed()
 					.setColor(EmbedColor)
-					.setDescription(`\nCurrent go: ${this.isPlayerOne ? PlayerEmojis[2] : PlayerEmojis[3]} ${this.currentPlayer}\n\n${this.grid.map((e) => e.join('')).join('\n')}`)
-			)],
-		});
+					.setDescription(`\nCurrent go: ${this.isPlayerOne ? PlayerEmojis[2] : PlayerEmojis[3]} ${this.currentPlayer}\n\n${this.grid.map((e) => e.join('')).join('\n')}`),
+			]});
 	}
 }

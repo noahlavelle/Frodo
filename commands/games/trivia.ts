@@ -2,6 +2,10 @@ import {CommandInteraction, Message, User, MessageEmbed} from 'discord.js';
 import {EmbedColor, client} from '../../index';
 import fetch = require('node-fetch');
 import atob = require('atob');
+import {SlashCommandBuilder} from '@discordjs/builders';
+import {Routes} from 'discord-api-types';
+import {registerCommands} from '../../refreshCommands';
+import {getMessage} from './utils';
 const characters: string[] = ['🇦', '🇧', '🇨', '🇩'];
 const letterMap: string[] = ['A', 'B', 'C', 'D'];
 let games = [];
@@ -16,8 +20,10 @@ const errorEmbed: MessageEmbed = new MessageEmbed()
 	try {
 		json = await (await fetch('https://opentdb.com/api_category.php')).json();
 	} catch (err) {
+		console.log(err);
 		error = true;
 	}
+	if (error) return;
 	games = json.trivia_categories;
 	let cats = '';
 	games.forEach((cat) => cats += cat.name + '\n');
@@ -28,56 +34,46 @@ const errorEmbed: MessageEmbed = new MessageEmbed()
 		.addField('Difficulties', 'Easy\nMedium\nHard\nAny')
 		.setFooter('Type /trivia <difficulty> <category> and make sure to not use any spaces in the category');
 	// eslint-disable-next-line prefer-const
-	let commandArray: Object[] = [];
-	games.forEach((cat) => commandArray.push({
-		name: cat.name,
-		value: cat.name,
-	}));
-	client.once('ready', async () => {
-		const command = {
-			name: 'trivia',
-			description: 'A game of Trivia',
-			options: [
-				{
-					name: 'difficulty',
-					type: 3,
-					description: 'Select the difficulty of the question',
-					choices: [
-						{
-							name: 'Easy',
-							value: 'easy',
-						},
-						{
-							name: 'Medium',
-							value: 'medium',
-						},
-						{
-							name: 'Hard',
-							value: 'hard',
-						},
-						{
-							name: 'Any',
-							value: 'any',
-						},
+	let commandArray: [name: string, value: string][] = [];
+	games.forEach((cat) => commandArray.push([
+		cat.name,
+		cat.name,
+	]));
+	const command = new SlashCommandBuilder()
+		.setName('trivia')
+		.setDescription('A game of Trivia')
+		.addStringOption((option) => {
+			option
+				.setName('difficulty')
+				.setDescription('Select the difficulty of the question')
+				.addChoices([
+					[
+						'Easy',
+						'easy',
 					],
-				},
-				{
-					name: 'category',
-					type: 3,
-					description: 'Select the category of the question',
-					// @ts-ignore
-					choices: commandArray,
-				},
-			],
-		};
-		// // @ts-ignore
-		// await client.guilds.cache.get('839919274395303946')?.commands.create(command);
-		// // @ts-ignore
-		// await client.guilds.cache.get('853033979803729920')?.commands.create(command);
-		// @ts-ignore
-		// await client.application.commands.create(command);
-		console.log('Trivia made!');
-	});
+					[
+						'Medium',
+						'medium',
+					],
+					[
+						'Hard',
+						'hard',
+					],
+					[
+						'Any',
+						'any',
+					],
+				]);
+			return option;
+		})
+		.addStringOption((option) => {
+			option
+				.setName('category')
+				.setDescription('Select the category of the question')
+				.addChoices(commandArray);
+			return option;
+		});
+	registerCommands([command.toJSON()]);
 })();
 
 export class Trivia {
@@ -91,14 +87,10 @@ export class Trivia {
 	}
 
 	async init() {
-		let difficulty;
-		let category;
-		this.interaction.options.forEach((option) => {
-			if (option.name === 'category') category = option.value;
-			if (option.name === 'difficulty') difficulty = option.value;
-		});
+		const difficulty = this.interaction.options.getString('difficulty');
+		const category = this.interaction.options.getString('category');
 
-		await this.interaction.defer();
+		await this.interaction.deferReply();
 
 		let url: String = 'https://opentdb.com/api.php?amount=1&encode=base64';
 		if (difficulty && difficulty != 'any') url += `&difficulty=${difficulty}`;
@@ -113,9 +105,9 @@ export class Trivia {
 		try {
 			json = await (await fetch(url)).json();
 		} catch (err) {
-			return this.interaction.editReply(errorEmbed);
+			return this.interaction.editReply({embeds: [errorEmbed]});
 		}
-		if (json.response_code != 0) return this.interaction.editReply(errorEmbed);
+		if (json.response_code != 0) return this.interaction.editReply({embeds: [errorEmbed]});
 		let options: string[] = [];
 		let optionsTimeOut: string[] = [];
 		let optionsAnswerCorrect: string[] = [];
@@ -176,56 +168,59 @@ export class Trivia {
 				currentAnswer++;
 			}
 		}
-		await this.interaction.editReply(
-			new MessageEmbed()
-				.setColor(EmbedColor)
-				.setTitle(atob(json.results[0].question))
-				.setDescription(options.join('\n'))
-				.setFooter(`Category - ${atob(json.results[0].category)}, Difficulty - ${atob(json.results[0].difficulty)}`),
-		);
-		this.message = await this.interaction.fetchReply();
+		await this.interaction.editReply({
+			embeds: [
+				new MessageEmbed()
+					.setColor(EmbedColor)
+					.setTitle(atob(json.results[0].question))
+					.setDescription(options.join('\n'))
+					.setFooter(`Category - ${atob(json.results[0].category)}, Difficulty - ${atob(json.results[0].difficulty)}`),
+			]});
+		this.message = await getMessage(this.interaction);
 		options.forEach((a, index) => this.message.react(characters[index]));
-		this.message.awaitReactions(
-			(r, user) => user.id == this.interaction.user.id && characters.includes(r.emoji.name),
-			{max: 1, time: 30000, errors: ['time']},
+		const filter = (r, user) => user.id == this.interaction.user.id && characters.includes(r.emoji.name);
+		this.message.awaitReactions({filter, max: 1, time: 30000, errors: ['time']},
 		).then((col) => {
 			this.message.reactions.removeAll();
 
 			if (characters.indexOf(col.first().emoji.name) == answer) {
-				this.interaction.editReply(
-					`Correct :smile:`,
-					new MessageEmbed()
-						.setColor(EmbedColor)
-						.setTitle(atob(json.results[0].question))
-						.setDescription(optionsAnswerCorrect.join('\n'))
-						.setFooter(`Category - ${atob(json.results[0].category)}, Difficulty - ${atob(json.results[0].difficulty)}`),
-				);
+				this.interaction.editReply({
+					content: `Correct :smile:`,
+					embeds: [
+						new MessageEmbed()
+							.setColor(EmbedColor)
+							.setTitle(atob(json.results[0].question))
+							.setDescription(optionsAnswerCorrect.join('\n'))
+							.setFooter(`Category - ${atob(json.results[0].category)}, Difficulty - ${atob(json.results[0].difficulty)}`),
+					]});
 			} else {
 				optionsAnswerIncorrect[characters.indexOf(col.first().emoji.name)] += ' :x:';
-				this.interaction.editReply(
-					`You got it wrong :cry:, The answer was :regional_indicator_${letterMap[answer].toLocaleLowerCase()}:`,
-					new MessageEmbed()
-						.setColor(EmbedColor)
-						.setTitle(atob(json.results[0].question))
-						.setDescription(optionsAnswerIncorrect.join('\n'))
-						.setFooter(`Category - ${atob(json.results[0].category)}, Difficulty - ${atob(json.results[0].difficulty)}`),
-				);
+				this.interaction.editReply({
+					content: `You got it wrong :cry:, The answer was :regional_indicator_${letterMap[answer].toLocaleLowerCase()}:`,
+					embeds: [
+						new MessageEmbed()
+							.setColor(EmbedColor)
+							.setTitle(atob(json.results[0].question))
+							.setDescription(optionsAnswerIncorrect.join('\n'))
+							.setFooter(`Category - ${atob(json.results[0].category)}, Difficulty - ${atob(json.results[0].difficulty)}`),
+					]});
 			}
 		}).catch(() => {
 			this.message.reactions.removeAll();
-			this.interaction.editReply(
-				`The game timed out! The correct answer was :regional_indicator_${letterMap[answer].toLocaleLowerCase()}:`,
-				new MessageEmbed()
-					.setColor(EmbedColor)
-					.setTitle(atob(json.results[0].question))
-					.setDescription(optionsTimeOut.join('\n'))
-					.setFooter(`Category - ${atob(json.results[0].category)}, Difficulty - ${atob(json.results[0].difficulty)}`),
-			);
+			this.interaction.editReply({
+				content: `The game timed out! The correct answer was :regional_indicator_${letterMap[answer].toLocaleLowerCase()}:`,
+				embeds: [
+					new MessageEmbed()
+						.setColor(EmbedColor)
+						.setTitle(atob(json.results[0].question))
+						.setDescription(optionsTimeOut.join('\n'))
+						.setFooter(`Category - ${atob(json.results[0].category)}, Difficulty - ${atob(json.results[0].difficulty)}`),
+				]});
 		});
 	};
 }
 
 export function triviaCategories(interaction: CommandInteraction) {
-	if (error) return interaction.reply(errorEmbed);
-	interaction.reply(gamesEmbed);
+	if (error) return interaction.reply({embeds: [errorEmbed]});
+	interaction.reply({embeds: [gamesEmbed]});
 }

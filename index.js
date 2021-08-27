@@ -3,9 +3,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.client = exports.timestamp = exports.EmbedColor = void 0;
 const Discord = require("discord.js");
 const discord_js_1 = require("discord.js");
-const commandData_1 = require("./commandData");
+const resetCommands_1 = require("./resetCommands");
 // @ts-ignore
-const client = new Discord.Client({ intents: [discord_js_1.Intents.FLAGS.GUILDS, discord_js_1.Intents.FLAGS.GUILD_MESSAGES, discord_js_1.Intents.FLAGS.GUILD_MESSAGE_REACTIONS] });
+const client = new Discord.Client({ intents: [discord_js_1.Intents.FLAGS.GUILDS, discord_js_1.Intents.FLAGS.GUILD_MESSAGES, discord_js_1.Intents.FLAGS.GUILD_MESSAGE_REACTIONS, discord_js_1.Intents.FLAGS.DIRECT_MESSAGE_REACTIONS] });
 exports.client = client;
 exports.EmbedColor = '#3498db';
 exports.timestamp = Date.now();
@@ -28,13 +28,12 @@ client.once('ready', async () => {
         ['.help'],
         [() => `${client.guilds.cache.size} servers!`, 'WATCHING'],
     ], 10000);
-    console.log('Ready');
 });
 client.on('interactionCreate', async (interaction) => {
     if (!interaction.isCommand())
         return;
-    if (Object.keys(commandData_1.CommandData).includes(`${interaction.commandName}CommandData`)) {
-        commandData_1.CommandData[`${interaction.commandName}CommandData`].execute(interaction);
+    if (Object.keys(resetCommands_1.CommandData).includes(`${interaction.commandName}CommandData`)) {
+        resetCommands_1.CommandData[`${interaction.commandName}CommandData`].execute(interaction);
     }
 });
 const helpEmbed = (auth) => {
@@ -64,5 +63,5 @@ client.on('messageCreate', async (message) => {
     ;
 });
 // login to Discord with your app's token
-client.login(process.env.TOKEN).then(() => console.log('Logged in'));
+client.login(require('./config.json').token).then(() => console.log('Logged in'));
 //# sourceMappingURL=index.js.map

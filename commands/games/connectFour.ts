@@ -1,6 +1,6 @@
 import {CommandInteraction, Message, MessageEmbed, User} from 'discord.js';
 import {client, EmbedColor} from '../../index';
-import {removeReaction} from './utils';
+import {getMessage, removeReaction} from './utils';
 
 enum SlotType {
 	Empty,
@@ -53,9 +53,9 @@ class ConnectFour {
 	constructor(interaction: CommandInteraction) {
 		this.interaction = interaction;
 		if (Math.round(Math.random()) === 0) {
-			this.players = [this.interaction.user, client.users.cache.find((user) => user.id == interaction.options[0].value)];
+			this.players = [this.interaction.user, this.interaction.options.getUser('playertwo')];
 		} else {
-			this.players = [client.users.cache.find((user) => user.id == interaction.options[0].value), this.interaction.user];
+			this.players = [this.interaction.options.getUser('playertwo'), this.interaction.user];
 		};
 		this.currentPlayer = this.players[0];
 		this.isPlayerOne = true;
@@ -70,8 +70,8 @@ class ConnectFour {
 			return;
 		}
 
-		await this.interaction.defer();
-		await this.interaction.fetchReply().then((msg) => this.message = msg);
+		await this.interaction.deferReply();
+		this.message = await getMessage(this.interaction);
 
 		this.generateGrid();
 		this.updateMessage(true);
@@ -85,7 +85,7 @@ class ConnectFour {
 		};
 
 		while (true) {
-			await this.message.awaitReactions(filter, {max: 1})
+			await this.message.awaitReactions({filter, max: 1})
 				.then(async (collected) => {
 					const reaction = collected.first();
 					const columnNumber = NumberReactionsFilter[reaction.emoji.name] - 1;
@@ -148,14 +148,20 @@ class ConnectFour {
 
 		message += '<:l1:851065666341699584><:l2:851065679682469888><:l3:851065688436899861><:l4:851065697873690654><:l5:851065706735992893><:l6:851065718644801546><:l7:851065729570963456>';
 
-		start ? this.interaction.editReply(`<@${this.interaction.user.id}> challenged <@${this.interaction.options[0].value}> to a game of Connect Four!`,
-			new MessageEmbed()
-				.setColor(EmbedColor)
-				.setDescription(`Current go: ${PlayerTextClear[this.isPlayerOne ? 0 : 1]} ${this.isPlayerOne ? this.players[0] : this.players[1]}\n\n${message}`),
-		) : this.interaction.editReply(`<@${this.interaction.user.id}> challenged <@${this.interaction.options[0].value}> to a game of Connect Four!`,
-			new MessageEmbed()
-				.setColor(EmbedColor)
-				.setDescription(`Current go: ${PlayerTextClear[this.isPlayerOne ? 1 : 0]} ${this.isPlayerOne ? this.players[1] : this.players[0]}\n\n${message}`),
+		start ? this.interaction.editReply({
+			content: `<@${this.interaction.user.id}> challenged ${this.interaction.options.getUser('playertwo')} to a game of Connect Four!`,
+			embeds: [
+				new MessageEmbed()
+					.setColor(EmbedColor)
+					.setDescription(`Current go: ${PlayerTextClear[this.isPlayerOne ? 0 : 1]} ${this.isPlayerOne ? this.players[0] : this.players[1]}\n\n${message}`),
+			]},
+		) : this.interaction.editReply({
+			content: `<@${this.interaction.user.id}> challenged ${this.interaction.options.getUser('playertwo')} to a game of Connect Four!`,
+			embeds: [
+				new MessageEmbed()
+					.setColor(EmbedColor)
+					.setDescription(`Current go: ${PlayerTextClear[this.isPlayerOne ? 1 : 0]} ${this.isPlayerOne ? this.players[1] : this.players[0]}\n\n${message}`),
+			]},
 		);
 	}
 
@@ -223,7 +229,6 @@ class ConnectFour {
 	}
 
 	async win() {
-		await this.interaction.fetchReply().then((msg) => this.message = msg);
 		await this.message.reactions.removeAll();
 		await this.interaction.editReply(this.message.content += `\n\n<@${this.currentPlayer.id}> wins!`);
 		this.updateMessageWin();
@@ -240,10 +245,13 @@ class ConnectFour {
 
 		message += '<:l1:851065666341699584><:l2:851065679682469888><:l3:851065688436899861><:l4:851065697873690654><:l5:851065706735992893><:l6:851065718644801546><:l7:851065729570963456>';
 
-		this.interaction.editReply(`<@${this.interaction.user.id}> challenged <@${this.interaction.options[0].value}> to a game of Connect Four!\n\n${this.isPlayerOne ? this.players[1] : this.players[0]} Won!\n`,
-			new MessageEmbed()
-				.setColor(EmbedColor)
-				.setDescription(`\n${message}`),
+		this.interaction.editReply({
+			content: `<@${this.interaction.user.id}> challenged ${this.interaction.options.getUser('playertwo')} to a game of Connect Four!\n\n${this.isPlayerOne ? this.players[1] : this.players[0]} Won!\n`,
+			embeds: [
+				new MessageEmbed()
+					.setColor(EmbedColor)
+					.setDescription(`\n${message}`),
+			]},
 		);
 	}
 }

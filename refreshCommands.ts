@@ -1,35 +1,28 @@
 import {REST} from '@discordjs/rest';
 import {Routes} from 'discord-api-types/v9';
-import {CommandData} from './commandData';
+import {commands} from './resetCommands';
 
-const commands = [];
-
-for (const command of Object.keys(CommandData)) {
-	commands.push(CommandData[command].data.toJSON());
-};
+const {token, clientID, guildID} = require('./config.json');
 
 const rest = new REST({version: '9'})
-	.setToken(process.env.TOKEN);
+	.setToken(token);
 
-(async () => {
+
+export async function registerCommands(command) {
 	try {
+		const commandsList = [...commands, ...command];
 		await rest.put(
-			Routes.applicationGuildCommands('737286732512493580', '839919274395303946'),
-			{body: []},
+			Routes.applicationGuildCommands(clientID, guildID),
+			{body: commandsList},
 		);
 
-		await rest.put(
-			Routes.applicationGuildCommands('737286732512493580', '839919274395303946'),
-			{body: commands},
-		);
-
-		await rest.put(
-			Routes.applicationCommands('737286732512493580'),
-			{body: []},
-		);
+		// await rest.put(
+		// 	Routes.applicationCommands(clientID),
+		// 	{body: []},
+		// );
 
 		console.log('Registered Commands!');
 	} catch (error) {
 		console.error(error);
 	}
-})();
+}

@@ -1,24 +1,25 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.registerCommands = void 0;
 const rest_1 = require("@discordjs/rest");
 const v9_1 = require("discord-api-types/v9");
-const commandData_1 = require("./commandData");
-const commands = [];
-for (const command of Object.keys(commandData_1.CommandData)) {
-    commands.push(commandData_1.CommandData[command].data.toJSON());
-}
-;
+const resetCommands_1 = require("./resetCommands");
+const { token, clientID, guildID } = require('./config.json');
 const rest = new rest_1.REST({ version: '9' })
-    .setToken(process.env.TOKEN);
-(async () => {
+    .setToken(token);
+async function registerCommands(command) {
     try {
-        await rest.put(v9_1.Routes.applicationGuildCommands('737286732512493580', '839919274395303946'), { body: [] });
-        await rest.put(v9_1.Routes.applicationGuildCommands('737286732512493580', '839919274395303946'), { body: commands });
-        await rest.put(v9_1.Routes.applicationCommands('737286732512493580'), { body: [] });
+        const commandsList = [...resetCommands_1.commands, ...command];
+        await rest.put(v9_1.Routes.applicationGuildCommands(clientID, guildID), { body: commandsList });
+        // await rest.put(
+        // 	Routes.applicationCommands(clientID),
+        // 	{body: []},
+        // );
         console.log('Registered Commands!');
     }
     catch (error) {
         console.error(error);
     }
-})();
+}
+exports.registerCommands = registerCommands;
 //# sourceMappingURL=refreshCommands.js.map

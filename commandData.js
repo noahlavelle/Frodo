@@ -19,9 +19,10 @@ const help_1 = require("./commands/Utils/help");
 const uptime_1 = require("./commands/Utils/uptime");
 const avatar_1 = require("./commands/Utils/avatar");
 const ping_1 = require("./commands/Utils/ping");
+const trivia_1 = require("./commands/games/trivia");
 var CommandData;
 (function (CommandData) {
-    CommandData.connectFourCommandData = {
+    CommandData.connectfourCommandData = {
         data: new builders_1.SlashCommandBuilder()
             .setName('connectfour')
             .setDescription('A game of connect four against another player')
@@ -165,6 +166,12 @@ var CommandData;
             .setDescription('View all Trivia categories'),
         execute(interaction) {
             triviaCategories(interaction);
+        },
+    };
+    CommandData.triviaCommandData = {
+        data: undefined,
+        execute(interaction) {
+            new trivia_1.Trivia(interaction);
         },
     };
     CommandData.helpCommandData = {

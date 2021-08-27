@@ -1,9 +1,9 @@
 import Discord = require('discord.js');
 import {Intents, MessageEmbed} from 'discord.js';
-import {CommandData} from './commandData';
+import {CommandData} from './resetCommands';
 
 // @ts-ignore
-const client = new Discord.Client({intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS]});
+const client = new Discord.Client({intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS, Intents.FLAGS.DIRECT_MESSAGE_REACTIONS]});
 export const EmbedColor = '#3498db';
 export const timestamp = Date.now();
 
@@ -25,7 +25,6 @@ client.once('ready', async () => {
 		['.help'],
 		[() => `${client.guilds.cache.size} servers!`, 'WATCHING'],
 	], 10000);
-	console.log('Ready');
 });
 
 
@@ -60,6 +59,6 @@ client.on('messageCreate', async (message) => {
 });
 
 // login to Discord with your app's token
-client.login(process.env.TOKEN).then(() => console.log('Logged in'));
+client.login(require('./config.json').token).then(() => console.log('Logged in'));
 
 export {client};

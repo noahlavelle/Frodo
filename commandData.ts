@@ -17,10 +17,11 @@ import {help} from './commands/Utils/help';
 import {uptime} from './commands/Utils/uptime';
 import {avatar} from './commands/Utils/avatar';
 import {ping} from './commands/Utils/ping';
+import {Trivia} from './commands/games/trivia';
 
 
 namespace CommandData {
-	export const connectFourCommandData = {
+	export const connectfourCommandData = {
 		data: new SlashCommandBuilder()
 			.setName('connectfour')
 			.setDescription('A game of connect four against another player')
@@ -175,6 +176,13 @@ namespace CommandData {
 			.setDescription('View all Trivia categories'),
 		execute(interaction) {
 			triviaCategories(interaction);
+		},
+	};
+
+	export const triviaCommandData = {
+		data: undefined,
+		execute(interaction) {
+			new Trivia(interaction);
 		},
 	};
 
