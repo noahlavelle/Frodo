@@ -369,7 +369,7 @@ class Othello {
             });
         }
         ;
-        return null;
+        return true;
     }
     ;
     gameOver() {

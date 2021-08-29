@@ -71,7 +71,8 @@ class ConnectFour {
         const filter = (reaction, user) => {
             return Object.keys(NumberReactionsFilter).includes(reaction.emoji.name) && this.currentPlayer == user;
         };
-        while (true) {
+        let running = true;
+        while (running) {
             await this.message.awaitReactions({ filter, max: 1 })
                 .then(async (collected) => {
                 const reaction = collected.first();
@@ -102,7 +103,8 @@ class ConnectFour {
                     return;
                 }
                 if (isWin) {
-                    this.win();
+                    running = false;
+                    return this.win();
                 }
                 this.isPlayerOne = !this.isPlayerOne;
                 this.currentPlayer = this.isPlayerOne ? this.players[0] : this.players[1];
@@ -220,7 +222,7 @@ class ConnectFour {
         });
         message += '<:l1:851065666341699584><:l2:851065679682469888><:l3:851065688436899861><:l4:851065697873690654><:l5:851065706735992893><:l6:851065718644801546><:l7:851065729570963456>';
         this.interaction.editReply({
-            content: `<@${this.interaction.user.id}> challenged ${this.interaction.options.getUser('playertwo')} to a game of Connect Four!\n\n${this.isPlayerOne ? this.players[1] : this.players[0]} Won!\n`,
+            content: `<@${this.interaction.user.id}> challenged ${this.interaction.options.getUser('playertwo')} to a game of Connect Four!\n\n${this.isPlayerOne ? this.players[0] : this.players[1]} Won!\n`,
             embeds: [
                 new discord_js_1.MessageEmbed()
                     .setColor(index_1.EmbedColor)

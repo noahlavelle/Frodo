@@ -18,7 +18,7 @@ import {uptime} from './commands/Utils/uptime';
 import {avatar} from './commands/Utils/avatar';
 import {ping} from './commands/Utils/ping';
 import {Trivia} from './commands/games/trivia';
-
+import {Rummy} from './commands/games/rummy';
 
 namespace CommandData {
 	export const connectfourCommandData = {
@@ -35,6 +35,7 @@ namespace CommandData {
 			new ConnectFour(interaction);
 		},
 	};
+
 	export const rpsCommandData = {
 		data: new SlashCommandBuilder()
 			.setName('rps')
@@ -49,6 +50,21 @@ namespace CommandData {
 			new Rps(interaction);
 		},
 	};
+
+	// export const rummyCommandData = {
+	// 	data: new SlashCommandBuilder()
+	// 		.setName('rummy')
+	// 		.setDescription('A game of rummy against another player')
+	// 		.addUserOption((option) => {
+	// 			return option
+	// 				.setName('playertwo')
+	// 				.setDescription('The user that you want to challenge')
+	// 				.setRequired(true);
+	// 		}),
+	// 	execute(interaction) {
+	// 		new Rummy(interaction);
+	// 	},
+	// };
 
 	export const tttCommandData = {
 		data: new SlashCommandBuilder()
@@ -98,14 +114,14 @@ namespace CommandData {
 		},
 	};
 
-	export const werewolfCommandData = {
-		data: new SlashCommandBuilder()
-			.setName('werewolf')
-			.setDescription('The classic party social deduction game'),
-		execute(interaction) {
-			new Werewolf(interaction);
-		},
-	};
+	// export const werewolfCommandData = {
+	// 	data: new SlashCommandBuilder()
+	// 		.setName('werewolf')
+	// 		.setDescription('The classic party social deduction game'),
+	// 	execute(interaction) {
+	// 		new Werewolf(interaction);
+	// 	},
+	// };
 
 	export const othelloCommandData = {
 		data: new SlashCommandBuilder()

@@ -185,7 +185,7 @@ class Ttt {
     }
     async updateMessage() {
         await this.interaction.editReply({
-            content: `${this.interaction.user} has challenged <@${this.interaction.options[0].value}> to a game of tic tac toe!`,
+            content: `${this.interaction.user} has challenged ${this.interaction.options.getUser('playertwo')} to a game of tic tac toe!`,
             embeds: [
                 new discord_js_1.MessageEmbed()
                     .setColor(index_1.EmbedColor)

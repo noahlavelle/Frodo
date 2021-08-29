@@ -71,13 +71,11 @@ export class Anagrams {
 		setTimeout(async () => {
 			await this.updateMessage(letters, '\nNow type the longest word you got.');
 
-			let channel;
 			const filter = (m : Message) => {
 				return m.author.id == this.interaction.user.id;
 			};
-
-			await this.interaction.channel.fetch().then((cnl) => channel = cnl);
-			channel.awaitMessages(filter, {max: 1}).then(async (collected) => {
+			const channel = await this.interaction.channel;
+			channel.awaitMessages({filter, max: 1}).then(async (collected) => {
 				const word = collected.first().content;
 				await collected.first().delete();
 				let solved;

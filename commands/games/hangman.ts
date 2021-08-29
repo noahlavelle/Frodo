@@ -3,12 +3,12 @@ import {client} from '../../index';
 import {getMessage} from './utils';
 
 const HangmanStages = [
-	'___\n*      |\n*    \n*    \n*      \n*    \n*',
-	'___\n*      |\n*    :dizzy_face: \n*      | \n*      \n*    \n*',
-	'___\n*      |\n*    :dizzy_face: \n*    /|\\ \n*      \n*    \n*',
-	'___\n*      |\n*    :dizzy_face: \n*    /|\\ \n*      |\n*    \n*',
-	'___\n*      |\n*    :dizzy_face: \n*    /|\\ \n*      |\n*    /\n*',
-	'___\n*      |\n*    :dizzy_face: \n*    /|\\ \n*      |\n*    / \\\n*',
+	'___\n|      |\n|    \n|    \n|      \n|    \n|',
+	'___\n|      |\n|    :dizzy_face: \n|      | \n|      \n|    \n|',
+	'___\n|      |\n|    :dizzy_face: \n|    /|\\ \n|      \n|    \n|',
+	'___\n|      |\n|    :dizzy_face: \n|    /|\\ \n|      |\n|    \n|',
+	'___\n|      |\n|    :dizzy_face: \n|    /|\\ \n|      |\n|    /\n|',
+	'___\n|      |\n|    :dizzy_face: \n|    /|\\ \n|      |\n|    / \\\n|',
 ];
 
 export class Hangman {
@@ -36,7 +36,7 @@ export class Hangman {
 		let hasWon = false;
 		await this.interaction.deferReply();
 		this.message = await getMessage(this.interaction);
-		await this.updateMessage('Waiting for a word to be chosen');
+		await this.updateMessage(`Waiting for a word to be chosen by ${this.interaction.user}`);
 		this.dmMessage = await this.players[0].send('Choose a word');
 
 		const channelFilter = (m: Message) => {

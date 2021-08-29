@@ -335,7 +335,7 @@ export class Othello {
 				]},
 			);
 		};
-		return null;
+		return true;
 	};
 	gameOver() {
 		this.playing = false;

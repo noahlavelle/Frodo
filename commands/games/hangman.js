@@ -3,12 +3,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Hangman = void 0;
 const utils_1 = require("./utils");
 const HangmanStages = [
-    '___\n*      |\n*    \n*    \n*      \n*    \n*',
-    '___\n*      |\n*    :dizzy_face: \n*      | \n*      \n*    \n*',
-    '___\n*      |\n*    :dizzy_face: \n*    /|\\ \n*      \n*    \n*',
-    '___\n*      |\n*    :dizzy_face: \n*    /|\\ \n*      |\n*    \n*',
-    '___\n*      |\n*    :dizzy_face: \n*    /|\\ \n*      |\n*    /\n*',
-    '___\n*      |\n*    :dizzy_face: \n*    /|\\ \n*      |\n*    / \\\n*',
+    '___\n|      |\n|    \n|    \n|      \n|    \n|',
+    '___\n|      |\n|    :dizzy_face: \n|      | \n|      \n|    \n|',
+    '___\n|      |\n|    :dizzy_face: \n|    /|\\ \n|      \n|    \n|',
+    '___\n|      |\n|    :dizzy_face: \n|    /|\\ \n|      |\n|    \n|',
+    '___\n|      |\n|    :dizzy_face: \n|    /|\\ \n|      |\n|    /\n|',
+    '___\n|      |\n|    :dizzy_face: \n|    /|\\ \n|      |\n|    / \\\n|',
 ];
 class Hangman {
     constructor(interaction) {
@@ -27,7 +27,7 @@ class Hangman {
         let hasWon = false;
         await this.interaction.deferReply();
         this.message = await utils_1.getMessage(this.interaction);
-        await this.updateMessage('Waiting for a word to be chosen');
+        await this.updateMessage(`Waiting for a word to be chosen by ${this.interaction.user}`);
         this.dmMessage = await this.players[0].send('Choose a word');
         const channelFilter = (m) => {
             return m.author.id == this.players[1].id;

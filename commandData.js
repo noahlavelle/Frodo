@@ -10,7 +10,6 @@ const { triviaCategories } = require('./commands/games/trivia.js');
 const ttt_1 = require("./commands/games/ttt");
 const othello_1 = require("./commands/games/othello");
 const hangman_1 = require("./commands/games/hangman");
-const werewolf_1 = require("./commands/games/werewolf");
 const fact_1 = require("./commands/chat/fact");
 const fortune_1 = require("./commands/chat/fortune");
 const joke_1 = require("./commands/chat/joke");
@@ -50,6 +49,20 @@ var CommandData;
             new rps_1.Rps(interaction);
         },
     };
+    // export const rummyCommandData = {
+    // 	data: new SlashCommandBuilder()
+    // 		.setName('rummy')
+    // 		.setDescription('A game of rummy against another player')
+    // 		.addUserOption((option) => {
+    // 			return option
+    // 				.setName('playertwo')
+    // 				.setDescription('The user that you want to challenge')
+    // 				.setRequired(true);
+    // 		}),
+    // 	execute(interaction) {
+    // 		new Rummy(interaction);
+    // 	},
+    // };
     CommandData.tttCommandData = {
         data: new builders_1.SlashCommandBuilder()
             .setName('ttt')
@@ -94,14 +107,14 @@ var CommandData;
             new anagrams_1.Anagrams(interaction);
         },
     };
-    CommandData.werewolfCommandData = {
-        data: new builders_1.SlashCommandBuilder()
-            .setName('werewolf')
-            .setDescription('The classic party social deduction game'),
-        execute(interaction) {
-            new werewolf_1.Werewolf(interaction);
-        },
-    };
+    // export const werewolfCommandData = {
+    // 	data: new SlashCommandBuilder()
+    // 		.setName('werewolf')
+    // 		.setDescription('The classic party social deduction game'),
+    // 	execute(interaction) {
+    // 		new Werewolf(interaction);
+    // 	},
+    // };
     CommandData.othelloCommandData = {
         data: new builders_1.SlashCommandBuilder()
             .setName('othello')
