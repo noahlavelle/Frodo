@@ -1,6 +1,6 @@
 ### Editor config
 .idea
-./config.json
+src/config.json
 
 ### Compiled JavaScript
 *.js
