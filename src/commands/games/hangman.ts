@@ -21,6 +21,7 @@ export class Hangman {
 	displayWord = '';
 	wrongGuesses = '';
 	stage = 0;
+	hasWon = false;
 
 	constructor(interaction) {
 		this.interaction = interaction;
@@ -35,7 +36,6 @@ export class Hangman {
 			return;
 		}
 
-		let hasWon = false;
 		await this.interaction.deferReply();
 		this.message = await getMessage(this.interaction);
 		await this.updateMessage(`Waiting for a word to be chosen by ${this.interaction.user}`);
@@ -46,20 +46,21 @@ export class Hangman {
 		};
 
 		await this.players[0].dmChannel.awaitMessages({filter: () => true, max: 1, time: 300000, errors: ['time']}).then(async (collected) => {
-			this.word = collected.first().content.replace(/ /g, '');
+			this.word = collected.first().content.replace(/ /g, '').toLowerCase();
 			for (let i = 0; i < this.word.length; i++) this.displayWord += '-';
 			await this.updateMessage(`\`\`${this.displayWord}\`\`\n Wrong Guesses: ${this.wrongGuesses}`);
 		}).catch((err) => {
-			hasWon = true;
+			this.hasWon = true;
 			this.dmMessage.edit('You didn\'t enter a word fast enough!');
 			return this.interaction.editReply(`${this.interaction.user} took too long to put a word in!`).catch((e) => {
 				handleError(e, this.interaction);
+				this.hasWon = true;
 			});
 		});
 
-		while (!hasWon) {
+		while (!this.hasWon) {
 			await this.message.channel.awaitMessages({filter: channelFilter, max: 1, time: 300000, errors: ['time']}).then((collected) => {
-				const letter = collected.first().content[0];
+				const letter = collected.first().content[0].toLowerCase();
 				collected.first().delete();
 				if (this.word.includes(letter)) {
 					const displayWordArray = [...this.displayWord];
@@ -78,14 +79,15 @@ export class Hangman {
 
 				this.updateMessage(`\`\`${this.displayWord}\`\`\n Wrong Guesses: ${this.wrongGuesses}`);
 				if (this.displayWord == this.word) {
-					hasWon = true;
+					this.hasWon = true;
 					this.updateMessage(`\`\`${this.displayWord}\`\`\n Wrong Guesses: ${this.wrongGuesses}\n${this.players[1]} has won!`);
 				} else if (this.stage == HangmanStages.length - 1) {
-					hasWon = true;
+					this.hasWon = true;
 					this.updateMessage(`\`\`${this.displayWord}\`\`\n Wrong Guesses: ${this.wrongGuesses}\n${this.players[0]} has won!`);
 				}
 			}).catch((e) => {
 				handleError(e, this.interaction);
+				this.hasWon = true;
 			});
 		}
 	}
@@ -93,6 +95,7 @@ export class Hangman {
 	async updateMessage(attachment: string) {
 		await this.interaction.editReply(`${HangmanStages[this.stage]}\n${attachment}`).catch((e) => {
 			handleError(e, this.interaction);
+			this.hasWon = true;
 		});
 	}
 }

@@ -83,7 +83,9 @@ export class Akinator {
 				this.interaction.editReply('The game has timed out!').catch((e) => {
 					handleError(e, this.interaction);
 				});
-				this.message.reactions.removeAll();
+				this.message.reactions.removeAll().catch((e) => {
+					handleError(e, this.interaction);
+				});;
 			});
 		}
 	}
