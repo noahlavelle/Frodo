@@ -6,9 +6,9 @@ async function sendErrorEmbed(interaction: CommandInteraction) {
 	await interaction.channel.send( {
 		embeds: [
 			new MessageEmbed()
-				.setTitle('Something has gone wrong :confused:')
+				.setTitle('Something has gone wrong...  :face_with_monocle:')
 				.setDescription(`${interaction.user}, something has gone wrong with your game. If you think you have found a bug, report it here: https://frodo.fun/feedback`)
-				.setColor('#B00020.'),
+				.setColor('#FF0134'),
 		],
 	});
 }
