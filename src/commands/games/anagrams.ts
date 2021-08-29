@@ -1,5 +1,6 @@
 import {CommandInteraction, Message, MessageEmbed} from 'discord.js';
 import {getMessage, removeReaction} from './utils';
+import handleError from '../../utilFunctions';
 
 const fetch = require('node-fetch');
 
@@ -40,7 +41,9 @@ export class Anagrams {
 		await this.updateMessage(letters, '');
 
 		for (const letter of Object.keys(LetterReactions)) {
-			await this.message.react(letter);
+			await this.message.react(letter).catch((e) => {
+				handleError(e, this.interaction);
+			});
 		}
 
 		const filter = (reaction, user) => {
@@ -66,7 +69,10 @@ export class Anagrams {
 			};
 		}
 
-		await this.message.reactions.removeAll();
+		await this.message.reactions.removeAll().catch((e) => {
+			handleError(e, this.interaction);
+		});
+
 		await this.updateMessage(letters, '\nYour 30 seconds starts now!');
 		setTimeout(async () => {
 			await this.updateMessage(letters, '\nNow type the longest word you got.');
@@ -100,6 +106,8 @@ export class Anagrams {
 					},
 					{name: 'Play:', value: (letters == '' ? '...' : letters) + playAttachment},
 				),
-		]});
+		]}).catch((e) => {
+			handleError(e, this.interaction);
+		});
 	}
 }

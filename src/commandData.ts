@@ -8,7 +8,7 @@ const {triviaCategories} = require('./commands/games/trivia.js');
 import {Ttt} from './commands/games/ttt';
 import {Othello} from './commands/games/othello';
 import {Hangman} from './commands/games/hangman';
-import {Werewolf} from './commands/games/werewolf';
+// import {Werewolf} from './commands/games/werewolf';
 import {fact} from './commands/chat/fact';
 import {fortune} from './commands/chat/fortune';
 import {joke} from './commands/chat/joke';

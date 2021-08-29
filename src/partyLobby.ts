@@ -1,5 +1,6 @@
 import {CommandInteraction, Message, MessageEmbed, User} from 'discord.js';
 import {getMessage, removeReaction} from './commands/games/utils';
+import handleError from './utilFunctions';
 
 export class PartyLobby {
 	interaction: CommandInteraction;
@@ -22,7 +23,11 @@ export class PartyLobby {
 		this.players = [this.interaction.user];
 		this.description = description;
 
-		this.createLobby();
+		try {
+			this.createLobby();
+		} catch (e) {
+			handleError(e, this.interaction);
+		}
 	}
 
 	async createLobby() {

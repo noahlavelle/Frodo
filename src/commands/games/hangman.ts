@@ -1,6 +1,7 @@
 import {Channel, CommandInteraction, Message, TextChannel, User} from 'discord.js';
 import {client} from '../../index';
 import {getMessage} from './utils';
+import handleError from '../../utilFunctions';
 
 const HangmanStages = [
 	'___\n|      |\n|    \n|    \n|      \n|    \n|',
@@ -24,6 +25,7 @@ export class Hangman {
 	constructor(interaction) {
 		this.interaction = interaction;
 		this.players = [interaction.user, interaction.options.getUser('playertwo')];
+
 		this.runGame();
 	}
 
@@ -50,7 +52,9 @@ export class Hangman {
 		}).catch((err) => {
 			hasWon = true;
 			this.dmMessage.edit('You didn\'t enter a word fast enough!');
-			return this.interaction.editReply(`${this.interaction.user} took too long to put a word in!`);
+			return this.interaction.editReply(`${this.interaction.user} took too long to put a word in!`).catch((e) => {
+				handleError(e, this.interaction);
+			});
 		});
 
 		while (!hasWon) {
@@ -80,11 +84,15 @@ export class Hangman {
 					hasWon = true;
 					this.updateMessage(`\`\`${this.displayWord}\`\`\n Wrong Guesses: ${this.wrongGuesses}\n${this.players[0]} has won!`);
 				}
+			}).catch((e) => {
+				handleError(e, this.interaction);
 			});
 		}
 	}
 
 	async updateMessage(attachment: string) {
-		await this.interaction.editReply(`${HangmanStages[this.stage]}\n${attachment}`);
+		await this.interaction.editReply(`${HangmanStages[this.stage]}\n${attachment}`).catch((e) => {
+			handleError(e, this.interaction);
+		});
 	}
 }

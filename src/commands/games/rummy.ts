@@ -1,6 +1,7 @@
 import {CommandInteraction, Message, MessageEmbed, User} from 'discord.js';
 import {Card, Deck} from '../../deck';
 import {getMessage} from './utils';
+import handleError from '../../utilFunctions';
 
 export class Rummy {
 	interaction: CommandInteraction;
@@ -19,10 +20,14 @@ export class Rummy {
 			this.players = [this.interaction.options.getUser('playertwo'), this.interaction.user];
 		};
 
-		this.start();
+		try {
+			this.runGame();
+		} catch (e) {
+			handleError(e, this.interaction);
+		}
 	}
 
-	async start() {
+	async runGame() {
 		await this.interaction.reply(`${this.interaction.user} has challenged ${this.interaction.options.getUser('playertwo')} to a game of Rummy, Please move to DMs`);
 		this.message = await getMessage(this.interaction);
 

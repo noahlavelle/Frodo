@@ -1,6 +1,7 @@
 import {CommandInteraction, Message, MessageEmbed, User} from 'discord.js';
 import {client, EmbedColor} from '../../index';
 import {getMessage} from './utils';
+import handleError from '../../utilFunctions';
 
 const NumberReactions = {
 	'856566113851932672': 1,
@@ -70,7 +71,9 @@ export class Ttt {
 
 	async runGame() {
 		if (this.players[1] == null || this.players[1].bot) {
-			await this.interaction.reply('The player could not be found or was a bot');
+			await this.interaction.reply('The player could not be found or was a bot').catch((e) => {
+				handleError(e, this.interaction);
+			});
 			return;
 		}
 
@@ -86,7 +89,9 @@ export class Ttt {
 
 		await this.updateMessage();
 		for (const reaction of Object.keys(NumberReactions)) {
-			await this.message.react(reaction);
+			await this.message.react(reaction).catch((e) => {
+				handleError(e, this.interaction);
+			});
 		}
 
 		const filter = (reaction, user) => {
@@ -130,8 +135,12 @@ export class Ttt {
 			})
 				.catch(async (err) => {
 					hasWon = true;
-					await this.message.reactions.removeAll();
-					await this.message.edit('The game has timed out!');
+					await this.message.reactions.removeAll().catch((e) => {
+						handleError(e, this.interaction);
+					});
+					await this.message.edit('The game has timed out!').catch((e) => {
+						handleError(e, this.interaction);
+					});
 				});
 		}
 	}
@@ -178,24 +187,32 @@ export class Ttt {
 	}
 
 	async win() {
-		await this.message.reactions.removeAll();
+		await this.message.reactions.removeAll().catch((e) => {
+			handleError(e, this.interaction);
+		});
 		await this.interaction.editReply({
 			content: `${this.isPlayerOne ? this.players[0] : this.players[1]} has won!`,
 			embeds: [
 				new MessageEmbed()
 					.setColor(EmbedColor)
 					.setDescription(`\n\n${this.grid.map((e) => e.join('')).join('\n')}`),
-			]});
+			]}).catch((e) => {
+			handleError(e, this.interaction);
+		});
 	}
 	async draw() {
-		await this.message.reactions.removeAll();
+		await this.message.reactions.removeAll().catch((e) => {
+			handleError(e, this.interaction);
+		});
 		await this.interaction.editReply({
 			content: `You drew!`,
 			embeds: [
 				new MessageEmbed()
 					.setColor(EmbedColor)
 					.setDescription(`\n\n${this.grid.map((e) => e.join('')).join('\n')}`),
-			]});
+			]}).catch((e) => {
+			handleError(e, this.interaction);
+		});
 	}
 
 	async updateMessage() {
@@ -205,6 +222,8 @@ export class Ttt {
 				new MessageEmbed()
 					.setColor(EmbedColor)
 					.setDescription(`\nCurrent go: ${this.isPlayerOne ? PlayerEmojis[2] : PlayerEmojis[3]} ${this.currentPlayer}\n\n${this.grid.map((e) => e.join('')).join('\n')}`),
-			]});
+			]}).catch((e) => {
+			handleError(e, this.interaction);
+		});
 	}
 }

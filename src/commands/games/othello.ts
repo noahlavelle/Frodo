@@ -1,6 +1,7 @@
 import {CommandInteraction, Message, MessageEmbed, User} from 'discord.js';
 import {client} from '../../index';
 import {getMessage, removeReaction} from './utils';
+import handleError from '../../utilFunctions';
 
 const clearEmojis = [
 	'<:p0c:851057388030525440>',
@@ -121,9 +122,9 @@ export class Othello {
 			this.grid[i + 7] = [];
 		};
 		this.playersGo = 0;
-		this.startGame();
+		this.runGame();
 	};
-	async startGame() {
+	async runGame() {
 		if (Math.round(Math.random()) === 0) {
 			this.players = [this.interaction.user, this.interaction.options.getUser('playertwo')];
 		} else {
@@ -144,7 +145,9 @@ export class Othello {
 				const letter = Object.keys(letterReactionsFilter).includes(collected.first().emoji.name);
 				const number = Object.keys(numberReactionsFilter).includes(collected.first().emoji.name);
 				const control = Object.keys(controlReactions).includes(collected.first().emoji.name);
-				await removeReaction(this.message, this.players[this.playersGo]);
+				await removeReaction(this.message, this.players[this.playersGo]).catch((e) => {
+					handleError(e, this.interaction);
+				});
 
 				if (letter) {
 					this.row = letterReactionsFilter[collected.first().emoji.name];
@@ -280,8 +283,12 @@ export class Othello {
 				};
 			})
 			.catch((err) => {
-				this.message.reactions.removeAll();
-				return this.message.edit('The game has timed out!');
+				this.message.reactions.removeAll().catch((e) => {
+					handleError(e, this.interaction);
+				});
+				return this.message.edit('The game has timed out!').catch((e) => {
+					handleError(e, this.interaction);
+				});
 			});
 	};
 
@@ -323,7 +330,9 @@ export class Othello {
 						.setFooter(`${this.players[0].username}: ${black}, ${this.players[1].username}: ${white}`)
 						.setDescription(`Current go: ${clearEmojis[this.playersGo]} <@${this.players[this.playersGo].id}>\n\n${this.stringGrid()}`),
 				]},
-			);
+			).catch((e) => {
+				handleError(e, this.interaction);
+			});
 		} else {
 			await this.interaction.reply({
 				content: `<@${this.interaction.user.id}> challenged ${this.interaction.options.getUser('playertwo')} to a game of othello!`,
@@ -333,7 +342,9 @@ export class Othello {
 						.setFooter(`${this.players[0].username}: ${black}, ${this.players[1].username}: ${white}`)
 						.setDescription(`Current go: ${clearEmojis[this.playersGo]} <@${this.players[this.playersGo].id}>\n\n${this.stringGrid()}`),
 				]},
-			);
+			).catch((e) => {
+				handleError(e, this.interaction);
+			});
 		};
 		return true;
 	};
@@ -347,7 +358,9 @@ export class Othello {
 				else if (value === 2) white++;
 			});
 		});
-		this.message.reactions.removeAll();
+		this.message.reactions.removeAll().catch((e) => {
+			handleError(e, this.interaction);
+		});
 		let text = '';
 		if (black === white) text = 'You Drew!';
 		else if (black > white) text = `<@${this.players[0].id}> Won!`;
@@ -360,7 +373,9 @@ export class Othello {
 					.setFooter(`${this.players[0].username}: ${black}, ${this.players[1].username}: ${white}`)
 					.setDescription(`\n${this.stringGrid()}`),
 			]},
-		);
+		).catch((e) => {
+			handleError(e, this.interaction);
+		});
 	};
 	stringGrid() {
 		for (let i = 1; i < 9; i++) {
@@ -428,7 +443,9 @@ export class Othello {
 		});
 	};
 	async makeTipReaction() {
-		await this.message.react('<:tip:856171946663084073>');
+		await this.message.react('<:tip:856171946663084073>').catch((e) => {
+			handleError(e, this.interaction);
+		});
 		this.waitTipReaction();
 	};
 	waitTipReaction() {
@@ -454,7 +471,9 @@ export class Othello {
 				];
 				this.updateMessage();
 				this.waitTipReaction();
-			};
+			}
+		}).catch((e) => {
+			handleError(e, this.interaction);
 		});
 	}
 };

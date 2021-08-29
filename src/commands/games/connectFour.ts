@@ -1,6 +1,7 @@
 import {CommandInteraction, Message, MessageEmbed, User} from 'discord.js';
 import {client, EmbedColor} from '../../index';
 import {getMessage, removeReaction} from './utils';
+import handleError from '../../utilFunctions';
 
 enum SlotType {
 	Empty,
@@ -56,7 +57,7 @@ class ConnectFour {
 			this.players = [this.interaction.user, this.interaction.options.getUser('playertwo')];
 		} else {
 			this.players = [this.interaction.options.getUser('playertwo'), this.interaction.user];
-		};
+		}
 		this.currentPlayer = this.players[0];
 		this.isPlayerOne = true;
 		this.grid = [];
@@ -77,7 +78,9 @@ class ConnectFour {
 		this.updateMessage(true);
 
 		for (const value of Object.keys(NumberReactions)) {
-			await this.message.react(value);
+			await this.message.react(value).catch((e) => {
+				handleError(e, this.interaction);
+			});
 		}
 
 		const filter = (reaction, user) => {
@@ -125,6 +128,8 @@ class ConnectFour {
 
 					this.isPlayerOne = !this.isPlayerOne;
 					this.currentPlayer = this.isPlayerOne ? this.players[0] : this.players[1];
+				}).catch((e) => {
+					handleError(e, this.interaction);
 				});
 		}
 	}
@@ -157,14 +162,18 @@ class ConnectFour {
 					.setColor(EmbedColor)
 					.setDescription(`Current go: ${PlayerTextClear[this.isPlayerOne ? 0 : 1]} ${this.isPlayerOne ? this.players[0] : this.players[1]}\n\n${message}`),
 			]},
-		) : this.interaction.editReply({
+		).catch((e) => {
+			handleError(e, this.interaction);
+		}) : this.interaction.editReply({
 			content: `<@${this.interaction.user.id}> challenged ${this.interaction.options.getUser('playertwo')} to a game of Connect Four!`,
 			embeds: [
 				new MessageEmbed()
 					.setColor(EmbedColor)
 					.setDescription(`Current go: ${PlayerTextClear[this.isPlayerOne ? 1 : 0]} ${this.isPlayerOne ? this.players[1] : this.players[0]}\n\n${message}`),
 			]},
-		);
+		).catch((e) => {
+			handleError(e, this.interaction);
+		});
 	}
 
 	checkHorizontalWin(row: number) {
@@ -231,8 +240,12 @@ class ConnectFour {
 	}
 
 	async win() {
-		await this.message.reactions.removeAll();
-		await this.interaction.editReply(this.message.content += `\n\n<@${this.currentPlayer.id}> wins!`);
+		await this.message.reactions.removeAll().catch((e) => {
+			handleError(e, this.interaction);
+		});
+		await this.interaction.editReply(this.message.content += `\n\n<@${this.currentPlayer.id}> wins!`).catch((e) => {
+			handleError(e, this.interaction);
+		});
 		this.updateMessageWin();
 	}
 	updateMessageWin() {
@@ -254,7 +267,9 @@ class ConnectFour {
 					.setColor(EmbedColor)
 					.setDescription(`\n${message}`),
 			]},
-		);
+		).catch((e) => {
+			handleError(e, this.interaction);
+		});
 	}
 }
 

@@ -27,7 +27,7 @@ client.once('ready', async () => {
 });
 
 
-client.on('interactionCreate', (interaction) => {
+client.on('interactionCreate', async (interaction) => {
 	if (!interaction.isCommand()) return;
 	if (Object.keys(CommandData).includes(`${interaction.commandName}CommandData`)) {
 		if (!interaction.guild) {
@@ -37,6 +37,14 @@ client.on('interactionCreate', (interaction) => {
 		try {
 			CommandData[`${interaction.commandName}CommandData`].execute(interaction);
 		} catch (e) {
+			await interaction.followUp( {
+				embeds: [
+					new MessageEmbed()
+						.setTitle('Something has gone wrong :confused:')
+						.setColor('#B00020.'),
+				],
+			});
+
 			console.error(e);
 		}
 	}

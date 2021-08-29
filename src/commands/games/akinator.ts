@@ -1,9 +1,11 @@
 import {Aki} from 'aki-api';
 
 const region = 'en';
-import {CommandInteraction, Message, MessageEmbed} from 'discord.js';
+import {CommandInteraction, DiscordAPIError, Message, MessageEmbed} from 'discord.js';
 import {getMessage, removeReaction} from './utils';
 import {guess} from 'aki-api/typings/src/functions';
+import sendErrorEmbed from '../../utilFunctions';
+import handleError from '../../utilFunctions';
 
 const NumberReactions = {
 	'851065666341699584': 0,
@@ -31,6 +33,7 @@ export class Akinator {
 	message: Message;
 	aki: Aki;
 	interaction: CommandInteraction;
+	hasWon = false;
 
 	constructor(interaction) {
 		this.interaction = interaction;
@@ -43,18 +46,19 @@ export class Akinator {
 		await this.interaction.deferReply();
 		this.message = await getMessage(this.interaction);
 		await this.aki.start();
-		let hasWon = false;
 		await this.updateMessage();
 
 		for (const reaction of Object.keys(NumberReactions)) {
-			await this.message.react(reaction);
+			await this.message.react(reaction).catch((e) => {
+				handleError(e, this.interaction);
+			});
 		}
 
 		const filter = (reaction, user) => {
 			return Object.keys(NumberReactionsFilter).includes(reaction.emoji.name) && user.id == this.interaction.user.id;
 		};
 
-		while (!hasWon) {
+		while (!this.hasWon) {
 			await this.message.awaitReactions({filter, max: 1, time: 300000, errors: ['time']}).then(async (collected) => {
 				const response = NumberReactionsFilter[collected.first().emoji.name];
 
@@ -70,13 +74,15 @@ export class Akinator {
 
 				if (this.aki.progress >= 75 || this.aki.currentStep >= 78) {
 					await this.aki.win();
-					hasWon = true;
+					this.hasWon = true;
 					await this.win();
 					return;
 				}
 			}).catch((err) => {
-				hasWon = true;
-				this.interaction.editReply('The game has timed out!');
+				this.hasWon = true;
+				this.interaction.editReply('The game has timed out!').catch((e) => {
+					handleError(e, this.interaction);
+				});
 				this.message.reactions.removeAll();
 			});
 		}
@@ -84,7 +90,9 @@ export class Akinator {
 
 	async win() {
 		let choiceMade = false;
-		await this.message.reactions.removeAll();
+		await this.message.reactions.removeAll().catch((e) => {
+			handleError(e, this.interaction);
+		});
 		const filter = (reaction, user) => {
 			return Object.keys(LetterReactions).includes(reaction.emoji.name) && user.id == this.interaction.user.id;
 		};
@@ -92,7 +100,9 @@ export class Akinator {
 		await this.updateWinMessage('Am I right?', 0);
 
 		for (const letter of Object.keys(LetterReactions)) {
-			await this.message.react(letter);
+			await this.message.react(letter).catch((e) => {
+				handleError(e, this.interaction);
+			});
 		}
 
 		for (let i = 0; i < this.aki.guessCount && !choiceMade; i++) {
@@ -105,11 +115,15 @@ export class Akinator {
 					await this.message.reactions.removeAll();
 					choiceMade = true;
 				}
+			}).catch((e) => {
+				handleError(e, this.interaction);
 			});
 		}
 		if (!choiceMade) {
 			await this.updateWinMessage('I don\'t know, you win!', this.aki.guessCount - 1);
-			await this.message.reactions.removeAll();
+			await this.message.reactions.removeAll().catch((e) => {
+				handleError(e, this.interaction);
+			});
 		}
 	}
 
@@ -126,7 +140,9 @@ export class Akinator {
 				.setImage(answers.absolute_picture_path)
 				.setThumbnail('https://frodo.fun/static/img/frodoAssets/aki.png')
 				.setDescription(description),
-		]});
+		]}).catch((e) => {
+			handleError(e, this.interaction);
+		});
 	}
 
 	async updateMessage() {
@@ -144,6 +160,8 @@ export class Akinator {
 					},
 					{name: 'Progress:', value: String(this.aki.progress)},
 				),
-		]});
+		]}).catch((e) => {
+			handleError(e, this.interaction);
+		});
 	}
 }

@@ -1,5 +1,6 @@
 import {CommandInteraction, Permissions, User} from 'discord.js';
 import {PartyLobby} from '../../partyLobby';
+import handleError from '../../utilFunctions';
 
 enum Roles {
 	Seer,
@@ -26,10 +27,13 @@ export default class Werewolf extends PartyLobby {
 	}
 
 	async gameStarted(players: User[]) {
-		super.gameStarted(players);
-
-		this.assignRoles(players);
-		await this.createChannels();
+		try {
+			super.gameStarted(players);
+			this.assignRoles(players);
+			this.createChannels();
+		} catch (e) {
+			handleError(e, this.interaction);
+		}
 	}
 
 	assignRoles(players: User[]) {

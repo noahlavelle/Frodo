@@ -6,6 +6,7 @@ import {SlashCommandBuilder} from '@discordjs/builders';
 import {Routes} from 'discord-api-types';
 import {registerCommands} from '../../refreshCommands';
 import {getMessage} from './utils';
+import handleError from '../../utilFunctions';
 const characters: string[] = ['🇦', '🇧', '🇨', '🇩'];
 const letterMap: string[] = ['A', 'B', 'C', 'D'];
 let games = [];
@@ -105,9 +106,16 @@ export class Trivia {
 		try {
 			json = await (await fetch(url)).json();
 		} catch (err) {
-			return this.interaction.editReply({embeds: [errorEmbed]});
+			return this.interaction.editReply({embeds: [errorEmbed]}).catch((e) => {
+				handleError(e, this.interaction);
+			});
 		}
-		if (json.response_code != 0) return this.interaction.editReply({embeds: [errorEmbed]});
+
+		try {
+			if (json.response_code != 0) return this.interaction.editReply({embeds: [errorEmbed]});
+		} catch (e) {
+			handleError(e, this.interaction);
+		}
 		let options: string[] = [];
 		let optionsTimeOut: string[] = [];
 		let optionsAnswerCorrect: string[] = [];
@@ -175,9 +183,13 @@ export class Trivia {
 					.setTitle(atob(json.results[0].question))
 					.setDescription(options.join('\n'))
 					.setFooter(`Category - ${atob(json.results[0].category)}, Difficulty - ${atob(json.results[0].difficulty)}`),
-			]});
+			]}).catch((e) => {
+			handleError(e, this.interaction);
+		});
 		this.message = await getMessage(this.interaction);
-		options.forEach((a, index) => this.message.react(characters[index]));
+		options.forEach((a, index) => this.message.react(characters[index]).catch((e) => {
+			handleError(e, this.interaction);
+		}));
 		const filter = (r, user) => user.id == this.interaction.user.id && characters.includes(r.emoji.name);
 		this.message.awaitReactions({filter, max: 1, time: 30000, errors: ['time']},
 		).then((col) => {
@@ -192,7 +204,9 @@ export class Trivia {
 							.setTitle(atob(json.results[0].question))
 							.setDescription(optionsAnswerCorrect.join('\n'))
 							.setFooter(`Category - ${atob(json.results[0].category)}, Difficulty - ${atob(json.results[0].difficulty)}`),
-					]});
+					]}).catch((e) => {
+					handleError(e, this.interaction);
+				});
 			} else {
 				optionsAnswerIncorrect[characters.indexOf(col.first().emoji.name)] += ' :x:';
 				this.interaction.editReply({
@@ -203,7 +217,9 @@ export class Trivia {
 							.setTitle(atob(json.results[0].question))
 							.setDescription(optionsAnswerIncorrect.join('\n'))
 							.setFooter(`Category - ${atob(json.results[0].category)}, Difficulty - ${atob(json.results[0].difficulty)}`),
-					]});
+					]}).catch((e) => {
+					handleError(e, this.interaction);
+				});
 			}
 		}).catch(() => {
 			this.message.reactions.removeAll();
@@ -215,12 +231,16 @@ export class Trivia {
 						.setTitle(atob(json.results[0].question))
 						.setDescription(optionsTimeOut.join('\n'))
 						.setFooter(`Category - ${atob(json.results[0].category)}, Difficulty - ${atob(json.results[0].difficulty)}`),
-				]});
+				]}).catch((e) => {
+				handleError(e, this.interaction);
+			});
 		});
 	};
 }
 
 export function triviaCategories(interaction: CommandInteraction) {
-	if (error) return interaction.reply({embeds: [errorEmbed]});
-	interaction.reply({embeds: [gamesEmbed]});
+	try {
+		if (error) return interaction.reply({embeds: [errorEmbed]});
+		interaction.reply({embeds: [gamesEmbed]});
+	} catch (e) {}
 }

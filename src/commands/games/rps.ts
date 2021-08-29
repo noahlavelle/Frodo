@@ -1,6 +1,7 @@
 import {CommandInteraction, Message, MessageEmbed, User} from 'discord.js';
 import {client, EmbedColor} from '../../index';
 import {getMessage, removeReaction} from './utils';
+import handleError from '../../utilFunctions';
 
 enum WinScenario {
 	Tie,
@@ -78,20 +79,26 @@ export class Rps {
 				max: 1,
 				time: 300000,
 				errors: ['time'],
-			}).then(() => removeReaction(playerOneMessage, this.message.author));
+			}).then(() => removeReaction(playerOneMessage, this.message.author)).catch((e) => {
+				handleError(e, this.interaction);
+			});
 			playerTwoMessage.awaitReactions({
 				filter,
 				max: 1,
 				time: 300000,
 				errors: ['time'],
-			}).then(() => removeReaction(playerTwoMessage, this.message.author));
+			}).then(() => removeReaction(playerTwoMessage, this.message.author)).catch((e) => {
+				handleError(e, this.interaction);
+			});
 
 			const playerOneAwait = playerOneMessage.awaitReactions({filter, max: 1, time: 300000, errors: ['time']});
 			const playerTwoAwait = playerTwoMessage.awaitReactions({filter, max: 1, time: 300000, errors: ['time']});
 
 			await Promise.all([playerOneAwait, playerTwoAwait]).then((values) => {
 				const winScenario = WinScenarios[values[0].first().emoji.name + values[1].first().emoji.name];
-				this.message.edit({embeds: [embed(`${winScenario === WinScenario.PlayerOne ? this.players[0] : this.players[1]} has ${winScenario == WinScenario.Tie ? 'tied with' : 'beaten'} ${winScenario == WinScenario.PlayerOne ? this.players[1] : this.players[0]} at a game of rock paper scissors`)]});
+				this.message.edit({embeds: [embed(`${winScenario === WinScenario.PlayerOne ? this.players[0] : this.players[1]} has ${winScenario == WinScenario.Tie ? 'tied with' : 'beaten'} ${winScenario == WinScenario.PlayerOne ? this.players[1] : this.players[0]} at a game of rock paper scissors`)]}).catch((e) => {
+					handleError(e, this.interaction);
+				});
 				if (winScenario === WinScenario.PlayerOne) {
 					playerOneMessage.edit({embeds: [embed(`You beat ${this.players[1].username}`)]});
 					playerTwoMessage.edit({embeds: [embed(`${this.players[0].username} beat you!`)]});
@@ -105,7 +112,9 @@ export class Rps {
 				;
 			});
 		} catch (err) {
-			return this.message.edit({embeds: [embed('The game has timed out!', '#ff0000')]});
+			return this.message.edit({embeds: [embed('The game has timed out!', '#ff0000')]}).catch((e) => {
+				handleError(e, this.interaction);
+			});
 		};
 	}
 }
