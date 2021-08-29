@@ -9,7 +9,7 @@
 <br />
 <p align="center">
   <a href="https://github.com/NoahLavelle/Frodo">
-    <img src="https://frodo.fun/static/img/frodo-nobg.svg" alt="Logo" height="250">
+    <img src="https://github.com/Toffee1347/FrodoWebsite/blob/master/public/static/img/logosNew/nobg.svg" alt="Logo" height="250">
   </a>
 
   <h3 align="center">FRODO - Discord Games Bot</h3>
