@@ -61,6 +61,6 @@ client.on('messageCreate', async (message) => {
 });
 
 // login to Discord with your app's token
-client.login(require('./config.json').token).then(() => console.log('Logged in'));
+client.login(process.env.TOKEN || require('./config.json').token).then(() => console.log('Logged in'));
 
 export {client};

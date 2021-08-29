@@ -2,38 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a3cc3e2f-3e43-4af7-80f5-c3baf3cd5f74" name="Default Changelist" comment="fixed some commands">
-      <change afterPath="$PROJECT_DIR$/commands/games/rummy.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/deck.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commandData.js" beforeDir="false" afterPath="$PROJECT_DIR$/commandData.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commandData.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/commandData.js.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commandData.ts" beforeDir="false" afterPath="$PROJECT_DIR$/commandData.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/Utils/ping.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/Utils/ping.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/Utils/ping.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/commands/Utils/ping.js.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/Utils/ping.ts" beforeDir="false" afterPath="$PROJECT_DIR$/commands/Utils/ping.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/games/anagrams.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/anagrams.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/games/anagrams.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/anagrams.js.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/games/anagrams.ts" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/anagrams.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/games/connectFour.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/connectFour.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/games/connectFour.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/connectFour.js.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/games/connectFour.ts" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/connectFour.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/games/hangman.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/hangman.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/games/hangman.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/hangman.js.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/games/hangman.ts" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/hangman.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/games/othello.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/othello.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/games/othello.ts" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/othello.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/games/ttt.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/ttt.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/games/ttt.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/ttt.js.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/games/ttt.ts" beforeDir="false" afterPath="$PROJECT_DIR$/commands/games/ttt.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config.json" beforeDir="false" afterPath="$PROJECT_DIR$/config.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/index.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/index.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/index.js.map" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/refreshCommands.js" beforeDir="false" afterPath="$PROJECT_DIR$/refreshCommands.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/refreshCommands.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/refreshCommands.js.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/refreshCommands.ts" beforeDir="false" afterPath="$PROJECT_DIR$/refreshCommands.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -165,7 +138,7 @@
       <workItem from="1630089165903" duration="1727000" />
       <workItem from="1630096085645" duration="1064000" />
       <workItem from="1630167177972" duration="8675000" />
-      <workItem from="1630226679071" duration="7793000" />
+      <workItem from="1630226679071" duration="8290000" />
     </task>
     <task id="LOCAL-00001" summary="fixed some commands">
       <created>1624057983961</created>
