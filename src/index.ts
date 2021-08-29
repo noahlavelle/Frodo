@@ -33,7 +33,12 @@ client.on('interactionCreate', (interaction) => {
 		if (!interaction.guild) {
 			return interaction.reply('This command is not available in DMs, please try again in a server');
 		}
-		CommandData[`${interaction.commandName}CommandData`].execute(interaction);
+
+		try {
+			CommandData[`${interaction.commandName}CommandData`].execute(interaction);
+		} catch (e) {
+			console.error(e);
+		}
 	}
 });
 
