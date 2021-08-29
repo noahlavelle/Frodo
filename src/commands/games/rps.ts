@@ -44,6 +44,7 @@ export class Rps {
 	interaction : CommandInteraction;
 	players : User[];
 	message : Message;
+	hasWon = false;
 
 	constructor(interaction : CommandInteraction) {
 		this.interaction = interaction;
@@ -94,8 +95,11 @@ export class Rps {
 					await playerOneMessage.edit({embeds: [embed(`You drew against ${this.players[1].username}!`)]});
 					await playerTwoMessage.edit({embeds: [embed(`You drew against ${this.players[0].username}!`)]});
 				}
+
+				this.hasWon = true;
 			});
 		} catch (err) {
+			if (this.hasWon) return;
 			return this.message.edit({embeds: [embed('The game has timed out!', '#ff0000')]}).catch((e) => {
 				handleError(e, this.interaction);
 			});
