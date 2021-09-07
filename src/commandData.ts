@@ -18,6 +18,7 @@ import {uptime} from './commands/Utils/uptime';
 import {avatar} from './commands/Utils/avatar';
 import {ping} from './commands/Utils/ping';
 import {Trivia} from './commands/games/trivia';
+import {invite} from './commands/Utils/invite';
 // import {Rummy} from './commands/games/rummy';
 
 namespace CommandData {
@@ -241,6 +242,15 @@ namespace CommandData {
 			.setDescription('Check Frodo\'s ping'),
 		execute(interaction) {
 			ping(interaction);
+		},
+	};
+
+	export const inviteCommandData = {
+		data: new SlashCommandBuilder()
+			.setName('invite')
+			.setDescription('Add Frodo to your server!'),
+		execute(interaction) {
+			invite(interaction);
 		},
 	};
 }
