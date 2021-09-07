@@ -1,5 +1,5 @@
 import {CommandInteraction, Message, MessageEmbed, User} from 'discord.js';
-import {getMessage, removeReaction} from './commands/games/utils';
+import {getMessage, removeReaction} from './utils';
 import handleError from './utilFunctions';
 
 export class PartyLobby {

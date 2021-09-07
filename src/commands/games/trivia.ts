@@ -3,10 +3,8 @@ import {EmbedColor, client} from '../../index';
 import fetch = require('node-fetch');
 import atob = require('atob');
 import {SlashCommandBuilder} from '@discordjs/builders';
-import {Routes} from 'discord-api-types';
 import {registerCommands} from '../../refreshCommands';
-import {getMessage} from './utils';
-import handleError from '../../utilFunctions';
+import {getMessage, MessageHandler} from '../../utils';
 const characters: string[] = ['🇦', '🇧', '🇨', '🇩'];
 const letterMap: string[] = ['A', 'B', 'C', 'D'];
 let games = [];
@@ -79,7 +77,7 @@ const errorEmbed: MessageEmbed = new MessageEmbed()
 
 export class Trivia {
 	interaction: CommandInteraction;
-	message: Message;
+	message: MessageHandler;
 
 	constructor(interaction) {
 		if (error) return interaction.reply(errorEmbed);
@@ -91,7 +89,7 @@ export class Trivia {
 		const difficulty = this.interaction.options.getString('difficulty');
 		const category = this.interaction.options.getString('category');
 
-		await this.interaction.deferReply();
+		this.message = await getMessage(this.interaction);
 
 		let url: String = 'https://opentdb.com/api.php?amount=1&encode=base64';
 		if (difficulty && difficulty != 'any') url += `&difficulty=${difficulty}`;
@@ -106,16 +104,10 @@ export class Trivia {
 		try {
 			json = await (await fetch(url)).json();
 		} catch (err) {
-			return this.interaction.editReply({embeds: [errorEmbed]}).catch((e) => {
-				handleError(e, this.interaction);
-			});
+			return this.message.edit({embeds: [errorEmbed]});
 		}
 
-		try {
-			if (json.response_code != 0) return this.interaction.editReply({embeds: [errorEmbed]});
-		} catch (e) {
-			handleError(e, this.interaction);
-		}
+		if (json.response_code != 0) return this.message.edit({embeds: [errorEmbed]});
 		let options: string[] = [];
 		let optionsTimeOut: string[] = [];
 		let optionsAnswerCorrect: string[] = [];
@@ -176,65 +168,58 @@ export class Trivia {
 				currentAnswer++;
 			}
 		}
-		await this.interaction.editReply({
+		await this.message.edit({
 			embeds: [
 				new MessageEmbed()
 					.setColor(EmbedColor)
 					.setTitle(atob(json.results[0].question))
 					.setDescription(options.join('\n'))
 					.setFooter(`Category - ${atob(json.results[0].category)}, Difficulty - ${atob(json.results[0].difficulty)}`),
-			]}).catch((e) => {
-			handleError(e, this.interaction);
-		});
-		this.message = await getMessage(this.interaction);
-		options.forEach((a, index) => this.message.react(characters[index]).catch((e) => {
-			handleError(e, this.interaction);
-		}));
+			]},
+		);
+		options.forEach((a, index) => this.message.react(characters[index]));
 		const filter = (r, user) => user.id == this.interaction.user.id && characters.includes(r.emoji.name);
-		this.message.awaitReactions({filter, max: 1, time: 30000, errors: ['time']},
-		).then((col) => {
-			this.message.reactions.removeAll();
+		this.message.awaitReactions({filter, max: 1, time: 30000, errors: ['time']})
+			.then((col) => {
+				this.message.removeReactions();
 
-			if (characters.indexOf(col.first().emoji.name) == answer) {
-				this.interaction.editReply({
-					content: `Correct :smile:`,
+				if (characters.indexOf(col.first().emoji.name) == answer) {
+					this.message.edit({
+						content: `Correct :smile:`,
+						embeds: [
+							new MessageEmbed()
+								.setColor(EmbedColor)
+								.setTitle(atob(json.results[0].question))
+								.setDescription(optionsAnswerCorrect.join('\n'))
+								.setFooter(`Category - ${atob(json.results[0].category)}, Difficulty - ${atob(json.results[0].difficulty)}`),
+						]},
+					);
+				} else {
+					optionsAnswerIncorrect[characters.indexOf(col.first().emoji.name)] += ' :x:';
+					this.message.edit({
+						content: `You got it wrong :cry:, The answer was :regional_indicator_${letterMap[answer].toLocaleLowerCase()}:`,
+						embeds: [
+							new MessageEmbed()
+								.setColor(EmbedColor)
+								.setTitle(atob(json.results[0].question))
+								.setDescription(optionsAnswerIncorrect.join('\n'))
+								.setFooter(`Category - ${atob(json.results[0].category)}, Difficulty - ${atob(json.results[0].difficulty)}`),
+						]},
+					);
+				}
+			}).catch(() => {
+				this.message.removeReactions();
+				this.message.edit({
+					content: `The game timed out! The correct answer was :regional_indicator_${letterMap[answer].toLocaleLowerCase()}:`,
 					embeds: [
 						new MessageEmbed()
 							.setColor(EmbedColor)
 							.setTitle(atob(json.results[0].question))
-							.setDescription(optionsAnswerCorrect.join('\n'))
+							.setDescription(optionsTimeOut.join('\n'))
 							.setFooter(`Category - ${atob(json.results[0].category)}, Difficulty - ${atob(json.results[0].difficulty)}`),
-					]}).catch((e) => {
-					handleError(e, this.interaction);
-				});
-			} else {
-				optionsAnswerIncorrect[characters.indexOf(col.first().emoji.name)] += ' :x:';
-				this.interaction.editReply({
-					content: `You got it wrong :cry:, The answer was :regional_indicator_${letterMap[answer].toLocaleLowerCase()}:`,
-					embeds: [
-						new MessageEmbed()
-							.setColor(EmbedColor)
-							.setTitle(atob(json.results[0].question))
-							.setDescription(optionsAnswerIncorrect.join('\n'))
-							.setFooter(`Category - ${atob(json.results[0].category)}, Difficulty - ${atob(json.results[0].difficulty)}`),
-					]}).catch((e) => {
-					handleError(e, this.interaction);
-				});
-			}
-		}).catch(() => {
-			this.message.reactions.removeAll();
-			this.interaction.editReply({
-				content: `The game timed out! The correct answer was :regional_indicator_${letterMap[answer].toLocaleLowerCase()}:`,
-				embeds: [
-					new MessageEmbed()
-						.setColor(EmbedColor)
-						.setTitle(atob(json.results[0].question))
-						.setDescription(optionsTimeOut.join('\n'))
-						.setFooter(`Category - ${atob(json.results[0].category)}, Difficulty - ${atob(json.results[0].difficulty)}`),
-				]}).catch((e) => {
-				handleError(e, this.interaction);
+					]},
+				);
 			});
-		});
 	};
 }
 

@@ -1,11 +1,9 @@
 import {Aki} from 'aki-api';
 
 const region = 'en';
-import {CommandInteraction, DiscordAPIError, Message, MessageEmbed} from 'discord.js';
-import {getMessage, removeReaction} from './utils';
+import {CommandInteraction, Message, MessageEmbed} from 'discord.js';
+import {getMessage, MessageHandler, removeReaction} from '../../utils';
 import {guess} from 'aki-api/typings/src/functions';
-import sendErrorEmbed from '../../utilFunctions';
-import handleError from '../../utilFunctions';
 
 const NumberReactions = {
 	'851065666341699584': 0,
@@ -30,7 +28,7 @@ const LetterReactions = {
 };
 
 export class Akinator {
-	message: Message;
+	message: MessageHandler;
 	aki: Aki;
 	interaction: CommandInteraction;
 	hasWon = false;
@@ -43,15 +41,12 @@ export class Akinator {
 	}
 
 	async runGame() {
-		await this.interaction.deferReply();
 		this.message = await getMessage(this.interaction);
 		await this.aki.start();
 		await this.updateMessage();
 
 		for (const reaction of Object.keys(NumberReactions)) {
-			await this.message.react(reaction).catch((e) => {
-				handleError(e, this.interaction);
-			});
+			await this.message.react(reaction);
 		}
 
 		const filter = (reaction, user) => {
@@ -62,7 +57,7 @@ export class Akinator {
 			await this.message.awaitReactions({filter, max: 1, time: 300000, errors: ['time']}).then(async (collected) => {
 				const response = NumberReactionsFilter[collected.first().emoji.name];
 
-				await removeReaction(this.message, this.interaction.user);
+				await this.message.removeUserReactions(this.interaction.user);
 
 				if (response == 5) {
 					await this.aki.back();
@@ -80,21 +75,15 @@ export class Akinator {
 				}
 			}).catch((err) => {
 				this.hasWon = true;
-				this.interaction.editReply('The game has timed out!').catch((e) => {
-					handleError(e, this.interaction);
-				});
-				this.message.reactions.removeAll().catch((e) => {
-					handleError(e, this.interaction);
-				});;
+				this.message.edit('The game has timed out!');
+				this.message.removeReactions();
 			});
 		}
 	}
 
 	async win() {
 		let choiceMade = false;
-		await this.message.reactions.removeAll().catch((e) => {
-			handleError(e, this.interaction);
-		});
+		await this.message.removeReactions();
 		const filter = (reaction, user) => {
 			return Object.keys(LetterReactions).includes(reaction.emoji.name) && user.id == this.interaction.user.id;
 		};
@@ -102,36 +91,30 @@ export class Akinator {
 		await this.updateWinMessage('Am I right?', 0);
 
 		for (const letter of Object.keys(LetterReactions)) {
-			await this.message.react(letter).catch((e) => {
-				handleError(e, this.interaction);
-			});
+			await this.message.react(letter);
 		}
 
 		for (let i = 0; i < this.aki.guessCount && !choiceMade; i++) {
 			await this.updateWinMessage('Am I right?', i);
 
 			await this.message.awaitReactions({filter, max: 1}).then(async (collected) => {
-				await removeReaction(this.message, this.interaction.user);
+				await this.message.removeUserReactions(this.interaction.user);
 				if (collected.first().emoji.name == Object.keys(LetterReactions)[0]) {
 					await this.updateWinMessage('I win again!', i);
-					await this.message.reactions.removeAll();
+					await this.message.removeReactions();
 					choiceMade = true;
 				}
-			}).catch((e) => {
-				handleError(e, this.interaction);
 			});
 		}
 		if (!choiceMade) {
 			await this.updateWinMessage('I don\'t know, you win!', this.aki.guessCount - 1);
-			await this.message.reactions.removeAll().catch((e) => {
-				handleError(e, this.interaction);
-			});
+			await this.message.removeReactions();
 		}
 	}
 
 	async updateWinMessage(description : string, i : number) {
 		const answers: guess = <guess> this.aki.answers[i];
-		await this.interaction.editReply({embeds: [
+		await this.message.edit({embeds: [
 			new MessageEmbed()
 				.setTitle('Akinator:')
 				.setColor('#3498db')
@@ -142,28 +125,26 @@ export class Akinator {
 				.setImage(answers.absolute_picture_path)
 				.setThumbnail('https://frodo.fun/static/img/frodoAssets/aki.png')
 				.setDescription(description),
-		]}).catch((e) => {
-			handleError(e, this.interaction);
-		});
+		]});
 	}
 
 	async updateMessage() {
-		await this.interaction.editReply({embeds: [
-			new MessageEmbed()
-				.setTitle('Akinator:')
-				.setColor('#3498db')
-				.setThumbnail('https://frodo.fun/static/img/frodoAssets/aki.png')
-				.addFields(
-					{name: 'Question:', value: this.aki.question},
-					{
-						name: 'Answers:',
-						value: `\n1: ${this.aki.answers[0]}\n2: ${this.aki.answers[1]}\n3: ${
-							this.aki.answers[2]}\n4: ${this.aki.answers[3]}\n5: ${this.aki.answers[4]}\n6: Back`,
-					},
-					{name: 'Progress:', value: String(this.aki.progress)},
-				),
-		]}).catch((e) => {
-			handleError(e, this.interaction);
+		await this.message.edit({
+			embeds: [
+				new MessageEmbed()
+					.setTitle('Akinator:')
+					.setColor('#3498db')
+					.setThumbnail('https://frodo.fun/static/img/frodoAssets/aki.png')
+					.addFields(
+						{name: 'Question:', value: this.aki.question},
+						{
+							name: 'Answers:',
+							value: `\n1: ${this.aki.answers[0]}\n2: ${this.aki.answers[1]}\n3: ${
+								this.aki.answers[2]}\n4: ${this.aki.answers[3]}\n5: ${this.aki.answers[4]}\n6: Back`,
+						},
+						{name: 'Progress:', value: String(this.aki.progress)},
+					),
+			],
 		});
 	}
 }

@@ -1,6 +1,5 @@
 import {CommandInteraction, Message, MessageEmbed} from 'discord.js';
-import {getMessage, removeReaction} from './utils';
-import handleError from '../../utilFunctions';
+import {getMessage, MessageHandler, removeReaction} from '../../utils';
 
 const fetch = require('node-fetch');
 
@@ -10,7 +9,7 @@ const LetterReactions = {
 };
 
 export class Anagrams {
-	message: Message;
+	message: MessageHandler;
 	interaction: CommandInteraction;
 	vowels: string[];
 	consonants: string[];
@@ -35,15 +34,12 @@ export class Anagrams {
 	}
 
 	async runGame() {
-		await this.interaction.deferReply();
 		this.message = await getMessage(this.interaction);
 		let letters = '';
 		await this.updateMessage(letters, '');
 
 		for (const letter of Object.keys(LetterReactions)) {
-			await this.message.react(letter).catch((e) => {
-				handleError(e, this.interaction);
-			});
+			await this.message.react(letter);
 		}
 
 		const filter = (reaction, user) => {
@@ -51,27 +47,23 @@ export class Anagrams {
 		};
 
 		while (letters.length < 9) {
-			try {
-				await this.message.awaitReactions({
-					filter,
-					max: 1,
-					time: 300000,
-					errors: ['time'],
-				}).then(async (collected) => {
-					const reactionNumber = LetterReactions[collected.first().emoji.name];
-					await removeReaction(this.message, this.interaction.user);
-					letters += reactionNumber == 0 ? this.vowels[Math.floor(Math.random() * this.vowels.length)] : this.consonants[Math.floor(Math.random() * this.consonants.length)];
-					await this.updateMessage(letters, '');
-				});
-			} catch (err) {
-				this.message.reactions.removeAll();
-				return this.interaction.editReply('The game has timed out!');
-			};
+			await this.message.awaitReactions({
+				filter,
+				max: 1,
+				time: 300000,
+				errors: ['time'],
+			}).then(async (collected) => {
+				const reactionNumber = LetterReactions[collected.first().emoji.name];
+				await this.message.removeUserReactions(this.interaction.user);
+				letters += reactionNumber == 0 ? this.vowels[Math.floor(Math.random() * this.vowels.length)] : this.consonants[Math.floor(Math.random() * this.consonants.length)];
+				await this.updateMessage(letters, '');
+			}).catch(() => {
+				this.message.removeReactions();
+				return this.message.edit('The game has timed out!');
+			});
 		}
 
-		await this.message.reactions.removeAll().catch((e) => {
-			handleError(e, this.interaction);
-		});
+		await this.message.removeReactions();
 
 		await this.updateMessage(letters, '\nYour 30 seconds starts now!');
 		setTimeout(async () => {
@@ -95,7 +87,7 @@ export class Anagrams {
 	}
 
 	async updateMessage(letters: string, playAttachment: string) {
-		await this.interaction.editReply({embeds: [
+		await this.message.edit({embeds: [
 			new MessageEmbed()
 				.setTitle('Countdown')
 				.setColor('#3498db')
@@ -106,8 +98,6 @@ export class Anagrams {
 					},
 					{name: 'Play:', value: (letters == '' ? '...' : letters) + playAttachment},
 				),
-		]}).catch((e) => {
-			handleError(e, this.interaction);
-		});
+		]});
 	}
 }

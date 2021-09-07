@@ -11,10 +11,10 @@ const rest = new REST({version: '9'})
 export async function registerCommands(command) {
 	try {
 		const commandsList = [...commands, ...command];
-		// await rest.put(
-		// 	Routes.applicationGuildCommands(clientID, guildID),
-		// 	{body: commandsList},
-		// );
+		await rest.put(
+			Routes.applicationGuildCommands(clientID, guildID),
+			{body: commandsList},
+		);
 		//
 		// await rest.put(
 		// 	Routes.applicationCommands(clientID),

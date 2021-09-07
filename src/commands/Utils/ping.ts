@@ -1,7 +1,8 @@
-import {getMessage} from '../games/utils';
+import {getMessage} from '../../utils';
+import {client} from '../../index';
 
 export async function ping(interaction) {
-	await interaction.reply(`\`Pinging...\``);
 	const message = await getMessage(interaction);
-	await message.edit(`Ping: \`${message.createdTimestamp - interaction.createdTimestamp}\``);
+	message.edit('`Pinging...`');
+	await message.edit(`Ping: \`${message.message.createdTimestamp - interaction.createdTimestamp}\`\nDiscord API ping: \`${client.ws.ping}\``);
 };

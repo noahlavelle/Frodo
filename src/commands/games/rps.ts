@@ -1,7 +1,6 @@
 import {CommandInteraction, Message, MessageEmbed, User} from 'discord.js';
 import {client, EmbedColor} from '../../index';
-import {getMessage, removeReaction} from './utils';
-import handleError from '../../utilFunctions';
+import {DmMessageHandler, getMessage, MessageHandler} from '../../utils';
 
 enum WinScenario {
 	Tie,
@@ -43,7 +42,7 @@ function embed(text, color?) {
 export class Rps {
 	interaction : CommandInteraction;
 	players : User[];
-	message : Message;
+	message : MessageHandler;
 	hasWon = false;
 
 	constructor(interaction : CommandInteraction) {
@@ -56,19 +55,19 @@ export class Rps {
 		try {
 			if (this.players[1] == null || this.players[1].bot) return this.interaction.reply('The player could not be found or was a bot');
 
-			await this.interaction.reply({embeds: [embed(`${this.players[0]} has challenged ${this.players[1]} to a game of rock paper scissors.\nPlease move to DMs`)]});
 			this.message = await getMessage(this.interaction);
+			await this.message.edit({embeds: [embed(`${this.players[0]} has challenged ${this.players[1]} to a game of rock paper scissors.\nPlease move to DMs`)]});
 
-			const playerOneMessage = await this.players[0].send({
+			const playerOneMessage = new DmMessageHandler(await this.players[0].send({
 				embeds: [
 					embed(`You challenged ${this.players[1].username} to Rock Paper Scissors [here](https://discordapp.com/channels/${this.message.guild.id}/${this.message.channel.id}/${this.message.id})\nChoose rock, paper or scissors`),
 				],
-			});
-			const playerTwoMessage = await this.players[1].send({
+			}));
+			const playerTwoMessage = new DmMessageHandler(await this.players[1].send({
 				embeds: [
 					embed(`${this.players[0].username} challenged you to Rock Paper Scissors [here](https://discordapp.com/channels/${this.message.guild.id}/${this.message.channel.id}/${this.message.id})\nChoose rock, paper or scissors`),
 				],
-			});
+			}));
 
 			for (const letter of LetterReactions) {
 				await Promise.all([playerOneMessage.react(letter), playerTwoMessage.react(letter)]);
@@ -80,11 +79,8 @@ export class Rps {
 			const playerTwoAwait = playerTwoMessage.awaitReactions({filter, max: 1});
 
 			await Promise.all([playerOneAwait, playerTwoAwait]).then(async (values) => {
-				console.log(values[0].first().emoji.name, values[1].first().emoji.name);
 				const winScenario = WinScenarios[values[0].first().emoji.name + values[1].first().emoji.name];
-				this.message.edit({embeds: [embed(`${winScenario === WinScenario.PlayerOne ? this.players[0] : this.players[1]} has ${winScenario == WinScenario.Tie ? 'tied with' : 'beaten'} ${winScenario == WinScenario.PlayerOne ? this.players[1] : this.players[0]} at a game of rock paper scissors`)]}).catch((e) => {
-					handleError(e, this.interaction);
-				});
+				this.message.edit({embeds: [embed(`${winScenario === WinScenario.PlayerOne ? this.players[0] : this.players[1]} has ${winScenario == WinScenario.Tie ? 'tied with' : 'beaten'} ${winScenario == WinScenario.PlayerOne ? this.players[1] : this.players[0]} at a game of rock paper scissors`)]});
 				if (winScenario === WinScenario.PlayerOne) {
 					await playerOneMessage.edit({embeds: [embed(`You beat ${this.players[1].username}`)]});
 					await playerTwoMessage.edit({embeds: [embed(`${this.players[0].username} beat you!`)]});
@@ -100,9 +96,7 @@ export class Rps {
 			});
 		} catch (err) {
 			if (this.hasWon) return;
-			return this.message.edit({embeds: [embed('The game has timed out!', '#ff0000')]}).catch((e) => {
-				handleError(e, this.interaction);
-			});
+			return this.message.edit({embeds: [embed('The game has timed out!', '#ff0000')]});
 		}
 	}
 }

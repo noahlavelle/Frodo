@@ -1,7 +1,6 @@
 import {CommandInteraction, Message, MessageEmbed, User} from 'discord.js';
 import {client, EmbedColor} from '../../index';
-import {getMessage, removeReaction} from './utils';
-import handleError from '../../utilFunctions';
+import {getMessage, MessageHandler, removeReaction} from '../../utils';
 
 enum SlotType {
 	Empty,
@@ -48,7 +47,7 @@ class ConnectFour {
 	players: User[];
 	currentPlayer: User;
 	grid: SlotType[][];
-	message: Message;
+	message: MessageHandler;
 	isPlayerOne: boolean;
 
 	constructor(interaction: CommandInteraction) {
@@ -71,16 +70,13 @@ class ConnectFour {
 			return;
 		}
 
-		await this.interaction.deferReply();
 		this.message = await getMessage(this.interaction);
 
 		this.generateGrid();
 		this.updateMessage(true);
 
 		for (const value of Object.keys(NumberReactions)) {
-			await this.message.react(value).catch((e) => {
-				handleError(e, this.interaction);
-			});
+			await this.message.react(value);
 		}
 
 		const filter = (reaction, user) => {
@@ -95,7 +91,7 @@ class ConnectFour {
 					const columnNumber = NumberReactionsFilter[reaction.emoji.name] - 1;
 					let rowNumber = GridDimensions.y - 1;
 
-					await removeReaction(this.message, this.currentPlayer);
+					await this.message.removeUserReactions(this.currentPlayer);
 
 					for (let i = GridDimensions.y - 1; i >= 0; i--) {
 						if (this.grid[i][columnNumber] == SlotType.Empty) {
@@ -128,8 +124,6 @@ class ConnectFour {
 
 					this.isPlayerOne = !this.isPlayerOne;
 					this.currentPlayer = this.isPlayerOne ? this.players[0] : this.players[1];
-				}).catch((e) => {
-					handleError(e, this.interaction);
 				});
 		}
 	}
@@ -155,25 +149,21 @@ class ConnectFour {
 
 		message += '<:l1:851065666341699584><:l2:851065679682469888><:l3:851065688436899861><:l4:851065697873690654><:l5:851065706735992893><:l6:851065718644801546><:l7:851065729570963456>';
 
-		start ? this.interaction.editReply({
+		start ? this.message.edit({
 			content: `<@${this.interaction.user.id}> challenged ${this.interaction.options.getUser('playertwo')} to a game of Connect Four!`,
 			embeds: [
 				new MessageEmbed()
 					.setColor(EmbedColor)
 					.setDescription(`Current go: ${PlayerTextClear[this.isPlayerOne ? 0 : 1]} ${this.isPlayerOne ? this.players[0] : this.players[1]}\n\n${message}`),
 			]},
-		).catch((e) => {
-			handleError(e, this.interaction);
-		}) : this.interaction.editReply({
+		) : this.message.edit({
 			content: `<@${this.interaction.user.id}> challenged ${this.interaction.options.getUser('playertwo')} to a game of Connect Four!`,
 			embeds: [
 				new MessageEmbed()
 					.setColor(EmbedColor)
 					.setDescription(`Current go: ${PlayerTextClear[this.isPlayerOne ? 1 : 0]} ${this.isPlayerOne ? this.players[1] : this.players[0]}\n\n${message}`),
 			]},
-		).catch((e) => {
-			handleError(e, this.interaction);
-		});
+		);
 	}
 
 	checkHorizontalWin(row: number) {
@@ -240,12 +230,8 @@ class ConnectFour {
 	}
 
 	async win() {
-		await this.message.reactions.removeAll().catch((e) => {
-			handleError(e, this.interaction);
-		});
-		await this.interaction.editReply(this.message.content += `\n\n<@${this.currentPlayer.id}> wins!`).catch((e) => {
-			handleError(e, this.interaction);
-		});
+		await this.message.removeReactions();
+		await this.message.edit(this.message.content + `\n\n<@${this.currentPlayer.id}> wins!`);
 		this.updateMessageWin();
 	}
 	updateMessageWin() {
@@ -260,16 +246,14 @@ class ConnectFour {
 
 		message += '<:l1:851065666341699584><:l2:851065679682469888><:l3:851065688436899861><:l4:851065697873690654><:l5:851065706735992893><:l6:851065718644801546><:l7:851065729570963456>';
 
-		this.interaction.editReply({
+		this.message.edit({
 			content: `<@${this.interaction.user.id}> challenged ${this.interaction.options.getUser('playertwo')} to a game of Connect Four!\n\n${this.isPlayerOne ? this.players[0] : this.players[1]} Won!\n`,
 			embeds: [
 				new MessageEmbed()
 					.setColor(EmbedColor)
 					.setDescription(`\n${message}`),
 			]},
-		).catch((e) => {
-			handleError(e, this.interaction);
-		});
+		);
 	}
 }
 

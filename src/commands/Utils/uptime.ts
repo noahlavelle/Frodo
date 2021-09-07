@@ -1,8 +1,5 @@
-import {client} from '../../index';
-import moment = require('moment');
-require('moment-duration-format');
+import {timestamp} from '../../index';
 
 export function uptime(interaction) {
-	// @ts-ignore
-	interaction.reply(moment.duration(client.uptime).format(' D [days], H [hrs], m [mins], s [secs]'));
+	interaction.reply(`Frodo started <t:${Math.round(timestamp / 1000)}:R>`);
 };
