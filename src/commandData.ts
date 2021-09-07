@@ -18,7 +18,7 @@ import {uptime} from './commands/Utils/uptime';
 import {avatar} from './commands/Utils/avatar';
 import {ping} from './commands/Utils/ping';
 import {Trivia} from './commands/games/trivia';
-import {Rummy} from './commands/games/rummy';
+// import {Rummy} from './commands/games/rummy';
 
 namespace CommandData {
 	export const connectfourCommandData = {
