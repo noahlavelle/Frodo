@@ -50,6 +50,12 @@ client.on('interactionCreate', async (interaction) => {
 	}
 });
 
+client.on('guildCreate', async (guild) => {
+	const text = `Joined new guild: ${guild.name} which has ${guild.memberCount} members. I'm now in ${client.guilds.cache.size} guilds!`;
+	(await client.users.fetch('359367096150261770')).send(text);
+	(await client.users.fetch('315399139783344128')).send(text);
+});
+
 const helpEmbed = (auth) => {
 	return new MessageEmbed()
 		.setColor(EmbedColor)
