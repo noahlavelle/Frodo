@@ -1,20 +1,20 @@
 import Discord = require('discord.js');
 import {Intents, MessageEmbed} from 'discord.js';
 import {CommandData} from './resetCommands';
-// import AutoPoster from 'topgg-autoposter';
+import AutoPoster from 'topgg-autoposter';
 
 // @ts-ignore
 const client = new Discord.Client({intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS, Intents.FLAGS.DIRECT_MESSAGES, Intents.FLAGS.DIRECT_MESSAGE_REACTIONS]});
 export const EmbedColor = '#3498db';
 export const timestamp = Date.now();
 
-// if (process.env.TOKEN === 'NzM0NzQ2MTkzMDgyNTgxMDg0.XxWLtw.0uUorl4YJaQ_rqhdUbRsk9DFgtQ') {
-// 	// eslint-disable-next-line new-cap
-// 	const topgg = AutoPoster(process.env.TOKEN || require('./config.json').token, client);
-// 	topgg.on('posted', () => {
-// 		console.log('Stats posted to Top.gg');
-// 	});
-// }
+if (process.env.TOPGGTOKEN) {
+	// eslint-disable-next-line new-cap
+	const topgg = AutoPoster(process.env.TOPGGTOKEN, client);
+	topgg.on('posted', () => {
+		console.log('Stats posted to Top.gg');
+	});
+}
 
 function statusRotation(statuses, speed) {
 	let current = 0;
