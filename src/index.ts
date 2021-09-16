@@ -7,6 +7,9 @@ import AutoPoster from 'topgg-autoposter';
 const client = new Discord.Client({intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS, Intents.FLAGS.DIRECT_MESSAGES, Intents.FLAGS.DIRECT_MESSAGE_REACTIONS]});
 export const EmbedColor = '#3498db';
 export const timestamp = Date.now();
+const stats = {
+	'trivia': 0,
+};
 
 if (process.env.TOPGGTOKEN) {
 	// eslint-disable-next-line new-cap
@@ -45,6 +48,7 @@ client.on('interactionCreate', async (interaction) => {
 
 		try {
 			CommandData[`${interaction.commandName}CommandData`].execute(interaction);
+			stats[interaction.commandName] ? stats[interaction.commandName]++ : stats[interaction.commandName] = 1;
 		} catch (e) {
 			await interaction.followUp( {
 				embeds: [
@@ -81,11 +85,15 @@ client.on('messageCreate', async (message) => {
 			await message.guild.commands.fetch();
 		} catch (err) {
 			auth = false;
-		};
+		}
 		if (message.content.includes(`${client.user.id}`) || (message.content.startsWith('.') && !auth)) {
 			await message.reply({embeds: [helpEmbed(auth)]});
-		};
-	};
+		}
+	}
+	if ((message.author.id === '359367096150261770' || message.author.id === '315399139783344128') && message.content === '!stats') {
+		const statsMessage = Object.keys(stats).map((command) => `${command}: ${stats[command]}`).join('\n');
+		message.reply(statsMessage);
+	}
 });
 
 // login to Discord with your app's token
