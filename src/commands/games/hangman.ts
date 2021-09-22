@@ -1,5 +1,4 @@
 import {Channel, CommandInteraction, Message, TextChannel, User} from 'discord.js';
-import {client} from '../../index';
 import {DmMessageHandler, getMessage, MessageHandler} from '../../utils';
 
 const HangmanStages = [
@@ -47,6 +46,8 @@ export class Hangman {
 			this.word = collected.first().content.replace(/ /g, '').toLowerCase();
 			for (let i = 0; i < this.word.length; i++) this.displayWord += '-';
 			await this.updateMessage(`\`\`${this.displayWord}\`\`\n Wrong Guesses: ${this.wrongGuesses}`);
+
+			this.reactToMessage();
 		}).catch((err) => {
 			this.hasWon = true;
 			this.dmMessage.edit('You didn\'t enter a word fast enough!');
@@ -55,6 +56,7 @@ export class Hangman {
 
 		while (!this.hasWon) {
 			await this.message.channel.awaitMessages({filter: channelFilter, max: 1, time: 300000, errors: ['time']}).then((collected) => {
+				if (this.hasWon) return;
 				const letter = collected.first().content[0].toLowerCase();
 				collected.first().delete();
 				if (this.word.includes(letter)) {
@@ -81,14 +83,27 @@ export class Hangman {
 					this.updateMessage(`\`\`${this.displayWord}\`\`\n Wrong Guesses: ${this.wrongGuesses}\n${this.players[0]} has won!`);
 				}
 			}).catch((e) => {
+				if (this.hasWon) return;
 				this.hasWon = true;
-				this.dmMessage.edit('You didn\'t enter a word fast enough!');
-				return this.message.edit(`${this.interaction.user} took too long to put a word in!`);
+				return this.message.edit(`The game timed out!`);
 			});
 		}
 	}
 
 	async updateMessage(attachment: string) {
 		await this.message.edit(`${HangmanStages[this.stage]}\n${attachment}`);
+	}
+
+	async reactToMessage() {
+		await this.message.react('❌');
+		const filter = (reaction, user) => (user.id === this.players[0].id || user.id === this.players[1].id) && reaction.emoji.name === '❌';
+		this.message.awaitReactions({filter, max: 1})
+			.then((col) => {
+				if (!col.first()) return;
+				if (this.hasWon) return;
+				this.hasWon = true;
+				this.message.removeReactions();
+				this.message.edit(`The game was canceled!`);
+			});
 	}
 }
