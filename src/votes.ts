@@ -103,4 +103,4 @@ export function setVoteEvent(func: (id: string) => void) {
 	onVote = func;
 }
 
-connect();
+// connect();
