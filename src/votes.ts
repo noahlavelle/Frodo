@@ -18,7 +18,7 @@ let onVote: (id: string) => void = () => {};
 function connect() {
 	let ws;
 	try {
-		ws = new WebSocket(process.env.RUNTIME ? 'wss://frodo.fun' : 'ws://localhost');
+		ws = new WebSocket(process.env.RUNTIME ? 'wss://frodo.fun' : 'wss://frodo.fun');
 	} catch (err) {
 		return console.log('(Init) Failed to connect to WebSocket, trying again in 1 minute');
 	}
@@ -104,4 +104,4 @@ export function setVoteEvent(func: (id: string) => void) {
 	onVote = func;
 }
 
-// connect();
+connect();
