@@ -20,11 +20,12 @@ function connect() {
 	try {
 		ws = new WebSocket(process.env.RUNTIME ? 'wss://frodo.fun' : 'ws://localhost');
 	} catch (err) {
-		return console.log('Failed to connect to WebSocket, trying again in 1 minute');
+		return console.log('(Init) Failed to connect to WebSocket, trying again in 1 minute');
 	}
 
-	ws.on('error', () => {
-		console.log('Failed to connect to WebSocket, trying again in 1 minute');
+	ws.on('error', (e) => {
+		console.error(e);
+		console.log('(Error Event) Failed to connect to WebSocket, trying again in 1 minute');
 		ws.close();
 	});
 
@@ -103,4 +104,4 @@ export function setVoteEvent(func: (id: string) => void) {
 	onVote = func;
 }
 
-// connect();
+connect();
