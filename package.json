@@ -20,7 +20,8 @@
     "moment": "^2.29.1",
     "moment-duration-format": "^2.3.2",
     "node-fetch": "^2.6.1",
-    "topgg-autoposter": "^2.0.0"
+    "topgg-autoposter": "^2.0.0",
+    "ws": "^8.2.2"
   },
   "devDependencies": {
     "@types/express": "^4.17.13",

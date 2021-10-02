@@ -2,6 +2,9 @@ import Discord = require('discord.js');
 import {Intents, MessageEmbed} from 'discord.js';
 import {CommandData} from './resetCommands';
 import AutoPoster from 'topgg-autoposter';
+import {hasVoted, setVoteEvent} from './votes';
+
+hasVoted(0);
 
 // @ts-ignore
 const client = new Discord.Client({intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS, Intents.FLAGS.DIRECT_MESSAGES, Intents.FLAGS.DIRECT_MESSAGE_REACTIONS]});
@@ -11,7 +14,7 @@ const stats = {
 	'trivia': 0,
 };
 
-if (process.env.TOPGGTOKEN) {
+if (process.env.RUNTIME) {
 	// eslint-disable-next-line new-cap
 	const topgg = AutoPoster(process.env.TOPGGTOKEN, client);
 	topgg.on('posted', () => {
@@ -30,7 +33,30 @@ function statusRotation(statuses, speed) {
 	}, speed);
 };
 
+const votingEmbed = new MessageEmbed()
+	.setTitle('Thanks for voting for Frodo!')
+	.setColor(EmbedColor)
+	.setDescription('Voting for Frodo helps us out greatly and if you would like to further support us, be sure to vote for us everyday!')
+	.addFields([
+		{
+			name: 'Want to add Frodo to your own server?',
+			value: 'https://invite.frodo.fun',
+			inline: true,
+		},
+		{
+			name: 'Want to vote again?',
+			value: 'https://top.gg/bot/734746193082581084/vote',
+			inline: true,
+		},
+	]);
+
 client.once('ready', async () => {
+	setVoteEvent(async (id) => {
+		try {
+			await (await client.users.fetch(id)).send({embeds: [votingEmbed]});
+		} catch (err) {}
+	});
+
 	statusRotation([
 		['Frodo V2 is here!'],
 		['Type @Frodo'],
@@ -54,7 +80,7 @@ client.on('interactionCreate', async (interaction) => {
 				embeds: [
 					new MessageEmbed()
 						.setTitle('Something has gone wrong :confused:')
-						.setColor('#B00020.'),
+						.setColor('#B00020'),
 				],
 			});
 
@@ -65,8 +91,10 @@ client.on('interactionCreate', async (interaction) => {
 
 client.on('guildCreate', async (guild) => {
 	const text = `Joined new guild: ${guild.name} which has ${guild.memberCount} members. I'm now in ${client.guilds.cache.size} guilds!`;
-	(await client.users.fetch('359367096150261770')).send(text);
-	(await client.users.fetch('315399139783344128')).send(text);
+	try {
+		(await client.users.fetch('359367096150261770')).send(text);
+		(await client.users.fetch('315399139783344128')).send(text);
+	} catch (err) {}
 });
 
 const helpEmbed = (auth) => {
