@@ -15,6 +15,10 @@ export function invite(interaction: CommandInteraction) {
 				.setLabel('Leave a review')
 				.setURL('https://top.gg/bot/734746193082581084#reviews')
 				.setStyle('LINK'),
+			new MessageButton()
+				.setLabel('Join the support server')
+				.setURL('https://support.frodo.fun')
+				.setStyle('LINK'),
 		);
 	interaction.reply({
 		content: 'If you enjoy Frodo, please leave a review below!',
