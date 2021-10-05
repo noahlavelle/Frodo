@@ -1,10 +1,13 @@
 import WebSocket from 'ws';
+import {sortScoreboard} from './scoreboard';
+import btoa from 'btoa';
 
 const votes = [];
 let error = false;
 let authed = false;
 export let reconnecting = false;
 export let webSocketPing = 0;
+export let leaderboardCurrent = sortScoreboard();
 const pingStats = {
 	sent: 0,
 	received: 0,
@@ -18,7 +21,7 @@ let onVote: (id: string) => void = () => {};
 function connect() {
 	let ws;
 	try {
-		ws = new WebSocket(process.env.RUNTIME ? 'wss://frodo.fun' : 'wss://frodo.fun');
+		ws = new WebSocket(process.env.RUNTIME ? 'wss://frodo.fun' : 'ws://localhost');
 	} catch (err) {
 		return console.log('(Init) Failed to connect to WebSocket, trying again in 1 minute');
 	}
@@ -34,11 +37,13 @@ function connect() {
 		ws.send(`init:${process.env.TOPGGAUTH}`);
 
 		pingStats.sent = Date.now();
-		ws.send('ping');
+		leaderboardCurrent = sortScoreboard();
+		ws.send(`ping:${btoa(JSON.stringify(leaderboardCurrent))}`);
 		pingIntervalId = setInterval(() => {
 			if (ws.closed) return clearInterval(pingIntervalId);
 			pingStats.sent = Date.now();
-			ws.send('ping');
+			leaderboardCurrent = sortScoreboard();
+			ws.send(`ping:${btoa(JSON.stringify(leaderboardCurrent))}`);
 		}, 30000);
 	});
 
@@ -91,7 +96,7 @@ function connect() {
 			}
 			console.log(`Attempting to reconnect to WebSocket... Attempt: ${tries}`);
 			connect();
-		}, 10000);
+		}, 60000);
 	});
 }
 
@@ -104,4 +109,5 @@ export function setVoteEvent(func: (id: string) => void) {
 	onVote = func;
 }
 
+// if (process.env.RUNTIME) connect();
 connect();

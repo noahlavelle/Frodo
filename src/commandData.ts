@@ -19,6 +19,7 @@ import {avatar} from './commands/Utils/avatar';
 import {ping} from './commands/Utils/ping';
 import {Trivia} from './commands/games/trivia';
 import {invite} from './commands/Utils/invite';
+import {leaderboard} from './commands/Utils/leaderboard';
 // import {Rummy} from './commands/games/rummy';
 
 namespace CommandData {
@@ -251,6 +252,28 @@ namespace CommandData {
 			.setDescription('Add Frodo to your server!'),
 		execute(interaction) {
 			invite(interaction);
+		},
+	};
+
+	export const leaderboardCommandData = {
+		data: new SlashCommandBuilder()
+			.setName('leaderboard')
+			.setDescription('View Frodo\'s current leaderboards')
+			.addStringOption((option) => {
+				option
+					.setName('game')
+					.setDescription('Pick a leaderboard to view')
+					.setRequired(true)
+					.addChoices([
+						[
+							'Trivia',
+							'trivia',
+						],
+					]);
+				return option;
+			}),
+		execute(interaction) {
+			leaderboard(interaction);
 		},
 	};
 }

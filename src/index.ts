@@ -58,18 +58,20 @@ client.once('ready', async () => {
 	});
 
 	statusRotation([
-		['Frodo V2 is here!'],
-		['Type @Frodo'],
+		['Trivia Leaderboard!'],
+		['/leaderboard'],
 		[() => `${client.guilds.cache.size} servers!`, 'WATCHING'],
 	], 10000);
 });
-
 
 client.on('interactionCreate', async (interaction) => {
 	if (!interaction.isCommand()) return;
 	if (Object.keys(CommandData).includes(`${interaction.commandName}CommandData`)) {
 		if (!interaction.guild) {
-			return interaction.reply('This command is not available in DMs, please try again in a server');
+			return interaction.reply({
+				content: 'This command is not available in DMs, please try again in a server',
+				ephemeral: true,
+			});
 		}
 
 		try {
@@ -86,6 +88,11 @@ client.on('interactionCreate', async (interaction) => {
 
 			console.error(e);
 		}
+	} else {
+		return interaction.reply({
+			content: 'Looks like we can\'t find that command! We are most likely updating Frodo so please try again later',
+			ephemeral: true,
+		});
 	}
 });
 
@@ -102,7 +109,11 @@ const helpEmbed = (auth) => {
 		.setColor(EmbedColor)
 		.setTitle('Frodo V2 is here!')
 		.setDescription('Frodo has updated! We now use slash commands, all commands have been revamped and many bugs have been fixed and we have a new command, othello (werewolf is still in development)! But there\'s one step you need to take to use the new version.')
-		.addField('New Permissions:', `In order to use slash commands, you need to give Frodo new permissions. Someone from this server with the \`Manage Server\` permission can authorise it at https://slash.frodo.fun\nThis server currently has slash commands ${auth ? '`Enabled`' : '`Disabled`'} for Frodo.`)
+		.addField('New Permissions:', auth ? (
+			`You don't need to do anything! Just type \`/\` and pick from out large choice of commands`
+		) : (
+			`In order to use slash commands, you need to give Frodo new permissions. Someone from this server with the \`Manage Server\` permission can authorise it at https://slash.frodo.fun`
+		))
 		.addField('How to use new commands:', 'Once Frodo has been given the new permissions, type `/` to view its commands!')
 		.addField('Not Working?', 'Let us know at our [feedback page](https://frodo.fun/feedback) and we will be in contact to fix your issue!');
 };

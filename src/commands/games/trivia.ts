@@ -5,6 +5,7 @@ import atob = require('atob');
 import {SlashCommandBuilder} from '@discordjs/builders';
 import {registerCommands} from '../../refreshCommands';
 import {getMessage, MessageHandler} from '../../utils';
+import {addUserToScoreboard} from '../../scoreboard';
 const characters: string[] = ['🇦', '🇧', '🇨', '🇩'];
 const letterMap: string[] = ['A', 'B', 'C', 'D'];
 let games = [];
@@ -194,6 +195,7 @@ export class Trivia {
 								.setFooter(`Category - ${atob(json.results[0].category)}, Difficulty - ${atob(json.results[0].difficulty)}`),
 						]},
 					);
+					addUserToScoreboard(this.interaction.user);
 				} else {
 					optionsAnswerIncorrect[characters.indexOf(col.first().emoji.name)] += ' :x:';
 					this.message.edit({

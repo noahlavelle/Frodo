@@ -16,10 +16,10 @@ export async function registerCommands(command) {
 		// 	{body: commandsList},
 		// );
 		//
-		// await rest.put(
-		// 	Routes.applicationCommands(clientID),
-		// 	{body: commandsList},
-		// );
+		await rest.put(
+			Routes.applicationCommands(clientID),
+			{body: commandsList},
+		);
 
 		console.log('Registered Commands!');
 	} catch (error) {
