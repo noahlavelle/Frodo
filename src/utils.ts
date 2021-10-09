@@ -147,7 +147,6 @@ export async function getMessage(interaction: CommandInteraction, onError = () =
 				handleError(err, interaction);
 			});
 	}
-	await interaction.deleteReply();
 	const message = await interaction.fetchReply()
 		.catch((err) => {
 			onError();
