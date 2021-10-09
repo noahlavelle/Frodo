@@ -20,14 +20,14 @@ export async function removeReaction(message : Message, user : User) {
 const erroredInteractions: string[] = [];
 
 async function sendErrorEmbed(interaction: CommandInteraction) {
-	await interaction.channel.send( {
+	await interaction.channel.send({
 		embeds: [
 			new MessageEmbed()
 				.setTitle('Something has gone wrong...  :face_with_monocle:')
-				.setDescription(`${interaction.user}, something has gone wrong with your game. If you think you have found a bug, report it here: https://frodo.fun/feedback`)
+				.setDescription(`${interaction.user}, something has gone wrong with your game. If you think you have found a bug, report it here: https://help.frodo.fun`)
 				.setColor('#FF0134'),
 		],
-	});
+	}).catch(() => {});
 }
 
 export default async function handleError(error, interaction) {
@@ -140,7 +140,18 @@ export class DmMessageHandler {
 }
 
 export async function getMessage(interaction: CommandInteraction, onError = () => {}): Promise<MessageHandler> {
-	if (!interaction.deferred || !interaction.replied) await interaction.deferReply();
-	const message = await interaction.fetchReply();
+	if (!interaction.deferred || !interaction.replied) {
+		await interaction.deferReply()
+			.catch((err) => {
+				onError();
+				handleError(err, interaction);
+			});
+	}
+	await interaction.deleteReply();
+	const message = await interaction.fetchReply()
+		.catch((err) => {
+			onError();
+			handleError(err, interaction);
+		});
 	if (message instanceof Message) return new MessageHandler(message, interaction, onError);
 }

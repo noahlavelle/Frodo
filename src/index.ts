@@ -71,7 +71,7 @@ client.on('interactionCreate', async (interaction) => {
 			return interaction.reply({
 				content: 'This command is not available in DMs, please try again in a server',
 				ephemeral: true,
-			});
+			}).catch(() => {});
 		}
 
 		try {
@@ -84,7 +84,7 @@ client.on('interactionCreate', async (interaction) => {
 						.setTitle('Something has gone wrong :confused:')
 						.setColor('#B00020'),
 				],
-			});
+			}).catch(() => {});
 
 			console.error(e);
 		}
@@ -92,7 +92,7 @@ client.on('interactionCreate', async (interaction) => {
 		return interaction.reply({
 			content: 'Looks like we can\'t find that command! We are most likely updating Frodo so please try again later',
 			ephemeral: true,
-		});
+		}).catch(() => {});
 	}
 });
 
@@ -118,6 +118,7 @@ const helpEmbed = (auth) => {
 		.addField('Not Working?', 'Let us know at our [feedback page](https://frodo.fun/feedback) and we will be in contact to fix your issue!');
 };
 client.on('messageCreate', async (message) => {
+	if (message.author.bot) return;
 	if (message.content.startsWith('.') || message.content.includes(client.user.id)) {
 		let auth = true;
 		try {
@@ -126,7 +127,7 @@ client.on('messageCreate', async (message) => {
 			auth = false;
 		}
 		if (message.content.includes(`${client.user.id}`) || (message.content.startsWith('.') && !auth)) {
-			await message.reply({embeds: [helpEmbed(auth)]});
+			await message.reply({embeds: [helpEmbed(auth)]}).catch(() => {});
 		}
 	}
 	if ((message.author.id === '359367096150261770' || message.author.id === '315399139783344128') && message.content === '!stats') {
