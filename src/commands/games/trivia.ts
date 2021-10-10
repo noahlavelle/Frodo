@@ -1,10 +1,15 @@
-import {CommandInteraction, Message, User, MessageEmbed} from 'discord.js';
+import {
+	CommandInteraction,
+	MessageEmbed,
+	ButtonInteraction,
+} from 'discord.js';
+
 import {EmbedColor, client} from '../../index';
 import fetch = require('node-fetch');
 import atob = require('atob');
 import {SlashCommandBuilder} from '@discordjs/builders';
 import {registerCommands} from '../../refreshCommands';
-import {getMessage, MessageHandler} from '../../utils';
+import {button, createButtonRow, getMessage, MessageHandler} from '../../utils';
 import {addUserToScoreboard} from '../../scoreboard';
 const characters: string[] = ['🇦', '🇧', '🇨', '🇩'];
 const letterMap: string[] = ['A', 'B', 'C', 'D'];
@@ -79,6 +84,11 @@ const errorEmbed: MessageEmbed = new MessageEmbed()
 export class Trivia {
 	interaction: CommandInteraction;
 	message: MessageHandler;
+	options: string[];
+	answer: number;
+	questionJSON;
+	buttons: button[];
+	finished: boolean;
 
 	constructor(interaction) {
 		if (error) return interaction.reply(errorEmbed);
@@ -107,122 +117,118 @@ export class Trivia {
 		} catch (err) {
 			return this.message.edit({embeds: [errorEmbed]});
 		}
+		this.questionJSON = json;
 
 		if (json.response_code != 0) return this.message.edit({embeds: [errorEmbed]});
-		let options: string[] = [];
-		let optionsTimeOut: string[] = [];
-		let optionsAnswerCorrect: string[] = [];
-		let optionsAnswerIncorrect: string[] = [];
-		let answer;
+		this.options = [];
 		if (atob(json.results[0].type) === 'boolean') {
-			options = [
+			this.options = [
 				`${letterMap[0]} - True`,
 				`${letterMap[1]} - False`,
 			];
-			optionsTimeOut = [
-				`${letterMap[0]} - ${atob(json.results[0].correct_answer) === 'True' ? '**' : ''}True${atob(json.results[0].correct_answer) === 'True' ? '**' : ''}`,
-				`${letterMap[1]} - ${atob(json.results[0].correct_answer) === 'True' ? '**' : ''}False${atob(json.results[0].correct_answer) === 'True' ? '**' : ''}`,
-			];
-			optionsAnswerCorrect = [
-				`${letterMap[0]} - True${atob(json.results[0].correct_answer) === 'True' ? ' :white_check_mark:' : ''}`,
-				`${letterMap[1]} - False${atob(json.results[0].correct_answer) === 'False' ? ' :white_check_mark:' : ''}`,
-			];
-			optionsAnswerIncorrect = [
-				`${letterMap[0]} - True`,
-				`${letterMap[1]} - False`,
-			];
-			answer = atob(json.results[0].correct_answer) === 'True' ? 0 : 1;
+			this.answer = atob(json.results[0].correct_answer) === 'True' ? 0 : 1;
 		} else {
 			const ranQ = Math.round(Math.random() * 3);
-			answer = ranQ;
+			this.answer = ranQ;
 			let currentAnswer = 0;
-			options[ranQ] = `${letterMap[ranQ]} - ${atob(json.results[0].correct_answer)}`;
-			optionsTimeOut[ranQ] = `**${letterMap[ranQ]} - ${atob(json.results[0].correct_answer)}**`;
-			optionsAnswerCorrect[ranQ] = `${letterMap[ranQ]} - ${atob(json.results[0].correct_answer)} :white_check_mark:`;
-			optionsAnswerIncorrect[ranQ] = `${letterMap[ranQ]} - ${atob(json.results[0].correct_answer)}`;
-			if (!options[0]) {
-				options[0] = `${letterMap[0]} - ${atob(json.results[0].incorrect_answers[currentAnswer])}`;
-				optionsTimeOut[0] = `${letterMap[0]} - ${atob(json.results[0].incorrect_answers[currentAnswer])}`;
-				optionsAnswerCorrect[0] = `${letterMap[0]} - ${atob(json.results[0].incorrect_answers[currentAnswer])}`;
-				optionsAnswerIncorrect[0] = `${letterMap[0]} - ${atob(json.results[0].incorrect_answers[currentAnswer])}`;
-				currentAnswer++;
-			}
-			if (!options[1]) {
-				options[1] = `${letterMap[1]} - ${atob(json.results[0].incorrect_answers[currentAnswer])}`;
-				optionsTimeOut[1] = `${letterMap[1]} - ${atob(json.results[0].incorrect_answers[currentAnswer])}`;
-				optionsAnswerCorrect[1] = `${letterMap[1]} - ${atob(json.results[0].incorrect_answers[currentAnswer])}`;
-				optionsAnswerIncorrect[1] = `${letterMap[1]} - ${atob(json.results[0].incorrect_answers[currentAnswer])}`;
-				currentAnswer++;
-			}
-			if (!options[2]) {
-				options[2] = `${letterMap[2]} - ${atob(json.results[0].incorrect_answers[currentAnswer])}`;
-				optionsTimeOut[2] = `${letterMap[2]} - ${atob(json.results[0].incorrect_answers[currentAnswer])}`;
-				optionsAnswerCorrect[2] = `${letterMap[2]} - ${atob(json.results[0].incorrect_answers[currentAnswer])}`;
-				optionsAnswerIncorrect[2] = `${letterMap[2]} - ${atob(json.results[0].incorrect_answers[currentAnswer])}`;
-				currentAnswer++;
-			}
-			if (!options[3]) {
-				options[3] = `${letterMap[3]} - ${atob(json.results[0].incorrect_answers[currentAnswer])}`;
-				optionsTimeOut[3] = `${letterMap[3]} - ${atob(json.results[0].incorrect_answers[currentAnswer])}`;
-				optionsAnswerCorrect[3] = `${letterMap[3]} - ${atob(json.results[0].incorrect_answers[currentAnswer])}`;
-				optionsAnswerIncorrect[3] = `${letterMap[3]} - ${atob(json.results[0].incorrect_answers[currentAnswer])}`;
-				currentAnswer++;
-			}
+			this.options[ranQ] = `${letterMap[ranQ]} - ${atob(json.results[0].correct_answer)}`;
+			if (!this.options[0]) this.options[0] = `${letterMap[0]} - ${atob(json.results[0].incorrect_answers[currentAnswer++])}`;
+			if (!this.options[1]) this.options[1] = `${letterMap[1]} - ${atob(json.results[0].incorrect_answers[currentAnswer++])}`;
+			if (!this.options[2]) this.options[2] = `${letterMap[2]} - ${atob(json.results[0].incorrect_answers[currentAnswer++])}`;
+			if (!this.options[3]) this.options[3] = `${letterMap[3]} - ${atob(json.results[0].incorrect_answers[currentAnswer++])}`;
 		}
+		this.buttons = [];
+		this.options.forEach((value, index) => {
+			this.buttons.push({
+				label: letterMap[index],
+				id: index.toString(),
+				disabled: false,
+			});
+		});
 		await this.message.edit({
 			embeds: [
 				new MessageEmbed()
 					.setColor(EmbedColor)
 					.setTitle(atob(json.results[0].question))
-					.setDescription(options.join('\n'))
+					.setDescription(this.options.join('\n'))
 					.setFooter(`Category - ${atob(json.results[0].category)}, Difficulty - ${atob(json.results[0].difficulty)}`),
-			]},
-		);
-		options.forEach((a, index) => this.message.react(characters[index]));
-		const filter = (r, user) => user.id == this.interaction.user.id && characters.includes(r.emoji.name);
-		this.message.awaitReactions({filter, max: 1, time: 30000, errors: ['time']})
-			.then((col) => {
-				this.message.removeReactions();
-
-				if (characters.indexOf(col.first().emoji.name) == answer) {
-					this.message.edit({
-						content: `Correct :smile:`,
-						embeds: [
-							new MessageEmbed()
-								.setColor(EmbedColor)
-								.setTitle(atob(json.results[0].question))
-								.setDescription(optionsAnswerCorrect.join('\n'))
-								.setFooter(`Category - ${atob(json.results[0].category)}, Difficulty - ${atob(json.results[0].difficulty)}`),
-						]},
-					);
-					addUserToScoreboard(this.interaction.user);
-				} else {
-					optionsAnswerIncorrect[characters.indexOf(col.first().emoji.name)] += ' :x:';
-					this.message.edit({
-						content: `You got it wrong :cry:, The answer was :regional_indicator_${letterMap[answer].toLocaleLowerCase()}:`,
-						embeds: [
-							new MessageEmbed()
-								.setColor(EmbedColor)
-								.setTitle(atob(json.results[0].question))
-								.setDescription(optionsAnswerIncorrect.join('\n'))
-								.setFooter(`Category - ${atob(json.results[0].category)}, Difficulty - ${atob(json.results[0].difficulty)}`),
-						]},
-					);
-				}
-			}).catch(() => {
-				this.message.removeReactions();
-				this.message.edit({
-					content: `The game timed out! The correct answer was :regional_indicator_${letterMap[answer].toLocaleLowerCase()}:`,
-					embeds: [
-						new MessageEmbed()
-							.setColor(EmbedColor)
-							.setTitle(atob(json.results[0].question))
-							.setDescription(optionsTimeOut.join('\n'))
-							.setFooter(`Category - ${atob(json.results[0].category)}, Difficulty - ${atob(json.results[0].difficulty)}`),
-					]},
-				);
+			],
+			components: [
+				createButtonRow(this.interaction, ...this.buttons),
+			],
+		});
+		setTimeout(() => {
+			if (this.finished) return;
+			this.options[this.answer] = `**${this.options[this.answer]}**`;
+			this.buttons = this.buttons.map((value) => {
+				value.disabled = true;
+				return value;
 			});
+			this.buttons[this.answer].style = 'SUCCESS';
+			this.message.edit({
+				content: `The game timed out! The correct answer was :regional_indicator_${letterMap[this.answer].toLocaleLowerCase()}:`,
+				components: [
+					createButtonRow(this.interaction, ...this.buttons),
+				],
+				embeds: [
+					new MessageEmbed()
+						.setColor(EmbedColor)
+						.setTitle(atob(this.questionJSON.results[0].question))
+						.setDescription(this.options.join('\n'))
+						.setFooter(`Category - ${atob(this.questionJSON.results[0].category)}, Difficulty - ${atob(this.questionJSON.results[0].difficulty)}`),
+				]},
+			);
+		}, 60000);
 	};
+	async onButtonClick(id, interaction: ButtonInteraction) {
+		if (interaction.user.id !== this.interaction.user.id) {
+			interaction.reply({
+				content: 'Only one person can answer the question, run `/trivia` for your own question',
+				ephemeral: true,
+			}).catch(() => {});
+			return false;
+		}
+		this.finished = true;
+		this.buttons = this.buttons.map((value) => {
+			value.disabled = true;
+			return value;
+		});
+		if (id == this.answer) {
+			this.buttons[id].style = 'SUCCESS';
+			this.options[this.answer] += ' :white_check_mark:';
+			await interaction.update({
+				content: `Correct :smile:`,
+				embeds: [
+					new MessageEmbed()
+						.setColor(EmbedColor)
+						.setTitle(atob(this.questionJSON.results[0].question))
+						.setDescription(this.options.join('\n'))
+						.setFooter(`Category - ${atob(this.questionJSON.results[0].category)}, Difficulty - ${atob(this.questionJSON.results[0].difficulty)}`),
+				],
+				components: [
+					createButtonRow(this.interaction, ...this.buttons),
+				],
+			}).catch(() => {});
+			addUserToScoreboard(this.interaction.user);
+		} else {
+			this.buttons[id].style = 'DANGER';
+			this.options[id] += ' :x:';
+			await interaction.update({
+				content: `You got it wrong :cry:, The answer was :regional_indicator_${letterMap[this.answer].toLocaleLowerCase()}:`,
+				embeds: [
+					new MessageEmbed()
+						.setColor(EmbedColor)
+						.setTitle(atob(this.questionJSON.results[0].question))
+						.setDescription(this.options.join('\n'))
+						.setFooter(`Category - ${atob(this.questionJSON.results[0].category)}, Difficulty - ${atob(this.questionJSON.results[0].difficulty)}`),
+				],
+				components: [
+					createButtonRow(this.interaction, ...this.buttons),
+				],
+			}).catch(() => {});
+		}
+		return true;
+	}
 }
 
 export function triviaCategories(interaction: CommandInteraction) {

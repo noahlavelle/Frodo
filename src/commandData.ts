@@ -34,7 +34,7 @@ namespace CommandData {
 					.setRequired(true);
 			}),
 		execute(interaction) {
-			new ConnectFour(interaction);
+			return new ConnectFour(interaction);
 		},
 	};
 
@@ -49,7 +49,7 @@ namespace CommandData {
 					.setRequired(true);
 			}),
 		execute(interaction) {
-			new Rps(interaction);
+			return new Rps(interaction);
 		},
 	};
 
@@ -79,7 +79,7 @@ namespace CommandData {
 					.setRequired(true);
 			}),
 		execute(interaction) {
-			new Ttt(interaction);
+			return new Ttt(interaction);
 		},
 	};
 
@@ -94,7 +94,7 @@ namespace CommandData {
 					.setRequired(true);
 			}),
 		execute(interaction) {
-			new Hangman(interaction);
+			return new Hangman(interaction);
 		},
 	};
 
@@ -103,7 +103,7 @@ namespace CommandData {
 			.setName('akinator')
 			.setDescription('A game of akinator against the AI'),
 		execute(interaction) {
-			new Akinator(interaction);
+			return new Akinator(interaction);
 		},
 	};
 
@@ -112,7 +112,7 @@ namespace CommandData {
 			.setName('anagrams')
 			.setDescription('A round of countdown as seen on the TV program'),
 		execute(interaction) {
-			new Anagrams(interaction);
+			return new Anagrams(interaction);
 		},
 	};
 
@@ -142,7 +142,7 @@ namespace CommandData {
 					.setRequired(false);
 			}),
 		execute(interaction) {
-			new Othello(interaction);
+			return new Othello(interaction);
 		},
 	};
 
@@ -200,7 +200,7 @@ namespace CommandData {
 	export const triviaCommandData = {
 		data: undefined,
 		execute(interaction) {
-			new Trivia(interaction);
+			return new Trivia(interaction);
 		},
 	};
 

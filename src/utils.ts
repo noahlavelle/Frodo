@@ -2,7 +2,7 @@ import {
 	AwaitMessagesOptions,
 	AwaitReactionsOptions,
 	CommandInteraction, EmojiIdentifierResolvable, Guild, GuildManager,
-	Message,
+	Message, MessageActionRow, MessageButton,
 	MessageEditOptions,
 	MessageEmbed,
 	MessageInteraction,
@@ -153,4 +153,27 @@ export async function getMessage(interaction: CommandInteraction, onError = () =
 			handleError(err, interaction);
 		});
 	if (message instanceof Message) return new MessageHandler(message, interaction, onError);
+}
+
+export class button {
+	label: string;
+	id: string;
+	style?: 'PRIMARY' | 'SECONDARY' | 'SUCCESS' | 'DANGER' | 'LINK';
+	disabled?: boolean;
+}
+
+export function createButtonRow(interaction: CommandInteraction, ...buttons: button[]): MessageActionRow {
+	const buttonArray = [];
+	buttons.forEach((button) => {
+		buttonArray.push(
+			new MessageButton()
+				.setLabel(button.label)
+				.setCustomId(`${interaction.id}:${button.id}`)
+				.setStyle(button.style || 'PRIMARY')
+				.setDisabled(button.disabled),
+		);
+	});
+	const row = new MessageActionRow()
+		.addComponents(...buttonArray);
+	return row;
 }

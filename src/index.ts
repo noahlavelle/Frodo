@@ -4,7 +4,7 @@ import {CommandData} from './resetCommands';
 import AutoPoster from 'topgg-autoposter';
 import {hasVoted, setVoteEvent} from './votes';
 
-hasVoted(0);
+const interactions = {};
 
 // @ts-ignore
 const client = new Discord.Client({intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS, Intents.FLAGS.DIRECT_MESSAGES, Intents.FLAGS.DIRECT_MESSAGE_REACTIONS]});
@@ -65,6 +65,30 @@ client.once('ready', async () => {
 });
 
 client.on('interactionCreate', async (interaction) => {
+	if (!interaction.isButton()) return;
+	if (interactions[interaction.guild.id]?.[interaction.channel.id]?.[interaction.customId.split(':')[0]]) {
+		if (!(await interactions[interaction.guild.id]?.[interaction.channel.id]?.[interaction.customId.split(':')[0]]?.onButtonClick(interaction.customId.split(':')[1], interaction))) {
+			await interaction.update({
+				components: [],
+			}).catch(() => {});
+		}
+	} else {
+		await interaction.followUp({
+			embeds: [
+				new MessageEmbed()
+					.setColor('#ff0000')
+					.setDescription('Error: Please re-run the command'),
+			],
+			ephemeral: true,
+			components: [],
+		}).catch(() => {});
+		await interaction.update({
+			components: [],
+		}).catch(() => {});
+	}
+});
+
+client.on('interactionCreate', async (interaction) => {
 	if (!interaction.isCommand()) return;
 	if (Object.keys(CommandData).includes(`${interaction.commandName}CommandData`)) {
 		if (!interaction.guild) {
@@ -75,8 +99,10 @@ client.on('interactionCreate', async (interaction) => {
 		}
 
 		try {
-			CommandData[`${interaction.commandName}CommandData`].execute(interaction);
 			stats[interaction.commandName] ? stats[interaction.commandName]++ : stats[interaction.commandName] = 1;
+			if (!interactions[interaction.guild.id]) interactions[interaction.guild.id] = {};
+			if (!interactions[interaction.guild.id][interaction.channel.id]) interactions[interaction.guild.id][interaction.channel.id] = {};
+			interactions[interaction.guild.id][interaction.channel.id][interaction.id] = CommandData[`${interaction.commandName}CommandData`].execute(interaction);
 		} catch (e) {
 			await interaction.followUp( {
 				embeds: [
