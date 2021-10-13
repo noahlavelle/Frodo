@@ -70,6 +70,7 @@ export class Ttt {
 
 	async runGame() {
 		this.message = await getMessage(this.interaction);
+		if (!this.message) return;
 		if (this.players[1] == null || this.players[1].bot) {
 			await this.message.edit('The player could not be found or was a bot');
 			return;

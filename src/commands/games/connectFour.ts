@@ -71,6 +71,7 @@ class ConnectFour {
 		}
 
 		this.message = await getMessage(this.interaction);
+		if (!this.message) return;
 
 		this.generateGrid();
 		this.updateMessage(true);

@@ -35,6 +35,7 @@ export class Anagrams {
 
 	async runGame() {
 		this.message = await getMessage(this.interaction);
+		if (!this.message) return;
 		let letters = '';
 		await this.updateMessage(letters, '');
 

@@ -56,6 +56,7 @@ export class Rps {
 			if (this.players[1] == null || this.players[1].bot) return this.interaction.reply('The player could not be found or was a bot');
 
 			this.message = await getMessage(this.interaction);
+			if (!this.message) return;
 			await this.message.edit({embeds: [embed(`${this.players[0]} has challenged ${this.players[1]} to a game of rock paper scissors.\nPlease move to DMs`)]});
 
 			const playerOneMessage = new DmMessageHandler(await this.players[0].send({

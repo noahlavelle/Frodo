@@ -1,4 +1,5 @@
 import {CommandInteraction, MessageActionRow, MessageButton} from 'discord.js';
+import handleError from '../../utils';
 
 export function invite(interaction: CommandInteraction) {
 	const row = new MessageActionRow()
@@ -23,5 +24,8 @@ export function invite(interaction: CommandInteraction) {
 	interaction.reply({
 		content: 'If you enjoy Frodo, please leave a review below!',
 		components: [row],
-	});
+	})
+		.catch((err) => {
+			handleError(err, interaction);
+		});
 }

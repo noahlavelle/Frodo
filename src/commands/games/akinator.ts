@@ -42,6 +42,7 @@ export class Akinator {
 
 	async runGame() {
 		this.message = await getMessage(this.interaction);
+		if (!this.message) return;
 		await this.aki.start();
 		await this.updateMessage();
 

@@ -37,6 +37,7 @@ export class Hangman {
 		this.message = await getMessage(this.interaction, () => {
 			this.hasWon = true;
 		});
+		if (!this.message) return;
 		await this.updateMessage(`Waiting for a word to be chosen by ${this.interaction.user}`);
 		this.dmMessage = new DmMessageHandler(await this.players[0].send('Choose a word'));
 

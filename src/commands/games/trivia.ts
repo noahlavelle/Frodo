@@ -101,6 +101,7 @@ export class Trivia {
 		const category = this.interaction.options.getString('category');
 
 		this.message = await getMessage(this.interaction);
+		if (!this.message) return;
 
 		let url: String = 'https://opentdb.com/api.php?amount=1&encode=base64';
 		if (difficulty && difficulty != 'any') url += `&difficulty=${difficulty}`;

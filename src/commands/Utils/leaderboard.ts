@@ -5,6 +5,7 @@ import {getMessage} from '../../utils';
 
 export async function leaderboard(interaction: CommandInteraction) {
 	const message = await getMessage(interaction);
+	if (!this.message) return;
 	const embed = new MessageEmbed()
 		.setTitle('Trivia Leaderboard')
 		.setColor(EmbedColor)

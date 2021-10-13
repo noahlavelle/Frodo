@@ -131,6 +131,7 @@ export class Othello {
 		if (!this.players[1] || this.players[1].bot) return this.interaction.reply('The player could not be found or was a bot');
 		if (this.players[0] === this.players[1]) return this.interaction.reply('You can\'t play othello with yourself!');
 		this.message = await getMessage(this.interaction);
+		if (!this.message) return;
 		await this.updateMessage();
 		await this.reactToMessage(this.message);
 		this.makeTipReaction();
