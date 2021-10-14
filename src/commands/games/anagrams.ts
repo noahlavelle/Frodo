@@ -1,4 +1,4 @@
-import {CommandInteraction, Message, MessageEmbed} from 'discord.js';
+import {Collection, CommandInteraction, Message, MessageEmbed, Snowflake} from 'discord.js';
 import {getMessage, MessageHandler, removeReaction} from '../../utils';
 
 const fetch = require('node-fetch');
@@ -76,7 +76,7 @@ export class Anagrams {
 			const channel = await this.interaction.channel;
 			channel.awaitMessages({filter, max: 1}).then(async (collected) => {
 				const word = collected.first().content;
-				await collected.first().delete();
+				await this.deleteMessage(collected);
 				let solved;
 				await fetch(`http://www.anagramica.com/all/:${letters}`)
 					.then((res) => res.json())
@@ -85,6 +85,11 @@ export class Anagrams {
 				await this.updateMessage(letters, `\nYour choice of ${word} was ${solved.all.includes(word.toLowerCase()) ? 'an' : 'not an'} option. To see a full list of words click [here](https://word.tips/unscramble/${letters})`);
 			});
 		}, 30000);
+	}
+
+	async deleteMessage(collected: Collection<Snowflake, Message>) {
+		return await collected.first().delete()
+			.catch((err) => {});
 	}
 
 	async updateMessage(letters: string, playAttachment: string) {
