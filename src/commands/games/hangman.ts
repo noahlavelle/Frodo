@@ -1,5 +1,5 @@
-import {Channel, CommandInteraction, Message, TextChannel, User} from 'discord.js';
-import {DmMessageHandler, getMessage, MessageHandler} from '../../utils';
+import {Channel, CommandInteraction, Message, MessageEmbed, TextChannel, User} from 'discord.js';
+import handleError, {DmMessageHandler, getMessage, MessageHandler} from '../../utils';
 
 const HangmanStages = [
 	'___\n|      |\n|    \n|    \n|      \n|    \n|',
@@ -38,8 +38,28 @@ export class Hangman {
 			this.hasWon = true;
 		});
 		if (!this.message) return;
-		await this.updateMessage(`Waiting for a word to be chosen by ${this.interaction.user}`);
-		this.dmMessage = new DmMessageHandler(await this.players[0].send('Choose a word'));
+		await this.message.edit({
+			embeds: [
+				new MessageEmbed()
+					.setDescription(`Waiting for a word to be chosen by ${this.interaction.user}`),
+			],
+		});
+
+		try {
+			const message = await this.players[0].send('Choose a word');
+			this.dmMessage = new DmMessageHandler(message);
+		} catch (err) {
+			this.hasWon = true;
+			return await this.message.edit({
+				embeds: [
+					new MessageEmbed()
+						.setTitle('Something has gone wrong...  :face_with_monocle:')
+						.setDescription(`${this.interaction.user}, looks like we can't send a message to you, please let Frodo dm you then run the command again!`)
+						.setColor('#FF0134'),
+				],
+			});
+		}
+		if (this.hasWon) return;
 
 		const channelFilter = (m: Message) => m.author.id == this.players[1].id;
 
@@ -51,6 +71,7 @@ export class Hangman {
 			this.reactToMessage();
 		}).catch((err) => {
 			this.hasWon = true;
+			this.message.removeReactions();
 			this.dmMessage.edit('You didn\'t enter a word fast enough!');
 			return this.message.edit(`${this.interaction.user} took too long to put a word in!`);
 		});
@@ -59,7 +80,7 @@ export class Hangman {
 			await this.message.channel.awaitMessages({filter: channelFilter, max: 1, time: 300000, errors: ['time']}).then((collected) => {
 				if (this.hasWon) return;
 				const letter = collected.first().content[0].toLowerCase();
-				collected.first().delete();
+				collected.first().delete().catch((e) => handleError(e, this.interaction));
 				if (this.word.includes(letter)) {
 					const displayWordArray = [...this.displayWord];
 					for (let i = 0; i < displayWordArray.length; i++) {
@@ -79,20 +100,26 @@ export class Hangman {
 				if (this.displayWord == this.word) {
 					this.hasWon = true;
 					this.updateMessage(`\`\`${this.displayWord}\`\`\n Wrong Guesses: ${this.wrongGuesses}\n${this.players[1]} has won!`);
+					this.message.removeReactions();
 				} else if (this.stage == HangmanStages.length - 1) {
 					this.hasWon = true;
 					this.updateMessage(`\`\`${this.displayWord}\`\`\n Wrong Guesses: ${this.wrongGuesses}\n${this.players[0]} has won!`);
+					this.message.removeReactions();
 				}
 			}).catch((e) => {
 				if (this.hasWon) return;
 				this.hasWon = true;
+				this.message.removeReactions();
 				return this.message.edit(`The game timed out!`);
 			});
 		}
 	}
 
-	async updateMessage(attachment: string) {
-		await this.message.edit(`${HangmanStages[this.stage]}\n${attachment}`);
+	async updateMessage(attachment: string, init?: boolean) {
+		await this.message.edit({
+			content: init ? attachment : `${HangmanStages[this.stage]}\n${attachment}`,
+			embeds: [],
+		});
 	}
 
 	async reactToMessage() {

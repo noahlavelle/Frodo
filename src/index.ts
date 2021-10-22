@@ -3,6 +3,7 @@ import {Intents, MessageEmbed} from 'discord.js';
 import {CommandData} from './resetCommands';
 import AutoPoster from 'topgg-autoposter';
 import {hasVoted, setVoteEvent} from './votes';
+import handleError from './utils';
 
 const interactions = {};
 
@@ -66,23 +67,17 @@ client.once('ready', async () => {
 
 client.on('interactionCreate', async (interaction) => {
 	if (!interaction.isButton()) return;
-	if (interactions[interaction.guild.id]?.[interaction.channel.id]?.[interaction.customId.split(':')[0]]) {
-		if (!(await interactions[interaction.guild.id]?.[interaction.channel.id]?.[interaction.customId.split(':')[0]]?.onButtonClick(interaction.customId.split(':')[1], interaction))) {
-			await interaction.update({
-				components: [],
-			}).catch(() => {});
-		}
+	if (interactions[interaction.guild.id]?.[interaction.channel.id]?.[interaction.customId.split(':')[0]]?.onButtonClick) {
+		await interaction.deferUpdate().catch((err) => handleError(err, interaction));
+		await interactions[interaction.guild.id]?.[interaction.channel.id]?.[interaction.customId.split(':')[0]]?.onButtonClick(interaction.customId.split(':')[1], interaction);
 	} else {
-		await interaction.followUp({
+		await interaction.reply({
 			embeds: [
 				new MessageEmbed()
 					.setColor('#ff0000')
 					.setDescription('Error: Please re-run the command'),
 			],
 			ephemeral: true,
-			components: [],
-		}).catch(() => {});
-		await interaction.update({
 			components: [],
 		}).catch(() => {});
 	}

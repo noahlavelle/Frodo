@@ -9,7 +9,7 @@ import fetch = require('node-fetch');
 import atob = require('atob');
 import {SlashCommandBuilder} from '@discordjs/builders';
 import {registerCommands} from '../../refreshCommands';
-import {button, createButtonRow, getMessage, MessageHandler} from '../../utils';
+import handleError, {Button, createButtonRow, getMessage, MessageHandler} from '../../utils';
 import {addUserToScoreboard} from '../../scoreboard';
 const characters: string[] = ['🇦', '🇧', '🇨', '🇩'];
 const letterMap: string[] = ['A', 'B', 'C', 'D'];
@@ -87,7 +87,7 @@ export class Trivia {
 	options: string[];
 	answer: number;
 	questionJSON;
-	buttons: button[];
+	buttons: Button[];
 	finished: boolean;
 
 	constructor(interaction) {
@@ -143,7 +143,6 @@ export class Trivia {
 			this.buttons.push({
 				label: letterMap[index],
 				id: index.toString(),
-				disabled: false,
 			});
 		});
 		await this.message.edit({
@@ -197,7 +196,7 @@ export class Trivia {
 		if (id == this.answer) {
 			this.buttons[id].style = 'SUCCESS';
 			this.options[this.answer] += ' :white_check_mark:';
-			await interaction.update({
+			await this.message.edit({
 				content: `Correct :smile:`,
 				embeds: [
 					new MessageEmbed()
@@ -209,12 +208,12 @@ export class Trivia {
 				components: [
 					createButtonRow(this.interaction, ...this.buttons),
 				],
-			}).catch(() => {});
+			});
 			addUserToScoreboard(this.interaction.user);
 		} else {
 			this.buttons[id].style = 'DANGER';
 			this.options[id] += ' :x:';
-			await interaction.update({
+			await this.message.edit({
 				content: `You got it wrong :cry:, The answer was :regional_indicator_${letterMap[this.answer].toLocaleLowerCase()}:`,
 				embeds: [
 					new MessageEmbed()
@@ -226,15 +225,13 @@ export class Trivia {
 				components: [
 					createButtonRow(this.interaction, ...this.buttons),
 				],
-			}).catch(() => {});
+			});
 		}
 		return true;
 	}
 }
 
 export function triviaCategories(interaction: CommandInteraction) {
-	try {
-		if (error) return interaction.reply({embeds: [errorEmbed]});
-		interaction.reply({embeds: [gamesEmbed]});
-	} catch (e) {}
+	if (error) return interaction.reply({embeds: [errorEmbed]}).catch((e) => handleError(e, interaction));
+	interaction.reply({embeds: [gamesEmbed]}).catch((e) => handleError(e, interaction));
 }

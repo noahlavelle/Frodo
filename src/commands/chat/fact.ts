@@ -1,16 +1,13 @@
 import fetch = require('node-fetch');
 import {CommandInteraction} from 'discord.js';
-import handleError from '../../utils';
+import {getMessage} from '../../utils';
 
 export async function fact(interaction: CommandInteraction) {
-	await interaction.deferReply()
-		.catch((err) => {
-			handleError(err, interaction);
-		});
+	const message = await getMessage(interaction);
 	fetch('https://uselessfacts.jsph.pl/random.json?language=en')
 		.then((res) => res.json())
-		.then(async (json) => interaction.editReply(json.text))
+		.then(async (json) => message.edit(json.text))
 		.catch(async (err) => {
-		 	await interaction.editReply('We could not find you a fortune :confused:');
+		 	await message.edit('We could not find you a fact :confused:');
 		});
 }

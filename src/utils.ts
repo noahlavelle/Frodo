@@ -156,22 +156,24 @@ export async function getMessage(interaction: CommandInteraction, onError = () =
 	if (message instanceof Message) return new MessageHandler(message, interaction, onError);
 }
 
-export class button {
-	label: string;
+export class Button {
 	id: string;
+	label?: string;
 	style?: 'PRIMARY' | 'SECONDARY' | 'SUCCESS' | 'DANGER' | 'LINK';
 	disabled?: boolean;
+	emoji?: string;
 }
 
-export function createButtonRow(interaction: CommandInteraction, ...buttons: button[]): MessageActionRow {
+export function createButtonRow(interaction: CommandInteraction, ...buttons: Button[]): MessageActionRow {
 	const buttonArray = [];
 	buttons.forEach((button) => {
 		buttonArray.push(
 			new MessageButton()
-				.setLabel(button.label)
+				.setLabel(button.label || '')
 				.setCustomId(`${interaction.id}:${button.id}`)
 				.setStyle(button.style || 'PRIMARY')
-				.setDisabled(button.disabled),
+				.setDisabled(button.disabled || false)
+				.setEmoji(button.emoji),
 		);
 	});
 	const row = new MessageActionRow()
