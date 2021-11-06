@@ -1,6 +1,6 @@
 import {
 	AwaitMessagesOptions,
-	AwaitReactionsOptions,
+	AwaitReactionsOptions, ButtonInteraction,
 	CommandInteraction, EmojiIdentifierResolvable, Guild, GuildManager,
 	Message, MessageActionRow, MessageButton,
 	MessageEditOptions,
@@ -32,6 +32,7 @@ async function sendErrorEmbed(interaction: CommandInteraction) {
 }
 
 export default async function handleError(error, interaction) {
+	if (interaction instanceof ButtonInteraction) return;
 	if (!erroredInteractions.includes(interaction.id)) {
 		erroredInteractions.push(interaction.id);
 		await sendErrorEmbed(interaction);
