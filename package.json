@@ -15,7 +15,7 @@
     "aki-api": "^6.0.7",
     "atob": "^2.1.2",
     "btoa": "^1.2.1",
-    "discord-api-types": "^0.22.0",
+    "discord-api-types": "^0.25.2",
     "discord.js": "^13.2.0",
     "express": "^4.17.1",
     "firebase": "^9.1.3",
