@@ -1,14 +1,14 @@
-import Discord = require('discord.js');
-import {Intents, MessageEmbed} from 'discord.js';
-import {CommandData} from './resetCommands';
+import {Intents, MessageEmbed, Client} from 'discord.js';
+import {CommandData} from './resetCommands.js';
 import AutoPoster from 'topgg-autoposter';
-import {hasVoted, setVoteEvent} from './votes';
-import handleError from './utils';
+import {setVoteEvent} from './votes.js';
+import handleError from './utils.js';
+import {sortScoreboard} from './scoreboard.js';
 
 const interactions = {};
 
 // @ts-ignore
-const client = new Discord.Client({intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS, Intents.FLAGS.DIRECT_MESSAGES, Intents.FLAGS.DIRECT_MESSAGE_REACTIONS]});
+const client = new Client({intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS, Intents.FLAGS.DIRECT_MESSAGES, Intents.FLAGS.DIRECT_MESSAGE_REACTIONS]});
 export const EmbedColor = '#3498db';
 export const timestamp = Date.now();
 const stats = {
@@ -27,8 +27,7 @@ function statusRotation(statuses, speed) {
 	let current = 0;
 	setInterval(() => {
 		const activity = statuses[current];
-		if (typeof(activity[0]) === 'function') activity[0] = activity[0]();
-		client.user.setActivity(activity[0], {type: activity[1] || 'PLAYING'});
+		client.user.setActivity(activity[0].replace('$server_count', client.guilds.cache.size), {type: activity[1] || 'PLAYING'});
 		current++;
 		current %= statuses.length;
 	}, speed);
@@ -61,8 +60,15 @@ client.once('ready', async () => {
 	statusRotation([
 		['Trivia Leaderboard!'],
 		['/leaderboard'],
-		[() => `${client.guilds.cache.size} servers!`, 'WATCHING'],
+		['$server_count servers!', 'WATCHING'],
 	], 10000);
+
+	sortScoreboard();
+	console.log('Firebase updated!');
+	setInterval(() => {
+		sortScoreboard();
+		console.log('Firebase updated!');
+	}, 30000);
 });
 
 client.on('interactionCreate', async (interaction) => {

@@ -60,17 +60,17 @@ const emojis = {
 	'back': '<:back:881661068089368627>',
 };
 
-export class Card {
-	public code: string;
-	public image: string;
-	public images: Images;
-	public value: 'ACE' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | 'JACK' | 'QUEEN' | 'KING';
-	public suit: 'CLUBS' | 'DIAMONDS' | 'HEARTS' | 'SPADES';
-	public emoji: string;
+export interface Card {
+	code: string;
+	image: string;
+	images: Images;
+	value: 'ACE' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | 'JACK' | 'QUEEN' | 'KING';
+	suit: 'CLUBS' | 'DIAMONDS' | 'HEARTS' | 'SPADES';
+	emoji: string;
 }
-class Images {
-	public svg: string;
-	public png: string;
+interface Images {
+	svg: string;
+	png: string;
 }
 export class Deck {
 	private deckId: string;
@@ -78,12 +78,12 @@ export class Deck {
 
 	async init() {
 		this.backEmoji = emojis.back;
-		this.deckId = (await (await fetch('https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1')).json()).deck_id;
+		this.deckId = (await (await fetch('https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1')).json())['deck_id'];
 		return;
 	}
 	async draw(amount=1): Promise<Card[]> {
 		const req = await ((await fetch(`https://deckofcardsapi.com/api/deck/${this.deckId}/draw/?count=${amount}`)).json());
-		const cards = <Card[]> req.cards;
+		const cards = <Card[]> req['cards'];
 		cards.forEach((card, index) => {
 			cards[index].emoji = emojis[card.code];
 		});

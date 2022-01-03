@@ -1,4 +1,4 @@
-import {CommandData} from './commandData';
+import {CommandData} from './commandData.js';
 
 const commands = [];
 

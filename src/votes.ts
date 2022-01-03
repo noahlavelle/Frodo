@@ -1,13 +1,10 @@
 import WebSocket from 'ws';
-import {sortScoreboard} from './scoreboard';
-import btoa from 'btoa';
 
 const votes = [];
 let error = false;
 let authed = false;
 export let reconnecting = false;
 export let webSocketPing = 0;
-export let leaderboardCurrent = sortScoreboard();
 const pingStats = {
 	sent: 0,
 	received: 0,
@@ -37,13 +34,11 @@ function connect() {
 		ws.send(`init:${process.env.TOPGGAUTH}`);
 
 		pingStats.sent = Date.now();
-		leaderboardCurrent = sortScoreboard();
-		ws.send(`ping:${btoa(JSON.stringify(leaderboardCurrent))}`);
+		ws.send(`ping`);
 		pingIntervalId = setInterval(() => {
 			if (ws.closed) return clearInterval(pingIntervalId);
 			pingStats.sent = Date.now();
-			leaderboardCurrent = sortScoreboard();
-			ws.send(`ping:${btoa(JSON.stringify(leaderboardCurrent))}`);
+			ws.send(`ping`);
 		}, 30000);
 	});
 

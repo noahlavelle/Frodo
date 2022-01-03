@@ -1,0 +1,20 @@
+{
+    "name": "othello",
+    "description": "A game of othello against another player",
+    "options": [
+        {
+            "name": "playertwo",
+            "description": "The user that you want to challenge",
+            "required": true,
+            "type": "USER"
+        },
+        {
+            "name": "showmoves",
+            "description": "Will show you your options that you can move to for the game",
+            "required": false,
+            "type": "BOOLEAN"
+        }
+    ],
+    "main": "index.js",
+    "version": "1.0.0"
+}

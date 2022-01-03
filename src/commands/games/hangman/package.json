@@ -1,0 +1,14 @@
+{
+    "name": "hangman",
+    "description": "A game of hangman",
+    "options": [
+        {
+            "name": "playertwo",
+            "description": "The user that you want to challenge",
+            "required": true,
+            "type": "USER"
+        }
+    ],
+    "main": "index.js",
+    "version": "1.0.0"
+}

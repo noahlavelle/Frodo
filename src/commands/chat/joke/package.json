@@ -1,0 +1,14 @@
+{
+    "name": "joke",
+    "description": "Sends a random insult",
+    "options": [
+        {
+            "name": "user",
+            "description": "Sends a random joke",
+            "required": true,
+            "type": "user"
+        }
+    ],
+    "main": "index.js",
+    "version": "1.0.0"
+}

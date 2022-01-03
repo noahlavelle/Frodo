@@ -2,10 +2,11 @@ import {REST} from '@discordjs/rest';
 import {Routes} from 'discord-api-types/v9';
 import {commands} from './resetCommands';
 
-const {token, clientID, guildID} = require('./config.json');
+// @ts-ignore
+import config from './config.json';
 
 const rest = new REST({version: '9'})
-	.setToken(token);
+	.setToken(config.token);
 
 
 export async function registerCommands(command) {

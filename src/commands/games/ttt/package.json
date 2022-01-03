@@ -1,0 +1,14 @@
+{
+    "name": "ttt",
+    "description": "Sends a random insult",
+    "options": [
+        {
+            "name": "playertwo",
+            "description": "A game of tick tack toe",
+            "required": true,
+            "type": "USER"
+        }
+    ],
+    "main": "index.js",
+    "version": "1.0.0"
+}

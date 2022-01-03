@@ -1,0 +1,6 @@
+{
+    "name": "anagrams",
+    "description": "A round of countdown as seen on the TV program",
+    "main": "index.js",
+    "version": "1.0.0"
+}

@@ -1,0 +1,20 @@
+{
+    "name": "leaderboard",
+    "description": "View Frodo's current leaderboards",
+    "options": [
+        {
+            "name": "game",
+            "description": "Pick a leaderboard to view",
+            "choices": [
+                {
+                    "name": "Trivia",
+                    "description": "trivia"
+                }
+            ],
+            "required": true,
+            "type": "USER"
+        }
+    ],
+    "main": "index.js",
+    "version": "1.0.0"
+}
