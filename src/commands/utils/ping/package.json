@@ -1,6 +1,0 @@
-{
-    "name": "ping",
-    "description": "Check Frodo's ping",
-    "main": "index.js",
-    "version": "1.0.0"
-}

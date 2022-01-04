@@ -1,6 +1,0 @@
-{
-    "name": "invite",
-    "description": "Add Frodo to your server!",
-    "main": "index.js",
-    "version": "1.0.0"
-}

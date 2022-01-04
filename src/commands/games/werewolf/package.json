@@ -1,6 +1,0 @@
-{
-    "name": "werewolf",
-    "description": "The classic party social deduction game",
-    "main": "index.js",
-    "version": "1.0.0"
-}

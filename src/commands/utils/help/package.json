@@ -1,6 +1,0 @@
-{
-    "name": "help",
-    "description": "Get help using Frodo",
-    "main": "index.js",
-    "version": "1.0.0"
-}

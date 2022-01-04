@@ -1,6 +1,0 @@
-{
-    "name": "uptime",
-    "description": "View the uptime of Frodo",
-    "main": "index.js",
-    "version": "1.0.0"
-}

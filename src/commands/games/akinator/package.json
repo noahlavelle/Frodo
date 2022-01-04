@@ -1,6 +1,0 @@
-{
-    "name": "akinator",
-    "description": "A game of akinator against the AI",
-    "main": "index.js",
-    "version": "1.0.0"
-}

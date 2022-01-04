@@ -1,6 +1,0 @@
-{
-    "name": "fortune",
-    "description": "Sends a random fortune",
-    "main": "index.js",
-    "version": "1.0.0"
-}
