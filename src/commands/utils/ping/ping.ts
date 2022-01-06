@@ -1,10 +1,10 @@
-import {getMessage} from '../../utils';
-import {client} from '../../index';
-import {webSocketPing, reconnecting} from '../../votes';
+import {MessageHandler} from './../../../utils/ErrorHandling/CommandHandler';
+import {FrodoClient, Interaction, Options} from '../../../FrodoClient';
 
-export async function ping(interaction) {
-	const message = await getMessage(interaction);
-	if (!message) return;
-	await message.edit('`Pinging...`');
-	await message.edit(`Ping: \`${message.message.createdTimestamp - interaction.createdTimestamp}\`\nDiscord API ping: \`${client.ws.ping}\`\nWebSocket Ping: \`${reconnecting ? 'Disconnected' : webSocketPing}\``);
-};
+export default function(this: FrodoClient, message: MessageHandler, options: Options, interaction: Interaction) {
+	const content = [
+		`Bot Ping: \`${message.message.createdTimestamp - interaction.createdTimestamp}ms\``,
+		`API Ping: \`${Math.round(this.ws.ping)}ms\``,
+	];
+	message.edit(content.join('\n'));
+}

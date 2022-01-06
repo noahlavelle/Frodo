@@ -7,7 +7,7 @@ import {
 	User,
 } from 'discord.js';
 
-import {handleError, removeReaction} from './ErrorHandler';
+import {handleError, removeReaction} from './ErrorHandler.js';
 
 export class MessageHandler {
 	message: Message;

@@ -2,5 +2,7 @@
     "files.exclude": {
         "**/*.js": {"when": "$(basename).ts"},
         "**/*.js.map": true
-    }
+	},
+	"autoimport.spaceBetweenBraces": false,
+	"vscode.tsc.compiler.alertTSConfigChanges": "never"
 }

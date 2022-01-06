@@ -1,8 +1,8 @@
 import {Joke} from './Joke.d';
-import {MessageHandler} from '../../../utils/ErrorHandling/CommandHandler';
 import fetch from 'node-fetch';
+import {FrodoClient, Message} from '../../../FrodoClient';
 
-export async function run(message: MessageHandler) {
+export default async function(this: FrodoClient, message: Message) {
 	fetch('https://v2.jokeapi.dev/joke/Any?blacklistFlags=nsfw,religious,political,racist,sexist,explicit')
 		.then((res) => res.json())
 		.then((json: Joke) => {

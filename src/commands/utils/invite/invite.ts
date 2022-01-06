@@ -1,8 +1,7 @@
-import {CommandInteraction, MessageActionRow, MessageButton} from 'discord.js';
-import handleError, {getMessage} from '../../utils';
+import {MessageActionRow, MessageButton} from 'discord.js';
+import {FrodoClient, Message} from '../../../FrodoClient';
 
-export async function invite(interaction: CommandInteraction) {
-	const message = await getMessage(interaction);
+export default function(this: FrodoClient, message: Message) {
 	const row = new MessageActionRow()
 		.addComponents(
 			new MessageButton()
@@ -22,6 +21,7 @@ export async function invite(interaction: CommandInteraction) {
 				.setURL('https://support.frodo.fun')
 				.setStyle('LINK'),
 		);
+
 	message.edit({
 		content: 'If you enjoy Frodo, please leave a review below!',
 		components: [row],

@@ -1,9 +1,8 @@
 import {Insult} from './Insult.d';
-import {MessageHandler} from '../../../utils/ErrorHandling/CommandHandler';
 import fetch from 'node-fetch';
-import {CommandInteractionOptionResolver} from 'discord.js';
+import {FrodoClient, Message, Options} from '../../../FrodoClient';
 
-export async function run(message: MessageHandler, options: CommandInteractionOptionResolver) {
+export default async function(this: FrodoClient, message: Message, options: Options) {
 	let text = '';
 	if (options.getUser('user')) text = `${options.getUser('user')} :fire: `;
 	fetch('https://evilinsult.com/generate_insult.php?lang=en&type=json')

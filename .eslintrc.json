@@ -21,6 +21,7 @@
         "max-len": "off",
         "linebreak-style": ["error", "windows"],
         "require-jsdoc": "off",
-        "no-unused-vars": "warn"
+        "no-unused-vars": "warn",
+		"no-invalid-this": "off"
     }
 }
