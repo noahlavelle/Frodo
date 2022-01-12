@@ -1,3 +1,4 @@
+## We have permenantly moved to gitlab [here](https://gitlab.com/frodobot/bot)
 
 [![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url]
